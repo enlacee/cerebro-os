@@ -10,6 +10,8 @@ services:
     environment:
       # ":80" = HTTP local. En producción pon tu dominio (ej. chat.anibalcopitan.com) y Caddy saca HTTPS solo.
       SERVER_NAME: ${SERVER_NAME:-:80}
+      # El navegador siempre revalida widget.js: los cambios se ven al recargar.
+      CADDY_SERVER_EXTRA_DIRECTIVES: header /widget.js Cache-Control "no-cache"
     ports:
       - "${APP_PORT:-8000}:80"
       - "${HTTPS_PORT:-8443}:443"

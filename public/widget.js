@@ -28,6 +28,7 @@
     .catch(function () {});
 
   var STORE = 'cerebro-chat';
+  var EXPIRES = 24 * 60 * 60 * 1000; // tras 24 h sin actividad, la conversación empieza de cero
   var state = load();
   var busy = false;
 
@@ -35,13 +36,18 @@
   function load() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORE));
-      if (saved && saved.session) return saved;
+      if (saved && saved.session && Date.now() - (saved.updated || 0) < EXPIRES) return saved;
     } catch (e) {}
-    return { session: uuid(), messages: [] };
+    return fresh();
+  }
+
+  function fresh() {
+    return { session: uuid(), messages: [], updated: Date.now() };
   }
 
   function save() {
     try {
+      state.updated = Date.now();
       state.messages = state.messages.slice(-30);
       localStorage.setItem(STORE, JSON.stringify(state));
     } catch (e) {}
@@ -112,6 +118,7 @@
     '</style>' +
     '<div class="panel" role="dialog" aria-label="Chat">' +
     '<div class="head"><b></b><a class="wa" target="_blank" rel="noopener" hidden></a>' +
+    '<button class="reset" aria-label="Nueva conversación" title="Nueva conversación">↻</button>' +
     '<button class="close" aria-label="Cerrar">✕</button></div>' +
     '<div class="msgs" aria-live="polite"></div>' +
     '<div class="typing">Escribiendo…</div>' +
@@ -145,6 +152,15 @@
 
   $('.fab').addEventListener('click', function () { toggle(!panel.classList.contains('open')); });
   $('.close').addEventListener('click', function () { toggle(false); });
+
+  // Nueva conversación: borra el historial local y vuelve a la bienvenida.
+  $('.reset').addEventListener('click', function () {
+    if (busy) return;
+    state = fresh();
+    save();
+    renderAll();
+    input.focus();
+  });
 
   function bubble(role, text, extra) {
     var el = document.createElement('div');

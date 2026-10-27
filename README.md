@@ -58,6 +58,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] `POST /api/chat` con streaming SSE, historial y guardado de conversaciones
 - [x] Proveedor de IA configurable por `.env` (Prism)
 - [x] `widget.js` embebible + botón WhatsApp + modo oscuro + móvil
+- [x] Botón ↻ "Nueva conversación" + reinicio automático tras 24 h sin actividad + widget sin caché
 - [x] Bienvenida con 2 caminos: "Ya decidí, quiero pagar" (WhatsApp directo) y chips de temas que preguntan al asistente
 - [x] CORS y rate limit por IP · tests automáticos
 - [x] Probado con API key real de Gemini (`gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`)
