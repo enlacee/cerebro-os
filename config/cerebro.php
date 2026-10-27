@@ -32,6 +32,21 @@ return [
         'per_day' => (int) env('CEREBRO_CHAT_PER_DAY', 100),
     ],
 
+    // "Que Aníbal me llame": franjas internas en las que se aceptan llamadas (hora de 'timezone').
+    'calls' => [
+        'days' => [1, 2, 3, 4, 5], // ISO: 1 = lunes … 7 = domingo
+        'windows' => [['11:00', '12:00'], ['15:00', '16:00']],
+        'slots_shown' => 3,
+        'timezone_label' => 'hora Perú',
+        'per_day' => (int) env('CEREBRO_CALLS_PER_DAY', 3), // solicitudes por IP al día
+    ],
+
+    // Avisos a Aníbal (nuevas llamadas y recordatorios). Ver: php artisan telegram:setup
+    'telegram' => [
+        'token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+    ],
+
     // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
     'widget' => [
         'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
@@ -50,6 +65,15 @@ return [
             'title' => '💳 Ya decidí, quiero pagar',
             'subtitle' => 'Hablar con Aníbal por WhatsApp',
             'message' => 'Hola Aníbal, ya decidí y quiero pagar 🙌',
+        ],
+
+        // Llamada rápida: el visitante deja su WhatsApp y elige una franja.
+        'call' => [
+            'title' => '📞 Prefiero que Aníbal me llame',
+            'subtitle' => 'Llamada rápida por WhatsApp · 3 min',
+            'short' => '📞 Que Aníbal me llame',
+            'intro' => 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto. **No es asesoría**: lo técnico lo vemos en la Consulta Técnica ($20).',
+            'country_code' => '+51',
         ],
 
         // Chips: al tocarlos se envía "message" al asistente.

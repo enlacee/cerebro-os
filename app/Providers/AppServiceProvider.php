@@ -27,5 +27,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(config('cerebro.chat.per_minute'))->by($request->ip()),
             Limit::perDay(config('cerebro.chat.per_day'))->by('day:'.$request->ip()),
         ]);
+
+        RateLimiter::for('call-request', fn (Request $request) => Limit::perDay(config('cerebro.calls.per_day'))->by($request->ip()));
     }
 }

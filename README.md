@@ -21,6 +21,7 @@ El contenedor instala dependencias, crea la base SQLite, migra y compila el cono
 | Recargar conocimiento tras editar Obsidian | `docker compose exec app php artisan knowledge:sync` |
 | Tests | `docker compose exec app php artisan test` |
 | Logs | `docker compose logs -f app` |
+| Conectar avisos de Telegram | `docker compose exec app php artisan telegram:setup` |
 
 **Widget en tu web** (antes de `</body>`):
 
@@ -41,6 +42,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 ```
 
 - **Sin RAG por ahora:** todo el conocimiento (~19k tokens) va en el prompt. RAG solo cuando no quepa.
+- **"Que Aníbal me llame":** el visitante deja nombre, WhatsApp y proyecto, y elige una de las 3 próximas franjas (lun–vie 11–12 y 3–4 pm, hora Perú; editable en `config/cerebro.php` → `calls`). Llega un aviso por Telegram y un recordatorio 5 min antes de la franja (servicio `scheduler`).
 - **Protección:** CORS (`CEREBRO_ALLOWED_ORIGINS`) + límite por IP por minuto y por día.
 
 | Archivo | Qué es |
@@ -48,6 +50,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 | `config/cerebro.php` | Toda la configuración del producto |
 | `app/Services/Knowledge.php` | Compila el conocimiento y arma el system prompt |
 | `app/Http/Controllers/ChatController.php` | Endpoint del chat con streaming |
+| `app/Services/CallSlots.php` | Calcula las franjas libres para llamadas |
 | `public/widget.js` | Widget embebible (sin dependencias); su contenido viene de `GET /api/widget` |
 
 ## Plan
@@ -59,6 +62,8 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] Proveedor de IA configurable por `.env` (Prism)
 - [x] `widget.js` embebible + botón WhatsApp + modo oscuro + móvil
 - [x] Botón ↻ "Nueva conversación" + reinicio automático tras 24 h sin actividad + widget sin caché
+- [x] "📞 Que Aníbal me llame": formulario en el chat con franjas libres (y hora local del visitante), aviso por Telegram y recordatorio
+- [ ] Crear el bot de Telegram y poner `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` (`php artisan telegram:setup`)
 - [x] Bienvenida con 2 caminos: "Ya decidí, quiero pagar" (WhatsApp directo) y chips de temas que preguntan al asistente
 - [x] CORS y rate limit por IP · tests automáticos
 - [x] Probado con API key real de Gemini (`gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`)
@@ -68,6 +73,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 
 ### Fase 2 — CRM mínimo
 - [ ] Panel admin con Filament (login, conversaciones, leads)
+- [ ] Panel de llamadas solicitadas (marcar hecha / no contestó)
 - [ ] Tabla `contacts` + etapas (nuevo → calificado → consulta $20 → plan → pagó)
 - [ ] Tool del LLM `guardar_lead` (nombre, WhatsApp, interés, etapa)
 - [ ] Tiempo real en el panel con Laravel Reverb
