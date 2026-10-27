@@ -3,14 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Cerebro OS</title>
+  <title>Cerebro OS · Demo</title>
   <style>
-    :root { color-scheme: light dark; }
-    html, body { margin: 0; min-height: 100%; background: #f8f9fa; }
-    @media (prefers-color-scheme: dark) { html, body { background: #202124; } }
+    :root { --bg: #f8f9fa; --fg: #202124; --muted: #5f6368; --accent: #1a73e8; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #202124; --fg: #e8eaed; --muted: #9aa0a6; --accent: #8ab4f8; }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--fg);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main {
+      flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+      width: 100%; max-width: 640px; margin: 0 auto;
+      padding: calc(32px + env(safe-area-inset-top)) 16px 32px;
+    }
+    .badge {
+      font-size: 13px; font-weight: 600; color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, transparent); padding: 4px 12px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(28px, 7vw, 40px); line-height: 1.15; margin: 16px 0 10px; font-weight: 700; }
+    p { margin: 0; color: var(--muted); font-size: 17px; max-width: 30em; }
+    /* Espacio abajo para que el botón 💬 del chat no tape el footer. */
+    footer {
+      text-align: center; color: var(--muted); font-size: 14px;
+      padding: 16px 16px calc(96px + env(safe-area-inset-bottom));
+    }
   </style>
 </head>
 <body>
+  <main>
+    <span class="badge">Cerebro OS</span>
+    <h1>Chat con IA para tu web</h1>
+    <p>Responde con tu propio conocimiento, filtra a quien ya quiere comprar y agenda llamadas por WhatsApp.</p>
+  </main>
+
+  <footer>Hecho por Aníbal Linux</footer>
+
   <script src="/widget.js" defer></script>
 </body>
 </html>
