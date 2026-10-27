@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    image: cerebro-os-app
+    restart: unless-stopped
+    environment:
+      # ":80" = HTTP local. En producción pon tu dominio (ej. chat.anibalcopitan.com) y Caddy saca HTTPS solo.
+      SERVER_NAME: ${SERVER_NAME:-:80}
+    ports:
+      - "${APP_PORT:-8000}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    volumes:
+      - .:/app
+      - ${KNOWLEDGE_PATH:-./knowledge}:/app/knowledge:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
