@@ -29,7 +29,7 @@ El contenedor instala dependencias, crea la base SQLite, migra y compila el cono
 <script src="https://chat.anibalcopitan.com/widget.js" defer></script>
 ```
 
-Saludo, colores (`colors`: azul = asistente, verde = WhatsApp, cabecera neutra), WhatsApp, botón **"Ya decidí, quiero pagar"** y **chips de temas** se editan en `config/cerebro.php` → `widget` (lo sirve `GET /api/widget`).
+Saludo, colores (`colors`, estilo sobrio tipo Google: azul `#1a73e8` = asistente, verde `#188038` = WhatsApp, cabecera blanca), WhatsApp, botón **"Ya decidí, quiero pagar"** y **chips de temas** se editan en `config/cerebro.php` → `widget` (lo sirve `GET /api/widget`).
 
 ## Cómo funciona
 
