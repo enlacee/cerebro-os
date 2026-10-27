@@ -103,6 +103,11 @@
     '.panel{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;display:none;flex-direction:column;' +
     'background:var(--bg);color:var(--fg);overflow:hidden;z-index:2147483001}' +
     '.panel.open{display:flex}' +
+    // Fondo oscurecido y difuminado detrás del chat (escritorio); en el celular el chat ya es pantalla completa.
+    '.backdrop{display:none;position:fixed;inset:0;background:rgba(32,33,36,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);' +
+    'opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;z-index:2147482999}' +
+    '.backdrop.show{opacity:1;visibility:visible}' +
+    '@keyframes cerebro-pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}' +
     '.head{flex:none;display:flex;align-items:center;gap:6px;background:var(--head);color:var(--head-fg);border-bottom:1px solid var(--line);' +
     'padding:calc(8px + env(safe-area-inset-top)) calc(6px + env(safe-area-inset-right)) 8px calc(14px + env(safe-area-inset-left))}' +
     '.who{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}' +
@@ -171,11 +176,14 @@
     '.panel{inset:auto 20px 90px auto;width:400px;height:620px;max-height:calc(100vh - 110px);border-radius:16px;border:1px solid var(--line);box-shadow:0 8px 28px rgba(60,64,67,.28)}' +
     '.head{padding:10px 8px 10px 14px}.icon{width:36px;height:36px;border-radius:10px}' +
     '.wa .short{display:none}.wa .long{display:inline}' +
+    '.backdrop{display:block}.panel.open{animation:cerebro-pop .2s ease-out}' +
     '.msgs{padding:14px}.composer{padding:10px}.callbar{padding:0 10px 8px}' +
     '}' +
     '.panel.open~.fab{display:none}' +
+    '@media (prefers-reduced-motion:reduce){.panel.open{animation:none}.backdrop{transition:none}}' +
     '@media (min-width:481px){.panel.open~.fab{display:grid}}' +
     '</style>' +
+    '<div class="backdrop" aria-hidden="true"></div>' +
     '<div class="panel" role="dialog" aria-label="Chat">' +
     '<div class="head">' +
     '<div class="who"><b></b><small></small></div>' +
@@ -262,6 +270,7 @@
 
   function toggle(open) {
     panel.classList.toggle('open', open);
+    $('.backdrop').classList.toggle('show', open);
     $('.fab').textContent = open ? '✕' : '💬';
     fitViewport();
     if (open) {
@@ -272,6 +281,11 @@
 
   $('.fab').addEventListener('click', function () { toggle(!panel.classList.contains('open')); });
   $('.close').addEventListener('click', function () { toggle(false); });
+  // Clic fuera del chat o tecla Esc: se cierra.
+  $('.backdrop').addEventListener('click', function () { toggle(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panel.classList.contains('open')) toggle(false);
+  });
 
   // Nueva conversación: borra el historial local y vuelve a la bienvenida.
   $('.reset').addEventListener('click', function () {
