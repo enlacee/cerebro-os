@@ -52,7 +52,12 @@ return [
         'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
         'subtitle' => 'Asistente en línea',
         'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
-        'color' => '#16a34a',
+        // Colores: azul = asistente, verde = WhatsApp (lo único verde para que "quiero pagar" destaque), cabecera neutra.
+        'colors' => [
+            'accent' => '#2563eb',
+            'whatsapp' => '#15803d',
+            'header' => '#0f172a',
+        ],
         'whatsapp' => env('CEREBRO_WHATSAPP', '51970142637'),
 
         // Botón fijo arriba: hablar con una persona.

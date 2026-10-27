@@ -16,7 +16,7 @@
     title: 'Asistente',
     subtitle: 'Asistente virtual',
     greeting: '¡Hola! 👋 ¿En qué te puedo ayudar?',
-    color: '#16a34a',
+    colors: { accent: '#2563eb', whatsapp: '#15803d', header: '#0f172a' },
     whatsapp: '',
     contact: { label: 'WhatsApp', message: 'Hola, vengo del chat de la web 👋' },
     pay: null,
@@ -86,9 +86,10 @@
   root.innerHTML =
     '<style>' +
     // Mobile first: base = pantalla completa en el celular; desde 481px = panel flotante.
-    ':host{all:initial;--c:#16a34a;--bg:#fff;--fg:#111827;--muted:#6b7280;--bot:#f3f4f6;--line:#e5e7eb;' +
+    // --c = asistente (chat) · --wa = todo lo que abre WhatsApp · --head = cabecera neutra.
+    ':host{all:initial;--c:#2563eb;--wa:#15803d;--head:#0f172a;--bg:#fff;--fg:#111827;--muted:#6b7280;--bot:#f3f4f6;--line:#e5e7eb;' +
     'font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}' +
-    '@media (prefers-color-scheme:dark){:host{--bg:#111827;--fg:#f9fafb;--muted:#9ca3af;--bot:#1f2937;--line:#374151}}' +
+    '@media (prefers-color-scheme:dark){:host{--bg:#111827;--fg:#f9fafb;--muted:#9ca3af;--bot:#1f2937;--line:#374151}.head{border-bottom:1px solid var(--line)}}' +
     '*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}' +
     'button,a{touch-action:manipulation}' +
     '.fab{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));' +
@@ -97,15 +98,15 @@
     '.panel{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;display:none;flex-direction:column;' +
     'background:var(--bg);color:var(--fg);overflow:hidden;z-index:2147483001}' +
     '.panel.open{display:flex}' +
-    '.head{flex:none;display:flex;align-items:center;gap:6px;background:var(--c);color:#fff;' +
+    '.head{flex:none;display:flex;align-items:center;gap:6px;background:var(--head);color:#fff;' +
     'padding:calc(8px + env(safe-area-inset-top)) calc(6px + env(safe-area-inset-right)) 8px calc(14px + env(safe-area-inset-left))}' +
     '.who{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}' +
     '.who b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.who small{font-size:12px;opacity:.92;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden}' +
     '.who small::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:#86efac}' +
-    '.wa{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:36px;background:#fff;color:#111827;font-weight:600;font-size:13px;' +
+    '.wa{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:36px;background:var(--wa);color:#fff;font-weight:600;font-size:13px;' +
     'padding:0 12px;border-radius:999px;text-decoration:none;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15)}' +
-    '.wa svg{color:var(--c);flex:none}.wa .long{display:none}' +
+    '.wa svg{flex:none}.wa .long{display:none}' +
     '.tools{display:flex;flex:none;margin-left:2px;padding-left:4px;border-left:1px solid rgba(255,255,255,.35)}' +
     '.icon{width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:#fff;cursor:pointer;padding:0}' +
     '.icon:active{background:rgba(255,255,255,.25)}' +
@@ -118,7 +119,7 @@
     '.m a{color:inherit;text-decoration:underline}' +
     '.m.err{background:#fef2f2;color:#991b1b}' +
     '.welcome{display:flex;flex-direction:column;gap:8px;margin-top:4px}' +
-    '.pay{display:block;padding:12px 14px;border-radius:14px;background:var(--c);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.12)}' +
+    '.pay{display:block;padding:12px 14px;border-radius:14px;background:var(--wa);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.12)}' +
     '.pay b{display:block;font-size:15px}.pay span{font-size:13px;opacity:.9}' +
     '.pay.call{background:var(--bg);color:var(--fg);border:1.5px solid var(--c);box-shadow:none;width:100%;text-align:left;font:inherit;cursor:pointer}' +
     '.label{color:var(--muted);font-size:13px;margin-top:6px}' +
@@ -224,7 +225,9 @@
   if (mobile.addEventListener) mobile.addEventListener('change', fitViewport);
 
   ready.then(function () {
-    host.style.setProperty('--c', cfg.color);
+    host.style.setProperty('--c', cfg.colors.accent);
+    host.style.setProperty('--wa', cfg.colors.whatsapp);
+    host.style.setProperty('--head', cfg.colors.header);
     $('.who b').textContent = cfg.title;
     $('.who small').textContent = cfg.subtitle;
     if (cfg.whatsapp) {
