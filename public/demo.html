@@ -2,23 +2,109 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Cerebro OS · Demo</title>
   <style>
-    body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: #f9fafb; color: #111827; }
-    main { max-width: 640px; margin: 0 auto; padding: 48px 16px; }
-    code { background: #e5e7eb; padding: 2px 6px; border-radius: 4px; }
+    :root {
+      --c: #16a34a; --bg: #f9fafb; --card: #fff; --fg: #111827; --muted: #6b7280; --line: #e5e7eb; --code: #f3f4f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0b1220; --card: #111827; --fg: #f9fafb; --muted: #9ca3af; --line: #1f2937; --code: #1f2937; }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    /* Espacio abajo para que el botón 💬 del chat no tape el contenido. */
+    main {
+      max-width: 640px; margin: 0 auto;
+      padding: calc(24px + env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom));
+    }
+    .badge {
+      display: inline-block; font-size: 13px; font-weight: 600; color: var(--c);
+      background: color-mix(in srgb, var(--c) 12%, transparent); padding: 4px 10px; border-radius: 999px;
+    }
+    h1 { font-size: clamp(26px, 7vw, 36px); line-height: 1.15; margin: 12px 0 8px; }
+    h2 { font-size: 18px; margin: 0 0 10px; }
+    p { margin: 0 0 12px; }
+    .lead { color: var(--muted); font-size: 17px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 18px 16px; margin-top: 16px;
+    }
+    ul { margin: 0; padding-left: 20px; }
+    li { margin: 6px 0; }
+    li::marker { color: var(--c); }
+    .hint {
+      display: flex; gap: 12px; align-items: center; margin-top: 20px; padding: 14px 16px;
+      border-radius: 16px; background: var(--c); color: #fff;
+    }
+    .hint span:first-child { font-size: 26px; line-height: 1; }
+    .code {
+      position: relative; background: var(--code); border-radius: 12px; margin: 0 0 12px;
+    }
+    /* El código se parte en varias líneas: nunca hay scroll horizontal en el celular. */
+    .code pre {
+      margin: 0; padding: 14px 14px 14px; white-space: pre-wrap; word-break: break-all;
+      font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .copy {
+      display: block; width: 100%; min-height: 44px; border: 0; border-top: 1px solid var(--line);
+      border-radius: 0 0 12px 12px; background: transparent; color: var(--c); font: inherit; font-weight: 600; cursor: pointer;
+    }
+    code.inline { background: var(--code); padding: 2px 6px; border-radius: 6px; font-size: 14px; overflow-wrap: anywhere; }
+    footer { color: var(--muted); font-size: 14px; margin-top: 24px; text-align: center; }
   </style>
 </head>
 <body>
   <main>
-    <h1>Cerebro OS · Demo</h1>
-    <p>Página de prueba: el chat aparece abajo a la derecha (💬).</p>
-    <p>Para ponerlo en tu web, pega antes de <code>&lt;/body&gt;</code>:</p>
-    <pre><code>&lt;script src="https://chat.anibalcopitan.com/widget.js" defer&gt;&lt;/script&gt;</code></pre>
-    <p>Saludo, chips de temas y WhatsApp se configuran en <code>config/cerebro.php</code>.</p>
+    <span class="badge">Cerebro OS · demo</span>
+    <h1>Chat con IA para tu web</h1>
+    <p class="lead">Responde con tu propio conocimiento, filtra a quien ya quiere comprar y agenda llamadas por WhatsApp.</p>
+
+    <div class="hint">
+      <span>💬</span>
+      <span>Toca el botón de abajo a la derecha para probar el chat.</span>
+    </div>
+
+    <section class="card">
+      <h2>Qué probar</h2>
+      <ul>
+        <li><strong>Un tema</strong> (ej. “Publicar mi app”): el asistente responde con precio y link.</li>
+        <li><strong>“Ya decidí, quiero pagar”</strong>: abre WhatsApp directo.</li>
+        <li><strong>“Que Aníbal me llame”</strong>: deja tu número y elige horario.</li>
+        <li><strong>Una pregunta técnica</strong>: el asistente no la resuelve y ofrece la Consulta Técnica.</li>
+        <li><strong>↻ arriba</strong>: empieza la conversación de cero.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Ponlo en tu web</h2>
+      <p>Pega esto antes de <code class="inline">&lt;/body&gt;</code>:</p>
+      <div class="code">
+        <pre id="snippet">&lt;script src="https://chat.anibalcopitan.com/widget.js" defer&gt;&lt;/script&gt;</pre>
+        <button class="copy" type="button">Copiar código</button>
+      </div>
+      <p>Saludo, temas, horarios de llamada y WhatsApp se cambian en <code class="inline">config/cerebro.php</code>.</p>
+    </section>
+
+    <footer>Hecho por Aníbal Linux</footer>
   </main>
 
+  <script>
+    document.querySelector('.copy').addEventListener('click', function () {
+      var button = this;
+      var text = document.getElementById('snippet').textContent;
+      var done = function (ok) {
+        button.textContent = ok ? '¡Copiado! ✅' : 'Selecciona y copia el código';
+        setTimeout(function () { button.textContent = 'Copiar código'; }, 2000);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      else done(false);
+    });
+  </script>
   <script src="/widget.js" defer></script>
 </body>
 </html>
