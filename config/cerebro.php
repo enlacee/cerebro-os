@@ -58,6 +58,7 @@ return [
         // Botón fijo arriba: hablar con una persona.
         'contact' => [
             'label' => 'Hablar con Aníbal',
+            'short' => 'WhatsApp', // en pantallas muy angostas (≤360px)
             'message' => 'Hola Aníbal, vengo del chat de la web 👋',
         ],
 

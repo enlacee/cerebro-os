@@ -60,7 +60,9 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] `knowledge:sync`: vault de Obsidian → prompt (excluye archivos internos)
 - [x] `POST /api/chat` con streaming SSE, historial y guardado de conversaciones
 - [x] Proveedor de IA configurable por `.env` (Prism)
-- [x] `widget.js` embebible + botón WhatsApp + modo oscuro + móvil
+- [x] `widget.js` embebible + botón WhatsApp + modo oscuro
+- [x] Mobile first: pantalla completa en el celular, se adapta al teclado, sin zoom de iPhone, márgenes para notch y botones táctiles de 40px+
+- [ ] Probar en celulares reales (iPhone Safari y Android Chrome)
 - [x] Botón ↻ "Nueva conversación" + reinicio automático tras 24 h sin actividad + widget sin caché
 - [x] "📞 Que Aníbal me llame": formulario en el chat con franjas libres (y hora local del visitante), aviso por Telegram y recordatorio
 - [ ] Crear el bot de Telegram y poner `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` (`php artisan telegram:setup`)
