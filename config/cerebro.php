@@ -50,6 +50,7 @@ return [
     // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
     'widget' => [
         'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
+        'subtitle' => 'Asistente en línea',
         'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
         'color' => '#16a34a',
         'whatsapp' => env('CEREBRO_WHATSAPP', '51970142637'),
