@@ -25,10 +25,10 @@ El contenedor instala dependencias, crea la base SQLite, migra y compila el cono
 **Widget en tu web** (antes de `</body>`):
 
 ```html
-<script src="https://chat.anibalcopitan.com/widget.js"
-        data-title="Aníbal Linux" data-whatsapp="51970142637"
-        data-greeting="¡Hola! 👋 ¿En qué te ayudo?" data-color="#16a34a" defer></script>
+<script src="https://chat.anibalcopitan.com/widget.js" defer></script>
 ```
+
+Saludo, color, WhatsApp, botón **"Ya decidí, quiero pagar"** y **chips de temas** se editan en `config/cerebro.php` → `widget` (lo sirve `GET /api/widget`).
 
 ## Cómo funciona
 
@@ -48,7 +48,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 | `config/cerebro.php` | Toda la configuración del producto |
 | `app/Services/Knowledge.php` | Compila el conocimiento y arma el system prompt |
 | `app/Http/Controllers/ChatController.php` | Endpoint del chat con streaming |
-| `public/widget.js` | Widget embebible (sin dependencias) |
+| `public/widget.js` | Widget embebible (sin dependencias); su contenido viene de `GET /api/widget` |
 
 ## Plan
 
@@ -58,6 +58,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] `POST /api/chat` con streaming SSE, historial y guardado de conversaciones
 - [x] Proveedor de IA configurable por `.env` (Prism)
 - [x] `widget.js` embebible + botón WhatsApp + modo oscuro + móvil
+- [x] Bienvenida con 2 caminos: "Ya decidí, quiero pagar" (WhatsApp directo) y chips de temas que preguntan al asistente
 - [x] CORS y rate limit por IP · tests automáticos
 - [x] Probado con API key real de Gemini (`gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`)
 - [ ] Ajustar tono/prompt con conversaciones reales
@@ -69,6 +70,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [ ] Tabla `contacts` + etapas (nuevo → calificado → consulta $20 → plan → pagó)
 - [ ] Tool del LLM `guardar_lead` (nombre, WhatsApp, interés, etapa)
 - [ ] Tiempo real en el panel con Laravel Reverb
+- [ ] Métricas: clics en "quiero pagar" vs. chips (qué temas venden)
 
 ### Fase 3 — Automatizaciones (n8n)
 - [ ] Webhooks `lead.created` / `lead.hot` → n8n (aviso WhatsApp/Telegram, seguimientos, Sheets)

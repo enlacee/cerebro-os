@@ -32,4 +32,36 @@ return [
         'per_day' => (int) env('CEREBRO_CHAT_PER_DAY', 100),
     ],
 
+    // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
+    'widget' => [
+        'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
+        'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
+        'color' => '#16a34a',
+        'whatsapp' => env('CEREBRO_WHATSAPP', '51970142637'),
+
+        // Botón fijo arriba: hablar con una persona.
+        'contact' => [
+            'label' => 'Hablar con Aníbal',
+            'message' => 'Hola Aníbal, vengo del chat de la web 👋',
+        ],
+
+        // Camino directo para quien ya decidió: WhatsApp sin pasar por la IA.
+        'pay' => [
+            'title' => '💳 Ya decidí, quiero pagar',
+            'subtitle' => 'Hablar con Aníbal por WhatsApp',
+            'message' => 'Hola Aníbal, ya decidí y quiero pagar 🙌',
+        ],
+
+        // Chips: al tocarlos se envía "message" al asistente.
+        'topics_title' => 'O pregúntale al asistente:',
+        'topics' => [
+            ['label' => '📱 Crear mi app Android', 'message' => 'Quiero crear mi propia app Android'],
+            ['label' => '🚀 Publicar mi app Android/iOS', 'message' => 'Quiero publicar mi app en Play Store o App Store'],
+            ['label' => '🤝 Asesoría / Acompañamiento', 'message' => 'Quiero una asesoría o acompañamiento'],
+            ['label' => '🐧 Aprender Linux', 'message' => 'Quiero aprender Linux'],
+            ['label' => '🖥️ Mi servidor en casa / VPS', 'message' => 'Quiero crear mi servidor en casa o VPS'],
+            ['label' => '⭐ Ver tus apps publicadas', 'message' => 'Quiero ver tus apps publicadas'],
+        ],
+    ],
+
 ];

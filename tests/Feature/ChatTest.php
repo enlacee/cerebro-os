@@ -55,6 +55,14 @@ class ChatTest extends TestCase
         });
     }
 
+    public function test_widget_config_has_pay_button_and_topics(): void
+    {
+        $this->getJson('/api/widget')
+            ->assertOk()
+            ->assertJsonPath('pay.message', config('cerebro.widget.pay.message'))
+            ->assertJsonStructure(['title', 'greeting', 'whatsapp', 'contact', 'topics' => [['label', 'message']]]);
+    }
+
     public function test_validates_input(): void
     {
         $this->postJson('/api/chat', ['session_id' => 'x', 'message' => ''])
