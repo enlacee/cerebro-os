@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CallRequest extends Model
 {
-    protected $fillable = ['conversation_id', 'name', 'whatsapp', 'project', 'slot_start', 'slot_end', 'status', 'reminded_at'];
+    protected $fillable = ['conversation_id', 'name', 'whatsapp', 'project', 'timezone', 'slot_start', 'slot_end', 'status', 'reminded_at'];
 
     protected function casts(): array
     {

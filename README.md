@@ -65,6 +65,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [ ] Probar en celulares reales (iPhone Safari y Android Chrome)
 - [x] Botón ↻ "Nueva conversación" + reinicio automático tras 24 h sin actividad + widget sin caché
 - [x] "📞 Que Aníbal me llame": formulario en el chat con franjas libres (y hora local del visitante), aviso por Telegram y recordatorio
+- [x] Horarios para todo el mundo: hora local del visitante primero (hora Perú debajo), "en 17 h", aviso 🌙 de madrugada, código de país automático y hora del cliente en Telegram
 - [ ] Crear el bot de Telegram y poner `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` (`php artisan telegram:setup`)
 - [x] Bienvenida con 2 caminos: "Ya decidí, quiero pagar" (WhatsApp directo) y chips de temas que preguntan al asistente
 - [x] CORS y rate limit por IP · tests automáticos

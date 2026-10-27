@@ -6,17 +6,19 @@ use App\Models\CallRequest;
 use App\Models\Conversation;
 use App\Services\CallSlots;
 use App\Services\Telegram;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class CallRequestController extends Controller
 {
-    public function slots(CallSlots $slots): JsonResponse
+    public function slots(Request $request, CallSlots $slots): JsonResponse
     {
         return response()->json([
             'timezone' => config('cerebro.timezone'),
-            'slots' => $slots->next(),
+            'timezone_label' => config('cerebro.calls.timezone_label'),
+            'slots' => $slots->next(count: max(1, (int) $request->query('count', config('cerebro.calls.slots_shown')))),
         ])->header('Cache-Control', 'no-cache');
     }
 
@@ -28,6 +30,7 @@ class CallRequestController extends Controller
             'whatsapp' => ['required', 'string', 'max:25'],
             'project' => ['required', 'string', 'max:300'],
             'slot' => ['required', 'string'],
+            'timezone' => ['nullable', 'timezone:all'], // zona horaria del visitante (navegador)
             'website' => ['nullable', 'string'], // trampa para bots: un humano no la ve
         ]);
 
@@ -53,22 +56,33 @@ class CallRequestController extends Controller
             'name' => $data['name'],
             'whatsapp' => $whatsapp,
             'project' => $data['project'],
+            'timezone' => $data['timezone'] ?? null,
             'slot_start' => $slot['start'],
             'slot_end' => $slot['end'],
         ]);
 
-        $telegram->send(implode("\n", [
+        // Hora del cliente, solo si es distinta a la del negocio (ej. Madrid o México).
+        $start = CarbonImmutable::parse($slot['start']);
+        $visitorTz = $call->timezone;
+        $local = $visitorTz && ! $slots->sameTime($visitorTz, $start)
+            ? $slots->label($start, CarbonImmutable::parse($slot['end']), CarbonImmutable::now(), $visitorTz)
+            : null;
+
+        $telegram->send(implode("\n", array_filter([
             '📞 <b>Nueva llamada solicitada</b>',
             '👤 '.e($call->name),
             '📱 <a href="'.$call->whatsappLink().'">+'.$call->whatsapp.'</a>',
             '💬 '.e($call->project),
             '🕐 '.e($slot['label']),
-        ]));
+            $local ? '🌍 Cliente en '.e($visitorTz).' — para él: '.e($local) : null,
+        ])));
 
-        return response()->json([
-            'message' => $slot['now']
-                ? "Listo ✅ Aníbal te llamará por WhatsApp en los próximos minutos al +{$whatsapp}."
-                : "Listo ✅ Aníbal te llamará por WhatsApp: **{$slot['label']}** al +{$whatsapp}.",
-        ], 201);
+        $message = match (true) {
+            $slot['now'] => "Listo ✅ Aníbal te llamará por WhatsApp en los próximos minutos al +{$whatsapp}.",
+            $local !== null => "Listo ✅ Aníbal te llamará por WhatsApp: **{$local} (tu hora)** · en Perú: {$slot['label']}. Número: +{$whatsapp}.",
+            default => "Listo ✅ Aníbal te llamará por WhatsApp: **{$slot['label']}** al +{$whatsapp}.",
+        };
+
+        return response()->json(['message' => $message], 201);
     }
 }

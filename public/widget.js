@@ -137,6 +137,12 @@
     '.card input{flex:none;width:100%}' +
     '.card .slot{flex-direction:row;align-items:flex-start;gap:10px;font-size:14px;color:var(--fg);cursor:pointer;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}' +
     '.card .slot:has(input:checked){border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}' +
+    '.card .when-title{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}' +
+    '.card .when-title small{font-size:12px;color:var(--c)}' +
+    '.card .night-note{font-size:12px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-top:4px}' +
+    '.card .slot>span{flex:1;min-width:0}.card .slot .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}' +
+    '.card .slot em{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}' +
+    '.card .slot.night b{color:var(--muted);font-weight:600}' +
     '.card .slot input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--c);flex:none}.card .slot small{display:block;color:var(--muted);font-size:12px}' +
     '.card .actions{display:flex;gap:8px}' +
     '.card .actions button{flex:1;min-height:46px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;cursor:pointer;background:var(--bg);color:var(--fg)}' +
@@ -342,6 +348,70 @@
     updateCallbar();
   }
 
+  // ---------- Horarios en la hora del visitante (cualquier país) ----------
+  var visitorTz = (function () {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+  })();
+
+  // Código de país según la zona horaria del navegador, para completar el campo de WhatsApp.
+  var DIAL = {
+    'America/Lima': '+51', 'America/Bogota': '+57', 'America/Santiago': '+56', 'America/Caracas': '+58',
+    'America/Guayaquil': '+593', 'America/La_Paz': '+591', 'America/Asuncion': '+595', 'America/Montevideo': '+598',
+    'America/Costa_Rica': '+506', 'America/Panama': '+507', 'America/Guatemala': '+502', 'America/El_Salvador': '+503',
+    'America/Tegucigalpa': '+504', 'America/Managua': '+505', 'America/Havana': '+53', 'America/Santo_Domingo': '+1',
+    'America/Puerto_Rico': '+1', 'Pacific/Honolulu': '+1', 'Europe/Madrid': '+34', 'Atlantic/Canary': '+34',
+    'Europe/Lisbon': '+351', 'Europe/London': '+44', 'Europe/Paris': '+33', 'Europe/Rome': '+39',
+    'Europe/Berlin': '+49', 'Europe/Amsterdam': '+31', 'Europe/Brussels': '+32', 'Europe/Zurich': '+41',
+  };
+  function dialCode() {
+    var tz = visitorTz;
+    if (DIAL[tz]) return DIAL[tz];
+    if (/^America\/(Argentina\/|Buenos_Aires)/.test(tz)) return '+54';
+    if (/^America\/(Mexico_City|Cancun|Merida|Monterrey|Matamoros|Chihuahua|Ciudad_Juarez|Ojinaga|Mazatlan|Bahia_Banderas|Hermosillo|Tijuana)$/.test(tz)) return '+52';
+    if (/^America\/(Sao_Paulo|Fortaleza|Recife|Bahia|Belem|Manaus|Cuiaba|Campo_Grande|Porto_Velho|Boa_Vista|Rio_Branco|Maceio|Araguaina|Santarem|Noronha)$/.test(tz)) return '+55';
+    if (/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Indiana\/|Kentucky\/|North_Dakota\/|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns)/.test(tz)) return '+1';
+    // Zona conocida pero país sin mapear: solo "+" (mejor que un código equivocado).
+    return tz ? '+' : (cfg.call.country_code || '');
+  }
+
+  function ymd(date, tz) {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+  }
+  function hourIn(date, tz) {
+    return Number(new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' }).format(date));
+  }
+  // "Hoy", "Mañana" o "Jueves 29" según el calendario de esa zona horaria.
+  function dayLabel(date, tz) {
+    var now = new Date();
+    if (ymd(date, tz) === ymd(now, tz)) return 'Hoy';
+    if (ymd(date, tz) === ymd(new Date(now.getTime() + 864e5), tz)) return 'Mañana';
+    var d = new Intl.DateTimeFormat('es', { timeZone: tz, weekday: 'long', day: 'numeric' }).format(date);
+    return d.charAt(0).toUpperCase() + d.slice(1);
+  }
+  // Rango de horas en el formato del país del visitante (12 h con am/pm o 24 h).
+  function timeRange(start, end, tz) {
+    var f = new Intl.DateTimeFormat(undefined, { timeZone: tz, hour: 'numeric', minute: '2-digit' });
+    return f.formatRange ? f.formatRange(start, end) : f.format(start) + ' – ' + f.format(end);
+  }
+  function countdown(start) {
+    var min = Math.round((start - Date.now()) / 6e4);
+    if (min <= 0) return 'ahora';
+    if (min < 60) return 'en ' + min + ' min';
+    var h = Math.round(min / 60);
+    return h < 48 ? 'en ' + h + ' h' : 'en ' + Math.round(h / 24) + ' días';
+  }
+  function tzName(tz) {
+    var styles = ['longGeneric', 'long'];
+    for (var i = 0; i < styles.length; i++) {
+      try {
+        var part = new Intl.DateTimeFormat('es', { timeZone: tz, timeZoneName: styles[i] })
+          .formatToParts(new Date()).filter(function (p) { return p.type === 'timeZoneName'; })[0];
+        if (part) return part.value;
+      } catch (e) {}
+    }
+    return tz;
+  }
+
   // ---------- "Que Aníbal me llame": formulario dentro del chat ----------
   function openCallForm() {
     if (busy) return;
@@ -358,7 +428,7 @@
     msgs.scrollTop = msgs.scrollHeight;
     updateCallbar();
 
-    fetch(origin + '/api/call-slots')
+    fetch(origin + '/api/call-slots?count=9')
       .then(function (res) { return res.json(); })
       .then(function (data) { buildCallForm(card, data); })
       .catch(function () { card.querySelector('.loading').textContent = 'No pude cargar los horarios. Intenta de nuevo.'; });
@@ -380,28 +450,51 @@
       return;
     }
 
-    var visitorTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var localDay = new Intl.DateTimeFormat('es', { weekday: 'short' });
-    var localTime = new Intl.DateTimeFormat('es', { hour: 'numeric', minute: '2-digit' });
+    var tz = visitorTz || data.timezone;
+    // ¿El visitante tiene otra hora que el negocio? (ej. México, España)
+    var differs = !!visitorTz && data.slots.some(function (slot) {
+      return timeRange(new Date(slot.start), new Date(slot.end), visitorTz) !== timeRange(new Date(slot.start), new Date(slot.end), data.timezone);
+    });
+    var night = function (slot) {
+      var h = hourIn(new Date(slot.start), tz);
+      return !slot.now && (h >= 22 || h < 7);
+    };
+
+    // Se muestran 3 franjas; si las 3 le caen de noche al visitante, se agregan las siguientes que no.
+    var shown = data.slots.slice(0, 3);
+    if (shown.every(night)) {
+      shown = shown.concat(data.slots.slice(3).filter(function (slot) { return !night(slot); }).slice(0, 3));
+    }
+    var firstDay = shown.filter(function (slot) { return !night(slot); })[0] || shown[0];
+
     var html =
       '<label>Tu nombre<input name="name" maxlength="80" required autocomplete="name"></label>' +
       '<label>Tu WhatsApp (con código de país)<input name="whatsapp" type="tel" maxlength="25" required autocomplete="tel"></label>' +
       '<label>¿De qué es tu proyecto?<input name="project" maxlength="300" required></label>' +
       '<label class="hp" aria-hidden="true">Web<input name="website" tabindex="-1" autocomplete="off"></label>' +
-      '<label>¿Cuándo te llamo?</label>';
+      '<div class="when-title">¿Cuándo te llamo?<small></small></div>';
     card.insertAdjacentHTML('beforeend', html);
+    if (differs) card.querySelector('.when-title small').textContent = 'Horarios en tu hora: ' + tzName(visitorTz);
+    if (shown.every(night)) {
+      card.querySelector('.when-title').insertAdjacentHTML('beforeend', '<span class="night-note"></span>');
+      card.querySelector('.night-note').textContent = '🌙 En tu país estos horarios caen de noche. Si prefieres, escríbele por WhatsApp con el botón de arriba.';
+    }
 
-    data.slots.forEach(function (slot, i) {
+    shown.forEach(function (slot) {
+      var start = new Date(slot.start), end = new Date(slot.end);
       var opt = document.createElement('label');
-      opt.className = 'slot';
-      opt.innerHTML = '<input type="radio" name="slot" required><span><b></b><small></small></span>';
+      opt.className = 'slot' + (night(slot) ? ' night' : '');
+      opt.innerHTML = '<input type="radio" name="slot" required><span><span class="row"><b></b><em></em></span><small></small></span>';
       opt.querySelector('input').value = slot.id;
-      opt.querySelector('input').checked = i === 0;
-      opt.querySelector('b').textContent = slot.label;
-      if (visitorTz !== data.timezone && !slot.now) {
-        var start = new Date(slot.start), end = new Date(slot.end);
-        opt.querySelector('small').textContent = 'Tu hora: ' + localDay.format(start) + ' ' + localTime.format(start) + ' – ' + localTime.format(end);
-      }
+      opt.querySelector('input').checked = slot === firstDay;
+      opt.querySelector('b').textContent = slot.now
+        ? 'Ahora (en los próximos minutos)'
+        : (night(slot) ? '🌙 ' : '') + dayLabel(start, tz) + ' · ' + timeRange(start, end, tz);
+      opt.querySelector('em').textContent = slot.now ? '' : countdown(start);
+      var notes = [];
+      if (differs && !slot.now) notes.push(timeRange(start, end, data.timezone) + ' ' + data.timezone_label);
+      if (night(slot)) notes.push(hourIn(start, tz) < 7 ? 'de madrugada para ti' : 'de noche para ti');
+      opt.querySelector('small').textContent = notes.join(' · ');
       card.appendChild(opt);
     });
 
@@ -410,7 +503,7 @@
       '<div class="actions"><button type="button" class="cancel">Cancelar</button>' +
       '<button type="submit" class="main">Agendar llamada</button></div>');
 
-    card.querySelector('[name=whatsapp]').value = (cfg.call.country_code || '') + ' ';
+    card.querySelector('[name=whatsapp]').value = dialCode() + ' ';
     card.querySelector('.cancel').addEventListener('click', function () { closeCallForm(card); });
     card.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -436,6 +529,7 @@
         whatsapp: field('whatsapp').value.trim(),
         project: field('project').value.trim(),
         slot: card.querySelector('[name=slot]:checked').value,
+        timezone: visitorTz,
         website: field('website').value,
       }),
     })

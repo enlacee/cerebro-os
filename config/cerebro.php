@@ -37,6 +37,7 @@ return [
         'days' => [1, 2, 3, 4, 5], // ISO: 1 = lunes … 7 = domingo
         'windows' => [['11:00', '12:00'], ['15:00', '16:00']],
         'slots_shown' => 3,
+        'slots_max' => 9, // el widget pide más si las primeras le caen de madrugada al visitante
         'timezone_label' => 'hora Perú',
         'per_day' => (int) env('CEREBRO_CALLS_PER_DAY', 3), // solicitudes por IP al día
     ],
@@ -82,7 +83,7 @@ return [
             'subtitle' => 'Llamada rápida por WhatsApp · 3 min',
             'short' => '📞 Que Aníbal me llame',
             'intro' => 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto. **No es asesoría**: lo técnico lo vemos en la Consulta Técnica ($20).',
-            'country_code' => '+51',
+            'country_code' => '+51', // si no se detecta el país del visitante
         ],
 
         // Chips: al tocarlos se envía "message" al asistente.

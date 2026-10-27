@@ -73,6 +73,53 @@ class CallRequestTest extends TestCase
             && str_contains($request['text'], 'https://wa.me/51999888777'));
     }
 
+    public function test_visitor_abroad_gets_both_times_and_telegram_shows_client_time(): void
+    {
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+
+        $this->postJson('/api/call-request', [
+            'name' => 'Lucía', 'whatsapp' => '+34 600 111 222', 'project' => 'Web', 'slot' => '2026-10-28T15:00',
+            'timezone' => 'Europe/Madrid',
+        ])->assertCreated()
+            // 3 pm en Lima = 9 pm en Madrid (horario de invierno desde el 25 de octubre).
+            ->assertJsonPath('message', fn (string $m) => str_contains($m, 'Hoy · 9:00 pm – 10:00 pm (tu hora)')
+                && str_contains($m, 'en Perú: Hoy · 3:00 pm – 4:00 pm (hora Perú)'));
+
+        $this->assertSame('Europe/Madrid', CallRequest::sole()->timezone);
+        Http::assertSent(fn (Request $request) => str_contains($request['text'], 'Cliente en Europe/Madrid — para él: Hoy · 9:00 pm'));
+    }
+
+    public function test_same_timezone_shows_single_time(): void
+    {
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+
+        $this->postJson('/api/call-request', [
+            'name' => 'Rosa', 'whatsapp' => '+57 300 111 2222', 'project' => 'App', 'slot' => '2026-10-28T11:00',
+            'timezone' => 'America/Bogota', // misma hora que Lima
+        ])->assertCreated()->assertJsonPath('message', fn (string $m) => ! str_contains($m, 'tu hora'));
+    }
+
+    public function test_accepts_extra_slots_beyond_first_three(): void
+    {
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+
+        $this->getJson('/api/call-slots?count=9')->assertOk()->assertJsonCount(9, 'slots');
+
+        // 4.ª franja (jueves 3 pm): solo se muestra si las primeras le caen de noche al visitante.
+        $this->postJson('/api/call-request', [
+            'name' => 'Ken', 'whatsapp' => '+81 90 1111 2222', 'project' => 'App', 'slot' => '2026-10-29T15:00', 'timezone' => 'Asia/Tokyo',
+        ])->assertCreated();
+    }
+
+    public function test_rejects_invalid_timezone(): void
+    {
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+
+        $this->postJson('/api/call-request', [
+            'name' => 'Rosa', 'whatsapp' => '+51 999 888 777', 'project' => 'App', 'slot' => '2026-10-28T11:00', 'timezone' => 'Marte/Olimpo',
+        ])->assertUnprocessable()->assertJsonValidationErrors('timezone');
+    }
+
     public function test_rejects_slot_outside_schedule(): void
     {
         $this->travelTo($this->lima('2026-10-28 09:00'));

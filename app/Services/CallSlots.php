@@ -12,14 +12,14 @@ class CallSlots
      *
      * @return Collection<int, array{id: string, start: string, end: string, now: bool, label: string}>
      */
-    public function next(?CarbonImmutable $now = null): Collection
+    public function next(?CarbonImmutable $now = null, ?int $count = null): Collection
     {
         $tz = config('cerebro.timezone');
-        $now = ($now ?? CarbonImmutable::now())->setTimezone($tz)->locale('es');
-        $wanted = config('cerebro.calls.slots_shown');
+        $now = ($now ?? CarbonImmutable::now())->setTimezone($tz);
+        $wanted = min($count ?? config('cerebro.calls.slots_shown'), config('cerebro.calls.slots_max'));
         $slots = collect();
 
-        for ($day = $now->startOfDay(); $slots->count() < $wanted && $day->diffInDays($now->startOfDay(), true) < 14; $day = $day->addDay()) {
+        for ($day = $now->startOfDay(); $slots->count() < $wanted && $day->diffInDays($now->startOfDay(), true) < 21; $day = $day->addDay()) {
             if (! in_array($day->dayOfWeekIso, config('cerebro.calls.days'), true)) {
                 continue;
             }
@@ -33,12 +33,13 @@ class CallSlots
                     continue;
                 }
 
+                $inProgress = $start->lte($now);
                 $slots->push([
                     'id' => $start->format('Y-m-d\TH:i'),
                     'start' => $start->toIso8601String(),
                     'end' => $end->toIso8601String(),
-                    'now' => $start->lte($now),
-                    'label' => $this->label($start, $end, $now),
+                    'now' => $inProgress,
+                    'label' => $this->label($start, $end, $now).($inProgress ? '' : ' ('.config('cerebro.calls.timezone_label').')'),
                 ]);
             }
         }
@@ -46,13 +47,20 @@ class CallSlots
         return $slots->take($wanted)->values();
     }
 
+    /** Busca entre todas las franjas que el widget puede mostrar (incluidas las extra). */
     public function find(string $id, ?CarbonImmutable $now = null): ?array
     {
-        return $this->next($now)->firstWhere('id', $id);
+        return $this->next($now, config('cerebro.calls.slots_max'))->firstWhere('id', $id);
     }
 
-    public function label(CarbonImmutable $start, CarbonImmutable $end, CarbonImmutable $now): string
+    /** "Mañana · 11:00 am – 12:00 pm" en la zona horaria indicada (por defecto, la del negocio). */
+    public function label(CarbonImmutable $start, CarbonImmutable $end, CarbonImmutable $now, ?string $tz = null): string
     {
+        $tz ??= config('cerebro.timezone');
+        $start = $start->setTimezone($tz)->locale('es');
+        $end = $end->setTimezone($tz);
+        $now = $now->setTimezone($tz);
+
         if ($start->lte($now)) {
             return 'Ahora (en los próximos minutos)';
         }
@@ -63,6 +71,12 @@ class CallSlots
             default => ucfirst($start->isoFormat('dddd D')),
         };
 
-        return sprintf('%s · %s – %s (%s)', $day, $start->format('g:i a'), $end->format('g:i a'), config('cerebro.calls.timezone_label'));
+        return sprintf('%s · %s – %s', $day, $start->format('g:i a'), $end->format('g:i a'));
+    }
+
+    /** ¿El visitante tiene la misma hora que el negocio en ese momento? */
+    public function sameTime(string $tz, CarbonImmutable $at): bool
+    {
+        return $at->setTimezone($tz)->utcOffset() === $at->setTimezone(config('cerebro.timezone'))->utcOffset();
     }
 }
