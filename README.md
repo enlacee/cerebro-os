@@ -85,7 +85,9 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] Backup diario de SQLite (`db:backup`, 14 copias) + `./deploy.sh backup` a tu PC
 - [x] Aviso de privacidad en el formulario de llamada + borrado automático (`data:prune`) + logs sin teléfonos
 - [x] `./deploy.sh` (rsync por SSH, sin GitHub) · `composer audit` sin vulnerabilidades
-- [ ] Crear droplet, DNS `chat.anibalcopitan.com` y primer despliegue
+- [x] Publicación por nginx-proxy (el del VPS o el propio de Cerebro), contenedores con nombre legible, sin puertos propios
+- [x] IP real del visitante detrás de proxy/Cloudflare (`CEREBRO_TRUSTED_PROXIES`) · widget funciona en subdominio o carpeta
+- [ ] Primer despliegue (VPS compartido con rapitaller) + DNS del subdominio
 - [ ] Página de política de privacidad (Ley 29733) enlazada desde el aviso
 
 ### Fase 2 — CRM mínimo

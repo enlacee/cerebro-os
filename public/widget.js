@@ -11,7 +11,8 @@
   if (!script || window.__cerebroWidget) return;
   window.__cerebroWidget = true;
 
-  var origin = new URL(script.src).origin;
+  // Base = donde vive widget.js (sirve con subdominio o carpeta: https://web.com/cerebro/widget.js).
+  var base = script.src.replace(/\/widget\.js(\?.*)?$/, '');
   var cfg = {
     title: 'Asistente',
     subtitle: 'Asistente virtual',
@@ -24,7 +25,7 @@
     topics_title: '',
     topics: [],
   };
-  var ready = fetch(origin + '/api/widget')
+  var ready = fetch(base + '/api/widget')
     .then(function (res) { return res.ok ? res.json() : {}; })
     .then(function (remote) { Object.assign(cfg, remote); })
     .catch(function () {});
@@ -443,7 +444,7 @@
     msgs.scrollTop = msgs.scrollHeight;
     updateCallbar();
 
-    fetch(origin + '/api/call-slots?count=9')
+    fetch(base + '/api/call-slots?count=9')
       .then(function (res) { return res.json(); })
       .then(function (data) { buildCallForm(card, data); })
       .catch(function () { card.querySelector('.loading').textContent = 'No pude cargar los horarios. Intenta de nuevo.'; });
@@ -536,7 +537,7 @@
     submit.disabled = true;
     error.hidden = true;
 
-    fetch(origin + '/api/call-request', {
+    fetch(base + '/api/call-request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
@@ -604,7 +605,7 @@
     setBusy(true);
     var reply = '', el = null;
 
-    fetch(origin + '/api/chat', {
+    fetch(base + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
       body: JSON.stringify({ session_id: state.session, message: text }),
