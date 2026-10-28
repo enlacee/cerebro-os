@@ -53,6 +53,19 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 | `app/Services/CallSlots.php` | Calcula las franjas libres para llamadas |
 | `public/widget.js` | Widget embebible (sin dependencias); su contenido viene de `GET /api/widget` |
 
+## Dónde vive
+
+```
+~/sites/cerebro-os/
+├── app/
+│   ├── common/                      ← infraestructura compartida del VPS (proxy), cuando haya 2+ instancias
+│   └── project/
+│       ├── cerebro-os/              ← este repo: el producto (aquí se desarrolla)
+│       └── chat.<dominio>/          ← una instancia por cliente: docker-compose + .env + datos (Fase 1.5)
+├── database/                        ← backups de SQLite
+└── data/                            ← capturas, videos, documentos
+```
+
 ## Plan
 
 ### Fase 1 — MVP del chat web

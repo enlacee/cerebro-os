@@ -1,3 +1,6 @@
+# Nombre fijo: así Docker no depende del nombre de la carpeta.
+name: cerebro-os
+
 services:
   app:
     build:
@@ -5,7 +8,7 @@ services:
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
-    image: cerebro-os-app
+    image: cerebro-os
     restart: unless-stopped
     environment:
       # ":80" = HTTP local. En producción pon tu dominio (ej. chat.anibalcopitan.com) y Caddy saca HTTPS solo.
@@ -23,11 +26,14 @@ services:
 
   # Tareas programadas (recordatorio de llamadas). Usa la misma imagen y código.
   scheduler:
-    image: cerebro-os-app
+    image: cerebro-os
     restart: unless-stopped
     depends_on:
       - app
     entrypoint: ["php", "artisan", "schedule:work"]
+    # No sirve web: el healthcheck de la imagen (Caddy) siempre fallaría aquí.
+    healthcheck:
+      disable: true
     volumes:
       - .:/app
 
