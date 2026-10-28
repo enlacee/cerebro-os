@@ -25,7 +25,7 @@ El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra 
 | Tests | `docker compose exec app php artisan test` |
 | Logs | `docker compose logs -f app` |
 | Conectar avisos de Telegram | `docker compose exec app php artisan telegram:setup` |
-| Producción | ver `README.md` de la infraestructura (`./deploy.sh`) |
+| Producción | ver `README.md` de la infraestructura (despliegue manual con git) |
 
 **Widget en tu web** (antes de `</body>`):
 
@@ -82,12 +82,12 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] Producción sin dependencias de dev, `php.ini` de producción + `docker-compose.prod.yml`
 - [x] `.env.production.example`: `APP_DEBUG=false`, CORS solo para anibalcopitan.com
 - [x] Cabeceras de seguridad (HSTS, nosniff, sin `Server`) y logs rotados
-- [x] Backup diario de SQLite (`db:backup`, 14 copias) + `./deploy.sh backup` a tu PC
+- [x] Backup diario de SQLite (`db:backup`, 14 copias)
 - [x] Aviso de privacidad en el formulario de llamada + borrado automático (`data:prune`) + logs sin teléfonos
-- [x] `./deploy.sh` (rsync por SSH, sin GitHub) · `composer audit` sin vulnerabilidades
+- [x] `composer audit` sin vulnerabilidades
 - [x] Publicación por nginx-proxy (el del VPS o el propio de Cerebro), contenedores con nombre legible, sin puertos propios
 - [x] IP real del visitante detrás de proxy/Cloudflare (`CEREBRO_TRUSTED_PROXIES`) · widget funciona en subdominio o carpeta
-- [ ] Primer despliegue (VPS compartido con rapitaller) + DNS del subdominio
+- [ ] Repos privados en GitHub + primer despliegue manual (VPS compartido con rapitaller) + DNS del subdominio
 - [ ] Página de política de privacidad (Ley 29733) enlazada desde el aviso
 
 ### Fase 2 — CRM mínimo
