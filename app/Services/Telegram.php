@@ -19,7 +19,8 @@ class Telegram
     public function send(string $html): bool
     {
         if (! $this->configured()) {
-            Log::info('Telegram no configurado; aviso no enviado', ['text' => $html]);
+            // Sin el texto: lleva nombre y teléfono del cliente, y los logs no deben guardar datos personales.
+            Log::warning('Telegram no configurado; aviso no enviado');
 
             return false;
         }

@@ -53,6 +53,36 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 | `app/Services/CallSlots.php` | Calcula las franjas libres para llamadas |
 | `public/widget.js` | Widget embebible (sin dependencias); su contenido viene de `GET /api/widget` |
 
+## Producción (VPS DigitalOcean)
+
+FrankenPHP (Caddy) sirve la app y saca el HTTPS solo. No hace falta nginx ni certbot.
+
+**Una sola vez:**
+1. Droplet Ubuntu 24.04 (1 GB) con tu **llave SSH** (sin contraseña).
+2. DNS: registro `A` `chat` → IP del droplet. En Cloudflare, **nube gris** ("DNS only"): así Caddy saca el certificado y el límite por IP ve la IP real.
+3. En el servidor (como root):
+   ```bash
+   apt update && apt -y upgrade && apt -y install docker.io docker-compose-v2 unattended-upgrades
+   adduser --disabled-password deploy && usermod -aG docker deploy
+   mkdir -p /home/deploy/.ssh && cp ~/.ssh/authorized_keys /home/deploy/.ssh/ && chown -R deploy: /home/deploy/.ssh
+   sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/; s/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && systemctl restart ssh
+   ufw allow OpenSSH && ufw allow 80,443/tcp && ufw allow 443/udp && ufw --force enable
+   ```
+4. `mkdir ~/cerebro-os` como `deploy` y crea `~/cerebro-os/.env` desde `.env.production.example` (keys reales, `chmod 600`).
+5. En tu PC, en tu `.env` local: `DEPLOY_HOST=deploy@IP`.
+
+**Cada vez:**
+
+| Qué | Comando (desde tu PC) |
+|---|---|
+| Subir cambios de código | `./deploy.sh` |
+| Subir cambios de Obsidian | `./deploy.sh knowledge` |
+| Bajar backups de SQLite a `~/sites/cerebro-os/database/` | `./deploy.sh backup` |
+| Ver logs | `./deploy.sh logs` |
+
+- `oportunidades.md` y lo de `CEREBRO_KNOWLEDGE_EXCLUDE` **nunca salen de tu PC**.
+- Backups automáticos todos los días a las 3 am (se guardan 14). Los datos personales se borran solos: llamadas a los 90 días y conversaciones a los 180 (`data:prune`).
+
 ## Dónde vive
 
 ```
@@ -84,8 +114,17 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] CORS y rate limit por IP · tests automáticos
 - [x] Probado con API key real de Gemini (`gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`)
 - [ ] Ajustar tono/prompt con conversaciones reales
-- [ ] Desplegar en `chat.anibalcopitan.com` (VPS o VPS en casa + Cloudflare Tunnel)
 - [ ] Pegar el widget en `/linktree` y en la web
+
+### Fase 1.5 — Producción segura
+- [x] Imagen de producción (código dentro, sin dependencias de dev, `php.ini` de producción) + `docker-compose.prod.yml`
+- [x] `.env.production.example`: `APP_DEBUG=false`, CORS solo para anibalcopitan.com
+- [x] Cabeceras de seguridad (HSTS, nosniff, sin `Server`) y logs rotados
+- [x] Backup diario de SQLite (`db:backup`, 14 copias) + `./deploy.sh backup` a tu PC
+- [x] Aviso de privacidad en el formulario de llamada + borrado automático (`data:prune`) + logs sin teléfonos
+- [x] `./deploy.sh` (rsync por SSH, sin GitHub) · `composer audit` sin vulnerabilidades
+- [ ] Crear droplet, DNS `chat.anibalcopitan.com` y primer despliegue
+- [ ] Página de política de privacidad (Ley 29733) enlazada desde el aviso
 
 ### Fase 2 — CRM mínimo
 - [ ] Panel admin con Filament (login, conversaciones, leads)

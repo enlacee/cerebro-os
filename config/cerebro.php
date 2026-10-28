@@ -42,6 +42,18 @@ return [
         'per_day' => (int) env('CEREBRO_CALLS_PER_DAY', 3), // solicitudes por IP al día
     ],
 
+    // Ley 29733 (Perú): no guardar datos personales más de lo necesario. Ver: php artisan data:prune
+    'retention' => [
+        'calls_days' => (int) env('CEREBRO_RETENTION_CALLS_DAYS', 90),
+        'conversations_days' => (int) env('CEREBRO_RETENTION_CONVERSATIONS_DAYS', 180),
+    ],
+
+    // Copias diarias de SQLite (php artisan db:backup). En producción van al volumen de datos.
+    'backup' => [
+        'path' => env('CEREBRO_BACKUP_PATH', storage_path('app/backups')),
+        'keep' => (int) env('CEREBRO_BACKUP_KEEP', 14),
+    ],
+
     // Avisos a Aníbal (nuevas llamadas y recordatorios). Ver: php artisan telegram:setup
     'telegram' => [
         'token' => env('TELEGRAM_BOT_TOKEN'),
@@ -84,6 +96,7 @@ return [
             'short' => '📞 Que Aníbal me llame',
             'intro' => 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto. **No es asesoría**: lo técnico lo vemos en la Consulta Técnica ($20).',
             'country_code' => '+51', // si no se detecta el país del visitante
+            'privacy' => '🔒 Tus datos solo se usan para esta llamada y se borran a los 90 días.',
         ],
 
         // Chips: al tocarlos se envía "message" al asistente.

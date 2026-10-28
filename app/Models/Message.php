@@ -11,6 +11,9 @@ class Message extends Model
 {
     protected $fillable = ['role', 'content'];
 
+    // Cada mensaje actualiza la conversación: así la retención cuenta desde la última actividad.
+    protected $touches = ['conversation'];
+
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(Conversation::class);

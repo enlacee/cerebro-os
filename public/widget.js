@@ -144,6 +144,7 @@
     '.card .slot:has(input:checked){border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}' +
     '.card .when-title{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}' +
     '.card .when-title small{font-size:12px;color:var(--c)}' +
+    '.card .privacy{font-size:12px;color:var(--muted);margin:8px 0 0}.card .privacy:empty{display:none}' +
     '.card .night-note{font-size:12px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-top:4px}' +
     '.card .slot>span{flex:1;min-width:0}.card .slot .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}' +
     '.card .slot em{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}' +
@@ -513,10 +514,11 @@
     });
 
     card.insertAdjacentHTML('beforeend',
-      '<p class="error" hidden></p>' +
+      '<p class="privacy"></p><p class="error" hidden></p>' +
       '<div class="actions"><button type="button" class="cancel">Cancelar</button>' +
       '<button type="submit" class="main">Agendar llamada</button></div>');
 
+    card.querySelector('.privacy').textContent = cfg.call.privacy || '';
     card.querySelector('[name=whatsapp]').value = dialCode() + ' ';
     card.querySelector('.cancel').addEventListener('click', function () { closeCallForm(card); });
     card.addEventListener('submit', function (e) {
