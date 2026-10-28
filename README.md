@@ -12,18 +12,20 @@ app/                                   ← este repo
         ├── docker-compose.yml         ← local
         ├── docker-compose.prod.yml    ← VPS: sin puertos, se publica por el proxy (red "red")
         ├── .env                       ← Docker: NAME, DOMAIN, EMAIL… (no se versiona)
-        └── laravel/                   ← repo del backend (no se versiona aquí)
-            └── .env                   ← la app: keys de Gemini y Telegram, CORS…
+        ├── laravel/                   ← repo del backend (no se versiona aquí)
+        │   └── .env                   ← la app: keys de Gemini y Telegram, CORS…
+        └── knowledge/                 ← repo + vault de Obsidian de ESTA instancia (no se versiona aquí)
 ```
 
 Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la app**.
+🔒 **`knowledge/` = solo lo público**: el bot puede revelar cualquier cosa que esté ahí. Notas internas, costos o datos de clientes van fuera (ej. `~/sites/obsidian-vault/cerebro-os`). Ábrelo en Obsidian con "Open folder as vault".
 Contenedores con nombre legible (`NAME`): `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (tareas).
 
 ## Local
 
 ```bash
 cd project/chat.anibalcopitan.com
-cp .env.example .env           # KNOWLEDGE_PATH = tu vault de Obsidian
+cp .env.example .env           # NAME y puerto
 docker compose up -d --build   # http://localhost:8000/demo.html
 docker compose exec app php artisan test
 ```
@@ -36,7 +38,7 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
 
 **Una sola vez:**
 1. DNS: registro `A` del subdominio → IP del VPS. Si pasa por Cloudflare (nube naranja), pon `CEREBRO_TRUSTED_PROXIES=docker,cloudflare` en `laravel/.env`.
-2. En el VPS, una **deploy key de solo lectura** para los dos repos privados:
+2. En el VPS, una **deploy key de solo lectura** para los tres repos privados (infra, backend, conocimiento):
    ```bash
    ssh-keygen -t ed25519 -f ~/.ssh/cerebro_deploy -N ""   # la .pub va en GitHub → repo → Settings → Deploy keys
    ```
@@ -44,16 +46,12 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
    ```bash
    git clone git@github.com:USUARIO/cerebro-os-infra.git ~/cerebro-os
    git clone git@github.com:USUARIO/cerebro-os.git ~/cerebro-os/project/chat.anibalcopitan.com/laravel
+   git clone git@github.com:USUARIO/knowledge-anibalcopitan.git ~/cerebro-os/project/chat.anibalcopitan.com/knowledge
    ```
 4. Crear los dos `.env` en `~/cerebro-os/project/chat.anibalcopitan.com/` (`chmod 600`):
    - `.env` → `NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE=docker-compose.prod.yml` (y `UID`/`GID` si no son 1000)
    - `laravel/.env` → desde `laravel/.env.production.example` (keys reales; `APP_KEY`: `echo "base64:$(openssl rand -base64 32)"`)
-5. Subir el conocimiento desde tu PC (sin archivos internos):
-   ```bash
-   rsync -av --delete --exclude oportunidades.md --exclude .obsidian \
-     ~/sites/obsidian-vault/cerebro-os/Knowledge/ USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/knowledge/
-   ```
-6. Levantar y comprobar:
+5. Levantar y comprobar:
    ```bash
    docker ps --filter name=nginx_proxy && docker network ls | grep red   # el proxy existe
    docker compose up -d --build && docker compose logs -f app
@@ -66,7 +64,7 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
 |---|---|
 | Código (backend) | `git -C laravel pull && docker compose restart` |
 | Docker (imagen o compose) | `git pull && docker compose up -d --build` |
-| Obsidian | el `rsync` del paso 5 (desde tu PC) + `docker compose exec app php artisan knowledge:sync` |
+| Conocimiento (Obsidian) | `git -C knowledge pull && docker compose exec app php artisan knowledge:sync` |
 | Logs | `docker compose logs -f app` |
 | Backup a tu PC | `scp USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/laravel/storage/app/backups/* ~/sites/cerebro-os/database/` |
 
@@ -75,15 +73,16 @@ Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca co
 
 ### Mudarse a otro VPS
 1. Copiar a tu PC el último backup (`scp` de arriba).
-2. En el VPS nuevo: pasos 2–6 (si no tiene proxy, levantar `common/proxy`).
+2. En el VPS nuevo: pasos 2–5 (si no tiene proxy, levantar `common/proxy`).
 3. `docker compose stop`, copiar el backup a `laravel/database/database.sqlite`, `docker compose start`.
 4. Apuntar el DNS a la IP nueva. 🔒 Rota las keys de Gemini y Telegram si el VPS anterior era compartido.
 
 ## Nuevo cliente
 
 ```bash
-cp -r project/chat.anibalcopitan.com project/chat.cliente.com   # sin laravel/ ni .env
+cp -r project/chat.anibalcopitan.com project/chat.cliente.com   # sin laravel/, knowledge/ ni .env
 git clone <repo-backend> project/chat.cliente.com/laravel
+mkdir project/chat.cliente.com/knowledge && git -C project/chat.cliente.com/knowledge init   # su vault, su repo
 ```
 
 En su `.env`: `NAME`/`DOMAIN` = `chat.cliente.com`. En su `laravel/.env`: sus keys. Comparte el proxy del VPS con las demás instancias.

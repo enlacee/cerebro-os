@@ -42,7 +42,7 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL:?Pon EMAIL en .env}
     volumes:
       - ./laravel:/app
-      - ./knowledge:/app/knowledge:ro
+      - ./knowledge:/app/knowledge:ro # vault de Obsidian de esta instancia
     networks: [default, red]
 
   # Sin red "red": no recibe web, solo sale a internet (Telegram).

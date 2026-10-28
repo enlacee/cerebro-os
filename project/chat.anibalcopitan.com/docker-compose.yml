@@ -18,7 +18,7 @@ services:
       - "${APP_PORT:-8000}:80"
     volumes:
       - ./laravel:/app
-      - ${KNOWLEDGE_PATH:-./knowledge}:/app/knowledge:ro
+      - ./knowledge:/app/knowledge:ro # vault de Obsidian de esta instancia
 
   # Tareas programadas: recordatorio de llamadas, backup y borrado de datos vencidos.
   scheduler:
