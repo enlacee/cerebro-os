@@ -1,5 +1,5 @@
 # Proxy de Cerebro OS: recibe internet (80/443), saca el HTTPS y reparte a cada instancia por la red "red".
-# Solo para un VPS SIN otro proxy. ./deploy.sh lo levanta solo si nadie usa ya el puerto 80.
+# Solo para un VPS SIN otro proxy (si algo ya usa el puerto 80, no lo levantes).
 # Mismo patrón que rapitaller (nginx-proxy + acme-companion): las instancias funcionan igual con uno u otro.
 services:
   proxy:

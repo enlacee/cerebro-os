@@ -1,5 +1,5 @@
 # Producción: la app no abre puertos; la publica un nginx-proxy en la red "red"
-# (el que ya exista en el VPS, o common/proxy en un VPS propio). ./deploy.sh decide.
+# (el que ya exista en el VPS, o common/proxy en un VPS propio).
 x-app: &app
   image: cerebro-os:prod
   restart: always

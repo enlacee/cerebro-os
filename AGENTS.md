@@ -12,19 +12,20 @@ Chat con IA embebible (widget JS) que responde con el conocimiento del dueño (v
 
 ## Dos repos (Docker separado del backend, estilo rapitaller)
 ```
-~/sites/cerebro-os/app/                     ← ESTE repo: INFRAESTRUCTURA (Docker, deploy)
+~/sites/cerebro-os/app/                     ← ESTE repo: INFRAESTRUCTURA (Docker)
 ├── common/frankenphp/                      imagen (targets dev/prod) + entrypoint
 ├── common/proxy/                           nginx-proxy + acme-companion propio (solo si el VPS no tiene proxy)
-└── project/chat.anibalcopitan.com/         instancia: docker-compose(.prod).yml, .env (Docker), deploy.sh
+└── project/chat.anibalcopitan.com/         instancia: docker-compose(.prod).yml, .env (Docker)
     └── laravel/                            ← repo BACKEND (no se versiona aquí)
 ```
-- `.env` de la instancia = Docker (`NAME`, `DOMAIN`, `EMAIL`, `KNOWLEDGE_PATH`, `DEPLOY_HOST`). `laravel/.env` = la app (keys, CORS, límites).
+- `.env` de la instancia = Docker (`NAME`, `DOMAIN`, `EMAIL`, `KNOWLEDGE_PATH`, `COMPOSE_FILE` en el VPS). `laravel/.env` = la app (keys, CORS, límites).
 - Contenedores: `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (`schedule:work`: recordatorios cada minuto, `db:backup` 3 am, `data:prune` 3:30 am).
 - Comandos: desde la carpeta de la instancia, `docker compose exec app php artisan test`. Mantener los tests en verde.
 - Vault de Obsidian: `~/sites/obsidian-vault/cerebro-os/Knowledge` (montado solo lectura). `oportunidades.md` es interno: nunca al prompt ni al servidor.
 
 ## Producción
-- Sin puertos propios: se publica por un nginx-proxy en la red `red` (`VIRTUAL_HOST`/`LETSENCRYPT_HOST`). `./deploy.sh` usa el proxy existente o levanta `common/proxy`.
+- Sin puertos propios: se publica por un nginx-proxy en la red `red` (`VIRTUAL_HOST`/`LETSENCRYPT_HOST`). En el VPS de rapitaller se usa su proxy; en un VPS sin proxy se levanta `common/proxy`.
+- Despliegue **manual con git** (repos privados + deploy key de solo lectura; ver README). Sin scripts de deploy en la primera fase: no reintroducirlos sin pedirlo.
 - Hoy: VPS compartido con rapitaller (temporal, para ahorrar) → luego VPS exclusivo. Requisito: proyectos aislados, sin dependencias entre ellos, y migrar sin cambiar archivos.
 - `CEREBRO_TRUSTED_PROXIES` (`docker`, `cloudflare`) para que el límite por IP use la IP real.
 - Pendiente: primer despliegue y DNS del subdominio.
@@ -43,12 +44,12 @@ Chat con IA embebible (widget JS) que responde con el conocimiento del dueño (v
 
 **Hecho**
 - Fase 1 (MVP): chat con streaming, conocimiento de Obsidian, widget mobile-first (Shadow DOM), botón "quiero pagar", chips de temas, "📞 Que Aníbal me llame" con hora local del visitante, avisos y recordatorios por Telegram (bot configurado).
-- Fase 1.5 (producción): imagen prod, `docker-compose.prod.yml` sin puertos vía nginx-proxy, proxy propio en `common/proxy`, `deploy.sh` (all / knowledge / backup / restore / logs), backups diarios, retención de datos, aviso de privacidad, IP real tras proxy/Cloudflare, cabeceras de seguridad. 23 tests en verde.
+- Fase 1.5 (producción): imagen prod, `docker-compose.prod.yml` sin puertos vía nginx-proxy, proxy propio en `common/proxy`, backups diarios, retención de datos, aviso de privacidad, IP real tras proxy/Cloudflare, cabeceras de seguridad. 23 tests en verde.
 - Estructura de dos repos (infra / backend) y nombres de contenedor legibles.
 - Fase 4 definida en el README (niveles hospedado / widget / self-hosted).
 
 **Siguiente**
-1. Primer despliegue en el VPS de rapitaller: DNS del subdominio, crear los dos `.env` en el servidor, `./deploy.sh`.
+1. Primer despliegue en el VPS de rapitaller (manual con git): repos privados en GitHub, DNS del subdominio, clonar, crear los dos `.env`, subir conocimiento, `docker compose up -d --build`.
 2. Pegar el widget en anibalcopitan.com y `/linktree`; probar en celulares reales.
 
 **Pendiente**
@@ -57,6 +58,5 @@ Chat con IA embebible (widget JS) que responde con el conocimiento del dueño (v
 - Fase 2: CRM con Filament en `/admin` (conversaciones, llamadas con estados, contactos con etapas, tool `guardar_lead`, métricas). Panel con 2FA, límite de intentos y, si se puede, Cloudflare Access.
 - Fase 3: webhooks → n8n.
 - Fase 4: producto genérico (sacar marca "Aníbal" del código), separar núcleo/personalización, chat a pantalla completa en `/`, DNS comodín + script de nueva instancia, versiones + CHANGELOG, licencia, contratos.
-- Infra: remotos git privados para ambos repos (hoy solo existen en el PC).
 - Fuera de alcance (no tocar sin ok): proxy de rapitaller con versiones de 2022 y `common/.env_example` con contraseñas reales.
 

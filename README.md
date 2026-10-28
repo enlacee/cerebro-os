@@ -12,7 +12,6 @@ app/                                   ← este repo
         ├── docker-compose.yml         ← local
         ├── docker-compose.prod.yml    ← VPS: sin puertos, se publica por el proxy (red "red")
         ├── .env                       ← Docker: NAME, DOMAIN, EMAIL… (no se versiona)
-        ├── deploy.sh                  ← sube al VPS por SSH
         └── laravel/                   ← repo del backend (no se versiona aquí)
             └── .env                   ← la app: keys de Gemini y Telegram, CORS…
 ```
@@ -31,50 +30,54 @@ docker compose exec app php artisan test
 
 Dos contenedores con la misma imagen y el mismo código: `app` (web) y `scheduler` (recordatorios, backup diario 3 am y borrado de datos vencidos).
 
-## Producción
+## Producción (manual, con git)
 
-Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red `red`** (detecta el contenedor por `VIRTUAL_HOST` y saca el HTTPS con `LETSENCRYPT_HOST`). El mismo `docker-compose.prod.yml` sirve en cualquier VPS; `./deploy.sh` decide el proxy:
+Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red `red`** (lo detecta por `VIRTUAL_HOST` y saca el HTTPS con `LETSENCRYPT_HOST`). En el VPS de rapitaller se usa el proxy que ya existe, **sin tocarlo**; en un VPS sin proxy: `cd common/proxy && docker compose up -d`.
 
-| VPS | Proxy | Qué haces |
-|---|---|---|
-| Compartido (ej. el de rapitaller) | Usa el que ya existe, **sin tocarlo** | `./deploy.sh` |
-| Exclusivo / nuevo | Levanta `common/proxy` de Cerebro (solo si nadie usa el puerto 80) | `./deploy.sh` |
-
-Lo único compartido en un VPS compartido es la puerta de entrada: contenedores, red interna, datos y backups son propios. Nunca corras `docker system prune --volumes` en un VPS compartido.
-
-**Una sola vez por VPS:**
-1. DNS: registro `A` de tu subdominio → IP del VPS. Si pasa por Cloudflare (nube naranja), pon `CEREBRO_TRUSTED_PROXIES=docker,cloudflare` en `laravel/.env`.
-2. VPS nuevo, como root (en uno existente, solo lo que falte):
+**Una sola vez:**
+1. DNS: registro `A` del subdominio → IP del VPS. Si pasa por Cloudflare (nube naranja), pon `CEREBRO_TRUSTED_PROXIES=docker,cloudflare` en `laravel/.env`.
+2. En el VPS, una **deploy key de solo lectura** para los dos repos privados:
    ```bash
-   apt update && apt -y upgrade && apt -y install docker.io docker-compose-v2 unattended-upgrades rsync
-   adduser --disabled-password --gecos "" deploy && usermod -aG docker deploy
-   mkdir -p /home/deploy/.ssh && cp ~/.ssh/authorized_keys /home/deploy/.ssh/ && chown -R deploy: /home/deploy/.ssh
-   sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/; s/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && systemctl restart ssh
-   ufw allow OpenSSH && ufw allow 80,443/tcp && ufw --force enable
+   ssh-keygen -t ed25519 -f ~/.ssh/cerebro_deploy -N ""   # la .pub va en GitHub → repo → Settings → Deploy keys
    ```
-3. Como `deploy`, crea los dos `.env` (`chmod 600`) en `~/cerebro-os/project/chat.anibalcopitan.com/`:
-   - `.env` → `NAME`, `DOMAIN`, `EMAIL` y `UID`/`GID` (`id -u`/`id -g`)
-   - `laravel/.env` → desde `laravel/.env.production.example` (keys reales, `APP_KEY`)
-4. En tu PC, en el `.env` de la instancia: `DEPLOY_HOST=deploy@IP`.
+3. Clonar con la misma estructura que en el PC:
+   ```bash
+   git clone git@github.com:USUARIO/cerebro-os-infra.git ~/cerebro-os
+   git clone git@github.com:USUARIO/cerebro-os.git ~/cerebro-os/project/chat.anibalcopitan.com/laravel
+   ```
+4. Crear los dos `.env` en `~/cerebro-os/project/chat.anibalcopitan.com/` (`chmod 600`):
+   - `.env` → `NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE=docker-compose.prod.yml` (y `UID`/`GID` si no son 1000)
+   - `laravel/.env` → desde `laravel/.env.production.example` (keys reales; `APP_KEY`: `echo "base64:$(openssl rand -base64 32)"`)
+5. Subir el conocimiento desde tu PC (sin archivos internos):
+   ```bash
+   rsync -av --delete --exclude oportunidades.md --exclude .obsidian \
+     ~/sites/obsidian-vault/cerebro-os/Knowledge/ USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/knowledge/
+   ```
+6. Levantar y comprobar:
+   ```bash
+   docker ps --filter name=nginx_proxy && docker network ls | grep red   # el proxy existe
+   docker compose up -d --build && docker compose logs -f app
+   curl -I https://chat.anibalcopitan.com/up
+   ```
 
-**Cada vez (desde la carpeta de la instancia en tu PC):**
+**Cada vez (en el VPS, carpeta de la instancia):**
 
-| Qué | Comando |
+| Cambio | Comando |
 |---|---|
-| Subir cambios (imagen, compose, código, conocimiento) | `./deploy.sh` |
-| Solo cambios de Obsidian | `./deploy.sh knowledge` |
-| Bajar backups de SQLite a `~/sites/cerebro-os/database/` | `./deploy.sh backup` |
-| Subir el último backup al servidor | `./deploy.sh restore` |
-| Logs | `./deploy.sh logs` |
+| Código (backend) | `git -C laravel pull && docker compose restart` |
+| Docker (imagen o compose) | `git pull && docker compose up -d --build` |
+| Obsidian | el `rsync` del paso 5 (desde tu PC) + `docker compose exec app php artisan knowledge:sync` |
+| Logs | `docker compose logs -f app` |
+| Backup a tu PC | `scp USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/laravel/storage/app/backups/* ~/sites/cerebro-os/database/` |
 
-Nunca suben: los `.env`, la base de datos, `vendor/`, `.git` ni los archivos internos de `CEREBRO_KNOWLEDGE_EXCLUDE` (ej. `oportunidades.md`).
+Al arrancar, el contenedor corre `composer install`, migraciones y recachea la config: para cambios de código basta `restart`.
+Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca corras `docker system prune --volumes` en un VPS compartido.
 
 ### Mudarse a otro VPS
-1. En el VPS viejo: `./deploy.sh backup`.
-2. Preparar el VPS nuevo (pasos 2–3 de arriba) y cambiar `DEPLOY_HOST`.
-3. `./deploy.sh` (levanta el proxy de Cerebro si hace falta) → `./deploy.sh restore`.
+1. Copiar a tu PC el último backup (`scp` de arriba).
+2. En el VPS nuevo: pasos 2–6 (si no tiene proxy, levantar `common/proxy`).
+3. `docker compose stop`, copiar el backup a `laravel/database/database.sqlite`, `docker compose start`.
 4. Apuntar el DNS a la IP nueva. 🔒 Rota las keys de Gemini y Telegram si el VPS anterior era compartido.
-5. En el VPS viejo: `docker compose -f docker-compose.prod.yml down` en la carpeta de la instancia.
 
 ## Nuevo cliente
 
