@@ -1,0 +1,58 @@
+# Producción (VPS): docker compose -f docker-compose.prod.yml up -d --build
+# Lo sube ./deploy.sh. En el servidor: .env (Docker) + laravel/.env (app) + knowledge/.
+x-app: &app
+  image: cerebro-os:prod
+  restart: always
+  environment:
+    APP_ENV: production
+    LOG_CHANNEL: stderr # se ve con "docker compose logs"
+  logging:
+    options: { max-size: 10m, max-file: "3" } # que los logs no llenen el disco
+  deploy:
+    resources:
+      limits: { memory: 512M }
+
+services:
+  app:
+    <<: *app
+    build:
+      context: ../../common/frankenphp
+      target: prod
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    environment:
+      APP_ENV: production
+      LOG_CHANNEL: stderr
+      # Tu dominio: Caddy saca y renueva el certificado HTTPS solo.
+      SERVER_NAME: ${SERVER_NAME:?Pon SERVER_NAME=chat.tudominio.com en .env}
+      CADDY_SERVER_EXTRA_DIRECTIVES: |
+        header /widget.js Cache-Control "no-cache"
+        header {
+          -Server
+          X-Content-Type-Options nosniff
+          Referrer-Policy strict-origin-when-cross-origin
+          Strict-Transport-Security "max-age=31536000"
+        }
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./laravel:/app
+      - ./knowledge:/app/knowledge:ro
+      - caddy_data:/data # certificados: si se pierden, Let's Encrypt limita cuántos puedes pedir
+      - caddy_config:/config
+
+  scheduler:
+    <<: *app
+    depends_on: [app]
+    entrypoint: ["php", "artisan", "schedule:work"]
+    healthcheck:
+      disable: true
+    volumes:
+      - ./laravel:/app
+
+volumes:
+  caddy_data:
+  caddy_config:
