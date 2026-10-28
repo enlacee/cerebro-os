@@ -1,16 +1,19 @@
-# Producción (VPS): docker compose -f docker-compose.prod.yml up -d --build
-# Lo sube ./deploy.sh. En el servidor: .env (Docker) + laravel/.env (app) + knowledge/.
+# Producción: la app no abre puertos; la publica un nginx-proxy en la red "red"
+# (el que ya exista en el VPS, o common/proxy en un VPS propio). ./deploy.sh decide.
 x-app: &app
   image: cerebro-os:prod
   restart: always
-  environment:
-    APP_ENV: production
-    LOG_CHANNEL: stderr # se ve con "docker compose logs"
+  volumes:
+    - ./laravel:/app
   logging:
     options: { max-size: 10m, max-file: "3" } # que los logs no llenen el disco
   deploy:
     resources:
       limits: { memory: 512M }
+
+x-env: &env
+  APP_ENV: production
+  LOG_CHANNEL: stderr # se ve con "docker compose logs"
 
 services:
   app:
@@ -21,38 +24,37 @@ services:
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
+    container_name: ${NAME:?Pon NAME en .env}
     environment:
-      APP_ENV: production
-      LOG_CHANNEL: stderr
-      # Tu dominio: Caddy saca y renueva el certificado HTTPS solo.
-      SERVER_NAME: ${SERVER_NAME:?Pon SERVER_NAME=chat.tudominio.com en .env}
+      <<: *env
+      SERVER_NAME: ":80" # HTTP interno; el HTTPS lo pone el proxy
       CADDY_SERVER_EXTRA_DIRECTIVES: |
         header /widget.js Cache-Control "no-cache"
         header {
           -Server
           X-Content-Type-Options nosniff
           Referrer-Policy strict-origin-when-cross-origin
-          Strict-Transport-Security "max-age=31536000"
         }
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp" # HTTP/3
+      # nginx-proxy + acme-companion detectan el contenedor por estas variables.
+      VIRTUAL_HOST: ${DOMAIN:?Pon DOMAIN en .env}
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${EMAIL:?Pon EMAIL en .env}
     volumes:
       - ./laravel:/app
       - ./knowledge:/app/knowledge:ro
-      - caddy_data:/data # certificados: si se pierden, Let's Encrypt limita cuántos puedes pedir
-      - caddy_config:/config
+    networks: [default, red]
 
+  # Sin red "red": no recibe web, solo sale a internet (Telegram).
   scheduler:
     <<: *app
+    container_name: ${NAME}-scheduler
+    environment: *env
     depends_on: [app]
     entrypoint: ["php", "artisan", "schedule:work"]
     healthcheck:
       disable: true
-    volumes:
-      - ./laravel:/app
 
-volumes:
-  caddy_data:
-  caddy_config:
+networks:
+  red:
+    external: true

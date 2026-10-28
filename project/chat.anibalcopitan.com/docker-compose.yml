@@ -8,9 +8,10 @@ services:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
     image: cerebro-os:dev
+    container_name: ${NAME:?Pon NAME en .env}
     restart: unless-stopped
     environment:
-      SERVER_NAME: ${SERVER_NAME:-:80}
+      SERVER_NAME: ":80"
       # El navegador siempre revalida widget.js: los cambios se ven al recargar.
       CADDY_SERVER_EXTRA_DIRECTIVES: header /widget.js Cache-Control "no-cache"
     ports:
@@ -18,12 +19,11 @@ services:
     volumes:
       - ./laravel:/app
       - ${KNOWLEDGE_PATH:-./knowledge}:/app/knowledge:ro
-      - caddy_data:/data
-      - caddy_config:/config
 
   # Tareas programadas: recordatorio de llamadas, backup y borrado de datos vencidos.
   scheduler:
     image: cerebro-os:dev
+    container_name: ${NAME}-scheduler
     restart: unless-stopped
     depends_on: [app]
     entrypoint: ["php", "artisan", "schedule:work"]
@@ -32,7 +32,3 @@ services:
       disable: true
     volumes:
       - ./laravel:/app
-
-volumes:
-  caddy_data:
-  caddy_config:

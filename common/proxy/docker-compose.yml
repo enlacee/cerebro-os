@@ -1,0 +1,44 @@
+# Proxy de Cerebro OS: recibe internet (80/443), saca el HTTPS y reparte a cada instancia por la red "red".
+# Solo para un VPS SIN otro proxy. ./deploy.sh lo levanta solo si nadie usa ya el puerto 80.
+# Mismo patrón que rapitaller (nginx-proxy + acme-companion): las instancias funcionan igual con uno u otro.
+services:
+  proxy:
+    image: nginxproxy/nginx-proxy:1.11.6-alpine
+    container_name: cerebro-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./proxy.conf:/etc/nginx/conf.d/cerebro-proxy.conf:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+    networks: [red]
+    logging:
+      options: { max-size: 10m, max-file: "3" }
+
+  letsencrypt:
+    image: nginxproxy/acme-companion:2.8.2
+    container_name: cerebro-letsencrypt
+    restart: always
+    environment:
+      NGINX_PROXY_CONTAINER: cerebro-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+    networks: [red]
+    depends_on: [proxy]
+    logging:
+      options: { max-size: 10m, max-file: "3" }
+
+volumes:
+  acme:
+  certs: # si se pierden, Let's Encrypt limita cuántos certificados puedes pedir
+  html:
+
+networks:
+  red:
+    name: red
