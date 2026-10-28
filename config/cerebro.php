@@ -16,13 +16,13 @@ return [
     ],
 
     'knowledge' => [
-        // Carpeta montada en Docker desde KNOWLEDGE_PATH (tu vault de Obsidian).
+        // Vault de Obsidian de la instancia (../knowledge), montado en Docker. Todo lo que hay ahí es público.
         'path' => base_path('knowledge'),
         'compiled' => storage_path('app/knowledge.md'),
         // Archivos que van primero en el prompt (rutas relativas a la carpeta).
         'first' => ['README.md', 'recursos/asistente-guia.md'],
-        // Archivos internos que el bot NUNCA debe ver.
-        'exclude' => array_filter(explode(',', env('CEREBRO_KNOWLEDGE_EXCLUDE', 'oportunidades.md'))),
+        // Red de seguridad: archivos que el bot no debe leer aunque estén en la carpeta.
+        'exclude' => array_filter(explode(',', env('CEREBRO_KNOWLEDGE_EXCLUDE', ''))),
     ],
 
     'chat' => [

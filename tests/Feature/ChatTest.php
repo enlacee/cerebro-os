@@ -27,7 +27,9 @@ class ChatTest extends TestCase
         config([
             'cerebro.knowledge.path' => $dir,
             'cerebro.knowledge.compiled' => storage_path('framework/testing/knowledge.md'),
+            'cerebro.knowledge.exclude' => ['oportunidades.md'], // red de seguridad (CEREBRO_KNOWLEDGE_EXCLUDE)
         ]);
+        File::delete(config('cerebro.knowledge.compiled')); // compilar siempre desde cero
     }
 
     public function test_streams_reply_and_stores_conversation(): void

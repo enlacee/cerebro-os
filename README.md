@@ -10,7 +10,7 @@ Este repo es **solo el backend**. Docker vive afuera, en el repo de infraestruct
 
 ```bash
 cd ..                     # carpeta de la instancia (ej. chat.anibalcopitan.com)
-cp .env.example .env      # Docker: puerto, KNOWLEDGE_PATH (tu vault de Obsidian)
+cp .env.example .env      # Docker: nombre y puerto (el conocimiento está en ../knowledge)
 docker compose up -d --build
 xdg-open http://localhost:8000/demo.html
 ```
@@ -42,7 +42,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
                                  │                    ▲
                                  ▼                    │ system prompt = resources/prompts/sistema.md
                           SQLite (conversations,      │               + knowledge/*.md compilado
-                                  messages)           │ (excluye CEREBRO_KNOWLEDGE_EXCLUDE)
+                                  messages)           │ (vault ../knowledge)
 ```
 
 - **Sin RAG por ahora:** todo el conocimiento (~19k tokens) va en el prompt. RAG solo cuando no quepa.
