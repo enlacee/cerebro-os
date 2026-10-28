@@ -102,8 +102,23 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [ ] Webhooks `lead.created` / `lead.hot` → n8n (aviso WhatsApp/Telegram, seguimientos, Sheets)
 
 ### Fase 4 — Producto vendible
-- [ ] Instalador (`install.sh`) + plantilla de conocimiento para clientes
-- [ ] Guía de instalación por cliente (Plan Implementación)
+Modelo: sin SaaS. Cada empresa tiene su instancia aislada (código, datos y conocimiento propios) y puede migrarla cuando quiera.
+
+**Niveles**
+1. Hospedado: `chat-cliente.anibalcopitan.com` (solo comparte la URL)
+2. Hospedado + widget: una línea de JS en su web
+3. Self-hosted: su servidor, su código (bifurcable; `git pull` del producto cuando quiera)
+
+**Antes del primer cliente**
+- [ ] Producto genérico: sacar la marca "Aníbal" del código; chat.anibalcopitan.com pasa a ser un cliente más
+- [ ] Separar núcleo (no se toca) de personalización (.env, textos, colores, prompt, conocimiento) → `git pull` sin conflictos
+- [ ] Página de chat a pantalla completa en `/` (nivel 1)
+- [ ] DNS comodín `*.anibalcopitan.com` y script para crear una instancia nueva
+- [ ] Versiones (`v1.x`) + CHANGELOG que marque 🔒 seguridad
+- [ ] Cada empresa con su propia API key de pago (el plan gratis de Gemini puede usar los datos para entrenar)
+- [ ] Licencia por instalación (usar y modificar, no redistribuir)
+- [ ] Contrato: encargo de datos (Ley 29733) si es hospedado; quién responde si no actualiza si es self-hosted
+- [ ] Planes: implementación + conocimiento curado + hosting/mantenimiento mensual opcional
 
 ### Fase 5 — Cuando haga falta
 - [ ] Canal WhatsApp (Cloud API / Evolution API)
