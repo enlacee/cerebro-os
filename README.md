@@ -97,10 +97,9 @@ Knowledge/
 ├── ventas/                   ← argumentos y manejo de objeciones
 │   ├── objeciones.md
 │   └── casos-exito.md
-├── recursos/                 ← para el asistente IA / n8n
-│   ├── enlaces.md            ← directorio único de URLs (tema → link a enviar)
-│   └── asistente-guia.md     ← cómo debe responder el bot (persona, flujo, media)
-└── oportunidades.md          ← notas/ideas detectadas (no para el cliente)
+└── recursos/                 ← para el asistente IA / n8n
+    ├── enlaces.md            ← directorio único de URLs (tema → link a enviar)
+    └── asistente-guia.md     ← cómo debe responder el bot (persona, flujo, media)
 ```
 
 ## 🤖 Reglas para la IA que use esta base
