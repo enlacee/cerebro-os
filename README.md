@@ -37,6 +37,8 @@ Saludo, colores (`colors`, estilo sobrio tipo Google: azul `#1a73e8` = asistente
 
 ## Cómo funciona
 
+Arquitectura completa (contenedores, scheduler, datos, despliegue): `ARQUITECTURA.md` en el repo de infraestructura.
+
 ```
 web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ──▶ LLM
                                  │                    ▲
