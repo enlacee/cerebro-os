@@ -2,7 +2,7 @@
 
 Chat con IA embebible (widget JS) que responde con el conocimiento del dueño (vault de Obsidian en `.md`) y agenda llamadas. Primer cliente: Aníbal Linux (anibalcopitan.com, sitio estático). Plan detallado: `project/chat.anibalcopitan.com/laravel/README.md` (fases con checkboxes). Este archivo resume decisiones, estado y pendientes: **actualízalo al terminar cada tarea**.
 
-Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`.
+Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`. Seguridad (riesgos, aplicado, pendiente): `SEGURIDAD.md`.
 
 ## Decisiones (no re-discutir)
 - Stack: Laravel 13 · PHP 8.4 · SQLite · FrankenPHP (Docker) · Prism PHP (Gemini `gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`) · SSE.
@@ -37,6 +37,7 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Producción: `APP_DEBUG=false`, CORS solo para el dominio del cliente, rate limit por IP, honeypot en formularios.
 - Datos personales: aviso en el formulario, retención (llamadas 90 días, conversaciones 180), logs sin teléfonos.
 - Nunca versionar `.env`, bases SQLite ni backups.
+- Bot sin herramientas y con contexto público: si lo engañan, que no pase nada grave. Prompt con alcance cerrado y anti-inyección; tope global diario. Pendientes en `SEGURIDAD.md`.
 
 ## Estilo
 - Respuestas y documentación en español, claras y breves. Código que imite el estilo existente (comentarios cortos en español).
