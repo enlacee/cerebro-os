@@ -90,6 +90,8 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] Publicación por nginx-proxy (el del VPS o el propio de Cerebro), contenedores con nombre legible, sin puertos propios
 - [x] IP real del visitante detrás de proxy/Cloudflare (`CEREBRO_TRUSTED_PROXIES`) · widget funciona en subdominio o carpeta
 - [ ] Repos privados en GitHub + primer despliegue manual (VPS compartido con rapitaller) + DNS del subdominio
+- [x] Anti-abuso del bot: prompt con alcance cerrado y anti-inyección, historial 10, respuesta máx. 800 tokens, tope global diario, aviso "puede equivocarse" (pendientes en `SEGURIDAD.md` de infraestructura)
+- [ ] Alerta y tope de gasto en la API key de Gemini
 - [ ] Página de política de privacidad (Ley 29733) enlazada desde el aviso
 
 ### Fase 2 — CRM mínimo

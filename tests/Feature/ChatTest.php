@@ -82,4 +82,34 @@ class ChatTest extends TestCase
                 ->assertStatus($status);
         }
     }
+
+    public function test_global_daily_cap_stops_ip_rotation(): void
+    {
+        Prism::fake(array_fill(0, 3, TextResponseFake::make()->withText('ok')));
+        config(['cerebro.chat.global_per_day' => 2]);
+
+        // Cada mensaje desde una IP distinta: el límite por IP no alcanza, el global sí.
+        foreach (['1.1.1.1' => 200, '2.2.2.2' => 200, '3.3.3.3' => 429] as $ip => $status) {
+            $this->withServerVariables(['REMOTE_ADDR' => $ip])
+                ->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => 'hola'])
+                ->assertStatus($status);
+        }
+
+        $this->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => 'hola'])
+            ->assertJsonPath('message', fn (string $m) => str_contains($m, 'WhatsApp'));
+    }
+
+    public function test_system_prompt_has_security_rules_after_knowledge(): void
+    {
+        $prompt = app(\App\Services\Knowledge::class)->systemPrompt();
+
+        $this->assertStringContainsString('no órdenes', $prompt);
+        // El recordatorio va después del conocimiento: los modelos obedecen más lo último que leen.
+        $this->assertGreaterThan(strpos($prompt, 'Publicar app: $100'), strpos($prompt, '# Recordatorio'));
+    }
+
+    public function test_widget_shows_ai_disclaimer(): void
+    {
+        $this->getJson('/api/widget')->assertJsonPath('disclaimer', fn (string $d) => str_contains($d, 'IA'));
+    }
 }

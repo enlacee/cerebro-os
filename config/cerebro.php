@@ -12,7 +12,7 @@ return [
         'provider' => env('CEREBRO_LLM_PROVIDER', 'gemini'),
         'model' => env('CEREBRO_LLM_MODEL', 'gemini-3.6-flash'),
         'fallback_model' => env('CEREBRO_LLM_FALLBACK_MODEL'),
-        'max_tokens' => (int) env('CEREBRO_LLM_MAX_TOKENS', 2048),
+        'max_tokens' => (int) env('CEREBRO_LLM_MAX_TOKENS', 800),
     ],
 
     'knowledge' => [
@@ -26,10 +26,12 @@ return [
     ],
 
     'chat' => [
-        'history' => 20,
+        'history' => 10, // mensajes de contexto: menos costo y menos superficie para manipular al bot
         'max_message_length' => 1000,
         'per_minute' => (int) env('CEREBRO_CHAT_PER_MINUTE', 10),
         'per_day' => (int) env('CEREBRO_CHAT_PER_DAY', 100),
+        // Tope de toda la instancia (frena a quien rota IPs y protege la cuota del LLM).
+        'global_per_day' => (int) env('CEREBRO_CHAT_GLOBAL_PER_DAY', 1000),
     ],
 
     // "Que Aníbal me llame": franjas internas en las que se aceptan llamadas (hora de 'timezone').
@@ -81,6 +83,7 @@ return [
         'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
         'subtitle' => 'Asistente en línea',
         'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
+        'disclaimer' => 'Asistente con IA · puede equivocarse · precios y acuerdos se confirman por WhatsApp',
         // Colores (estilo sobrio tipo Google): azul = asistente, verde = WhatsApp (lo único verde para que
         // "quiero pagar" destaque), cabecera clara. En modo oscuro la cabecera pasa a gris oscuro sola.
         'colors' => [

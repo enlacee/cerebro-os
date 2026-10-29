@@ -29,9 +29,15 @@ class AppServiceProvider extends ServiceProvider
             ->all());
 
         // Protege la cuota del LLM: límite por minuto y por día para cada IP.
+        $tooMany = fn (string $message) => fn () => response()->json(['message' => $message], 429);
+
         RateLimiter::for('chat', fn (Request $request) => [
-            Limit::perMinute(config('cerebro.chat.per_minute'))->by($request->ip()),
-            Limit::perDay(config('cerebro.chat.per_day'))->by('day:'.$request->ip()),
+            Limit::perMinute(config('cerebro.chat.per_minute'))->by($request->ip())
+                ->response($tooMany('Estás enviando muchos mensajes. Espera un momento 🙏')),
+            Limit::perDay(config('cerebro.chat.per_day'))->by('day:'.$request->ip())
+                ->response($tooMany('Llegaste al límite de mensajes de hoy 🙏 Escríbenos por WhatsApp y te atendemos.')),
+            Limit::perDay(config('cerebro.chat.global_per_day'))->by('global')
+                ->response($tooMany('El chat llegó a su límite de hoy 🙏 Escríbenos por WhatsApp y te atendemos.')),
         ]);
 
         RateLimiter::for('call-request', fn (Request $request) => Limit::perDay(config('cerebro.calls.per_day'))->by($request->ip()));

@@ -129,6 +129,7 @@
     '.m.user{background:var(--c);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}' +
     '.m a{color:inherit;text-decoration:underline}' +
     '.m.err{background:#fef2f2;color:#991b1b}' +
+    '.notice{align-self:center;max-width:90%;font-size:12px;color:var(--muted);text-align:center}' +
     '.welcome{display:flex;flex-direction:column;gap:8px;margin-top:4px}' +
     '.pay{display:block;padding:12px 14px;border-radius:14px;background:var(--wa);color:#fff;text-decoration:none;box-shadow:0 1px 2px rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)}' +
     '.pay b{display:block;font-size:15px}.pay span{font-size:13px;opacity:.9}' +
@@ -359,6 +360,12 @@
   function renderAll() {
     msgs.innerHTML = '';
     bubble('bot', cfg.greeting);
+    if (cfg.disclaimer) {
+      var note = document.createElement('div');
+      note.className = 'notice';
+      note.textContent = cfg.disclaimer;
+      msgs.appendChild(note);
+    }
     if (!state.messages.length) welcome();
     state.messages.forEach(function (m) { bubble(m.role, m.content); });
     updateCallbar();
@@ -611,7 +618,11 @@
       body: JSON.stringify({ session_id: state.session, message: text }),
     })
       .then(function (res) {
-        if (res.status === 429) throw new Error('Estás enviando muchos mensajes. Espera un momento 🙏');
+        if (res.status === 429) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            throw new Error(data.message || 'Estás enviando muchos mensajes. Espera un momento 🙏');
+          });
+        }
         if (!res.ok || !res.body) throw new Error('No pude conectar con el chat. Intenta de nuevo.');
 
         var reader = res.body.getReader(), decoder = new TextDecoder(), buffer = '';
