@@ -83,7 +83,7 @@ return [
         'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
         'subtitle' => 'Asistente en línea',
         'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
-        'disclaimer' => 'Asistente con IA · puede equivocarse · precios y acuerdos se confirman por WhatsApp',
+        'disclaimer' => 'Respuestas con IA · pueden tener errores',
         // Colores (estilo sobrio tipo Google): azul = asistente, verde = WhatsApp (lo único verde para que
         // "quiero pagar" destaque), cabecera clara. En modo oscuro la cabecera pasa a gris oscuro sola.
         'colors' => [
@@ -104,6 +104,7 @@ return [
         // Camino directo para quien ya decidió: WhatsApp sin pasar por la IA.
         'pay' => [
             'title' => '💳 Ya decidí, quiero pagar',
+            'short' => '💳 Quiero pagar', // texto del botón; title/subtitle quedan como descripción
             'subtitle' => 'Hablar con Aníbal por WhatsApp',
             'message' => 'Hola Aníbal, ya decidí y quiero pagar 🙌',
         ],

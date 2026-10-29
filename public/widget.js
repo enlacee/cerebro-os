@@ -129,11 +129,12 @@
     '.m.user{background:var(--c);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}' +
     '.m a{color:inherit;text-decoration:underline}' +
     '.m.err{background:#fef2f2;color:#991b1b}' +
-    '.notice{align-self:center;max-width:90%;font-size:12px;color:var(--muted);text-align:center}' +
-    '.welcome{display:flex;flex-direction:column;gap:8px;margin-top:4px}' +
-    '.pay{display:block;padding:12px 14px;border-radius:14px;background:var(--wa);color:#fff;text-decoration:none;box-shadow:0 1px 2px rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)}' +
-    '.pay b{display:block;font-size:15px}.pay span{font-size:13px;opacity:.9}' +
-    '.pay.call{background:var(--bg);color:var(--fg);border:1px solid var(--line);box-shadow:none;width:100%;text-align:left;font:inherit;cursor:pointer}' +
+    '.notice{align-self:center;max-width:90%;font-size:11.5px;color:var(--muted);text-align:center}' +
+    '.welcome{display:flex;flex-direction:column;gap:6px}' +
+    // Acciones principales en una fila de botones compactos (bajan de línea si no caben).
+    '.quick{display:flex;flex-wrap:wrap;gap:8px}' +
+    '.pay{display:inline-flex;align-items:center;min-height:38px;padding:7px 14px;border-radius:999px;background:var(--wa);color:#fff;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap}' +
+    '.pay.call{background:var(--bg);color:var(--fg);border:1px solid var(--line);font:inherit;font-weight:600;font-size:14px;cursor:pointer}' +
     '.label{color:var(--muted);font-size:13px;margin-top:4px}' +
     // Temas en lista vertical compacta: cada chip ocupa solo el ancho de su texto.
     '.chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}' +
@@ -313,6 +314,8 @@
   function welcome() {
     var box = document.createElement('div');
     box.className = 'welcome';
+    var quick = document.createElement('div');
+    quick.className = 'quick';
 
     if (cfg.pay && cfg.whatsapp) {
       var pay = document.createElement('a');
@@ -320,22 +323,22 @@
       pay.target = '_blank';
       pay.rel = 'noopener';
       pay.href = waLink(cfg.pay.message);
-      pay.innerHTML = '<b></b><span></span>';
-      pay.querySelector('b').textContent = cfg.pay.title;
-      pay.querySelector('span').textContent = cfg.pay.subtitle;
-      box.appendChild(pay);
+      pay.textContent = cfg.pay.short || cfg.pay.title;
+      pay.title = cfg.pay.title + ' · ' + cfg.pay.subtitle;
+      quick.appendChild(pay);
     }
 
     if (cfg.call) {
       var call = document.createElement('button');
       call.type = 'button';
       call.className = 'pay call';
-      call.innerHTML = '<b></b><span></span>';
-      call.querySelector('b').textContent = cfg.call.title;
-      call.querySelector('span').textContent = cfg.call.subtitle;
+      call.textContent = cfg.call.short || cfg.call.title;
+      call.title = cfg.call.subtitle;
       call.addEventListener('click', function () { openCallForm(); });
-      box.appendChild(call);
+      quick.appendChild(call);
     }
+
+    if (quick.children.length) box.appendChild(quick);
 
     if (cfg.topics.length) {
       var label = document.createElement('div');
