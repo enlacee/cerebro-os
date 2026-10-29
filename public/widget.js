@@ -134,9 +134,10 @@
     '.pay{display:block;padding:12px 14px;border-radius:14px;background:var(--wa);color:#fff;text-decoration:none;box-shadow:0 1px 2px rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)}' +
     '.pay b{display:block;font-size:15px}.pay span{font-size:13px;opacity:.9}' +
     '.pay.call{background:var(--bg);color:var(--fg);border:1px solid var(--line);box-shadow:none;width:100%;text-align:left;font:inherit;cursor:pointer}' +
-    '.label{color:var(--muted);font-size:13px;margin-top:6px}' +
-    '.chips{display:flex;flex-wrap:wrap;gap:8px}' +
-    '.chip{min-height:40px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer;text-align:left}' +
+    '.label{color:var(--muted);font-size:13px;margin-top:4px}' +
+    // Temas en lista vertical compacta: cada chip ocupa solo el ancho de su texto.
+    '.chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}' +
+    '.chip{min-height:32px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-align:left}' +
     '.chip:active,.callbar button:active{background:#e8f0fe;border-color:#d2e3fc}.pay.call:active{background:var(--hover)}' +
     '.card{background:var(--bot);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;align-self:stretch}' +
     '.card p{margin:0;font-size:14px}' +
