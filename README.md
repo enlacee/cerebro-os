@@ -21,6 +21,8 @@ Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la
 🔒 **`knowledge/` = solo lo público**: el bot puede revelar cualquier cosa que esté ahí. Notas internas, costos o datos de clientes van fuera (ej. `~/sites/obsidian-vault/cerebro-os`). Ábrelo en Obsidian con "Open folder as vault".
 Contenedores con nombre legible (`NAME`): `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (tareas).
 
+Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`**.
+
 ## Local
 
 ```bash
