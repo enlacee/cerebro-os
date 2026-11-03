@@ -2,7 +2,7 @@
 
 Chat con IA embebible (widget JS) que responde con el conocimiento del dueño (vault de Obsidian en `.md`) y agenda llamadas. Primer cliente: Aníbal Linux (anibalcopitan.com, sitio estático). Plan detallado: `project/chat.rapitaller.com/laravel/README.md` (fases con checkboxes). Este archivo resume decisiones, estado y pendientes: **actualízalo al terminar cada tarea**.
 
-Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`. Seguridad (riesgos, aplicado, pendiente): `SEGURIDAD.md`.
+Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`. Seguridad (riesgos, aplicado, pendiente): `SEGURIDAD.md`. Variables de los dos `.env` y qué hacer tras editarlos: `CONFIGURACION.md`.
 
 ## Decisiones (no re-discutir)
 - Stack: Laravel 13 · PHP 8.4 · SQLite · FrankenPHP (Docker) · Prism PHP (Gemini `gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`) · SSE.
@@ -55,11 +55,14 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Chips con respuesta escrita (tercer campo de `CEREBRO_TOPIC_*` → `knowledge/respuestas/*.md`): sin IA ni tokens. `CEREBRO_LLM_MAX_TOKENS=3000` (el "pensamiento" de Gemini cuenta en el tope; con 800 se cortaban respuestas).
 - Fase 4 definida en el README (niveles hospedado / widget / self-hosted).
 - Widget (2026-11-03): "Nueva conversación" destacada en azul; título de chips configurable (`CEREBRO_TOPICS_TITLE`, "Lo más buscado"); calificación "★ 4.9 en Google" en la cabecera (`CEREBRO_RATING*`); aviso de IA al pie bajo el campo de texto; un solo link del dueño al pie de la bienvenida: el blog (`CEREBRO_LINKS="tipo|url|texto"`, solo http/https). Sin link a anibalcopitan.com ni al linktree: el widget vive ahí. Botón de WhatsApp con logo. 29 tests en verde.
+- Raíz `/` = página del visitante (`public/chat.html`) con el chat abierto (`data-open` en el `<script>`); el código para pegar va oculto tras un "Saber más" que lo muestra sin mover nada (y en los README). Un link `<a href="#chat">` o entrar con `#chat` abre el widget (para el linktree, que usa la burbuja cerrada). (2026-11-03)
+- Botón flotante en píldora: ícono de chat (SVG, ya no emoji) + texto `CEREBRO_LAUNCHER_TEXT` ("¿Dudas? Pregúntame"; vacío = solo ícono); abierto, círculo con ✕. 30 tests en verde. (2026-11-03)
+- "Que Aníbal me llame" sin barra fija abajo: ícono de teléfono (SVG) en la cabecera + chip dentro de la conversación (una vez tras la 2.ª respuesta y cuando el bot sugiere la llamada; se guarda en el mensaje con `call: true`). Con calificación, la cabecera ya no muestra "En línea". (2026-11-03)
 - Vault revisado (2026-11-03): precios unificados (Android SaaS S/49; AppMonetizable $10 solo código, sin soporte), planes viejos eliminados, estrategia interna movida a `~/sites/obsidian-vault/cerebro-os/estrategia-ventas.md`, caso Studio8Record anonimizado, wikilinks corregidos.
 
 **Siguiente**
 1. Primer despliegue en el VPS de rapitaller (manual con git): repo privado `cerebro-os` en GitHub, DNS del subdominio, clonar, crear los dos `.env`, `docker compose up -d --build`.
-2. Pegar el widget en anibalcopitan.com y `/linktree`; probar en celulares reales.
+2. Pegar el widget en anibalcopitan.com/linktree (burbuja + botón `<a href="#chat">💬 Pregúntale a mi asistente</a>`), poner `https://anibalcopitan.com` en `CEREBRO_ALLOWED_ORIGINS`; probar en celulares reales.
 
 **Pendiente**
 - Fase 1: ajustar tono/prompt con conversaciones reales. Revisar los borradores de `knowledge/respuestas/`.

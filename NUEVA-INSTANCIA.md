@@ -87,7 +87,7 @@ GEMINI_API_KEY=...                        # la del cliente
 CEREBRO_ALLOWED_ORIGINS=*                 # local; en producción, su web (paso 8)
 ```
 
-`APP_KEY` se genera solo al arrancar en local. Textos con `$` (ej. `$20`): usa comillas simples.
+Qué hace cada variable: `CONFIGURACION.md`. `APP_KEY` se genera solo al arrancar en local. Textos con `$` (ej. `$20`): usa comillas simples.
 
 ## 5. `knowledge/` (vault de Obsidian)
 
@@ -150,6 +150,8 @@ Que pegue esto en su web, antes de `</body>`:
 ```html
 <script src="https://chat.tallerjuan.com/widget.js" defer></script>
 ```
+
+Opcional: un link `<a href="#chat">💬 Pregúntale a nuestro asistente</a>` en su web abre el chat. `https://chat.tallerjuan.com` también sirve como link directo: abre el chat a pantalla completa.
 
 Y que configure un tope de gasto en su API key de Gemini.
 

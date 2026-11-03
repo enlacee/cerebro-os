@@ -25,14 +25,14 @@ Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la
 🔒 **`knowledge/` = solo lo público**: el bot puede revelar cualquier cosa que esté ahí. Notas internas, costos o datos de clientes van fuera (ej. `~/sites/obsidian-vault/cerebro-os`). Ábrelo en Obsidian con "Open folder as vault".
 Contenedores con nombre legible (`NAME`): `chat.rapitaller.com` (web) y `chat.rapitaller.com-scheduler` (tareas).
 
-Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`** · Seguridad: **`SEGURIDAD.md`** · Cliente nuevo: **`NUEVA-INSTANCIA.md`**.
+Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`** · Seguridad: **`SEGURIDAD.md`** · Cliente nuevo: **`NUEVA-INSTANCIA.md`** · Variables de los `.env`: **`CONFIGURACION.md`**.
 
 ## Local
 
 ```bash
 cd project/chat.rapitaller.com
 cp .env.example .env           # NAME y puerto
-docker compose up -d --build   # http://localhost/demo.html
+docker compose up -d --build   # http://localhost (chat abierto)
 docker compose exec app php artisan test
 ```
 
@@ -46,11 +46,14 @@ importante en .env descomentar:
 COMPOSE_FILE=docker-compose.prod.yml
 ```
 
+## GetStart project into docker-compose.yml
 
 ```bash
-docker compose down
-docker compose up -d --build --force-recreate
+cd chat.rapitaller.com
 
+docker compose down
+docker compose up -d
+#docker compose up -d --build --force-recreate
 ```
 
 
