@@ -44,7 +44,7 @@ updated: 2026-10-27
 | **App OkeyPay** (verificación de pagos) | https://okeypay.anibalcopitan.com/ |
 | OkeyPay en Play Store | https://play.google.com/store/apps/details?id=com.anibalcopitan.okeypay |
 | **Apps publicadas** (prueba social) | https://play.google.com/store/apps/developer?id=AnibalCopitan.Com |
-| Reseñas (5.0 Google) | https://maps.app.goo.gl/JRrBrmTmXPokXJyt6 |
+| Reseñas (4.9 en Google) | https://maps.app.goo.gl/JRrBrmTmXPokXJyt6 |
 | Política de privacidad (ejemplo) | https://okeypay.anibalcopitan.com/privacy-policy.html |
 | Pagar con link (pasarela) | https://anibalcopitan.com/pago/ |
 

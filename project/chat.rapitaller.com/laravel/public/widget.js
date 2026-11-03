@@ -24,6 +24,20 @@
     call: null,
     topics_title: '',
     topics: [],
+    rating: null,
+    links: [],
+  };
+
+  // Íconos de línea (24×24) para CEREBRO_LINKS; un tipo desconocido usa "link".
+  var ICONS = {
+    blog: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    web: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',
+    youtube: '<path d="M2.5 17a24 24 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49 49 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24 24 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49 49 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/>',
+    tiktok: '<path d="M9 12a4 4 0 1 0 4 4V2a5 5 0 0 0 5 5"/>',
+    facebook: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+    instagram: '<rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
+    linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><path d="M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
   };
   var ready = fetch(base + '/api/widget')
     .then(function (res) { return res.ok ? res.json() : {}; })
@@ -95,6 +109,7 @@
     'font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}' +
     '@media (prefers-color-scheme:dark){:host{--bg:#202124;--fg:#e8eaed;--muted:#9aa0a6;--bot:#303134;--line:#3c4043;--head:#202124;--head-fg:#e8eaed;--icon:#9aa0a6;--hover:#303134}' +
     ':host .chip,:host .callbar button{color:#8ab4f8}' +
+    ':host .icon.reset,:host .icon.reset:hover{color:#8ab4f8;background:rgba(138,180,248,.14)}' +
     ':host .chip:hover,:host .chip:active,:host .callbar button:hover,:host .callbar button:active{background:rgba(138,180,248,.12);border-color:var(--line)}}' +
     '*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}' +
     'button,a{touch-action:manipulation}' +
@@ -117,10 +132,13 @@
     '.who small::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:#1e8e3e}' +
     '.wa{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:36px;background:var(--wa);color:#fff;font-weight:600;font-size:13px;' +
     'padding:0 12px;border-radius:999px;text-decoration:none;white-space:nowrap}' +
-    '.wa svg{flex:none}.wa .long{display:none}' +
+    '.wa svg{flex:none}' +
     '.tools{display:flex;flex:none;margin-left:2px;padding-left:4px;border-left:1px solid var(--line)}' +
     '.icon{width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:var(--icon);cursor:pointer;padding:0}' +
     '.icon:active{background:var(--hover)}' +
+    // Nueva conversación destacada (como el F5): azul del asistente y gira al tocarla.
+    '.icon.reset{color:var(--c);background:#e8f0fe;margin-right:4px}.icon.reset:active{background:#d2e3fc}' +
+    '@keyframes cerebro-spin{to{transform:rotate(360deg)}}.reset.spin svg{animation:cerebro-spin .5s ease}' +
     '.icon:focus-visible,.wa:focus-visible{outline:2px solid var(--c);outline-offset:2px}' +
     '.msgs{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;' +
     'padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px}' +
@@ -129,13 +147,20 @@
     '.m.user{background:var(--c);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}' +
     '.m a{color:inherit;text-decoration:underline}' +
     '.m.err{background:#fef2f2;color:#991b1b}' +
-    '.notice{align-self:center;max-width:90%;font-size:11.5px;color:var(--muted);text-align:center}' +
     '.welcome{display:flex;flex-direction:column;gap:6px}' +
     // Acciones principales en una fila de botones compactos (bajan de línea si no caben).
     '.quick{display:flex;flex-wrap:wrap;gap:8px}' +
     '.pay{display:inline-flex;align-items:center;min-height:38px;padding:7px 14px;border-radius:999px;background:var(--wa);color:#fff;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap}' +
     '.pay.call{background:var(--bg);color:var(--fg);border:1px solid var(--line);font:inherit;font-weight:600;font-size:14px;cursor:pointer}' +
     '.label{color:var(--muted);font-size:13px;margin-top:4px}' +
+    // Prueba social (calificación) y, al pie, blog y redes en gris para no competir con pagar/llamar/chips.
+    '.rating{display:inline-flex;align-items:center;gap:3px;color:var(--muted);text-decoration:none}' +
+    '.rating .star{color:#fbbc04;font-size:13px;line-height:1}.who .rating b{font-size:12px;color:var(--fg);font-weight:600}' +
+    // Aviso de IA al pie, bajo el campo de texto (como en ChatGPT): siempre visible sin cortar la bienvenida.
+    '.foot{flex:none;background:var(--bg);color:var(--muted);font-size:11px;line-height:1.3;text-align:center;padding:0 12px calc(6px + env(safe-area-inset-bottom))}' +
+    '.links{display:flex;flex-wrap:wrap;gap:4px 2px;margin-top:8px;padding-top:10px;border-top:1px solid var(--line)}' +
+    '.links a{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 6px;border-radius:999px;color:var(--muted);font-size:13px;text-decoration:none}' +
+    '.links a:active{background:var(--hover)}.rating:focus-visible,.links a:focus-visible{outline:2px solid var(--c);outline-offset:2px}' +
     // Temas en lista vertical compacta: cada chip ocupa solo el ancho de su texto.
     '.chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}' +
     '.chip{min-height:32px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-align:left}' +
@@ -171,21 +196,23 @@
     'input:focus{outline:2px solid var(--c);outline-offset:-1px;border-color:transparent}' +
     '.send{flex:none;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--c);color:#fff;cursor:pointer;padding:0}' +
     '.send:disabled{opacity:.5;cursor:default}' +
-    '@media (hover:hover){.icon:hover{background:var(--hover);color:var(--fg)}.wa:hover{filter:brightness(.95)}' +
+    '@media (hover:hover){.links a:hover{background:var(--hover);color:var(--fg)}.rating[href]:hover{text-decoration:underline}' +
+    '.icon:hover{background:var(--hover);color:var(--fg)}.icon.reset:hover{background:#d2e3fc;color:var(--c)}.wa:hover{filter:brightness(.95)}' +
     '.chip:hover,.callbar button:hover{background:#e8f0fe;border-color:#d2e3fc}.pay.call:hover{background:var(--hover)}}' +
     // Celular angosto (≤360px): el botón de WhatsApp queda solo con ícono.
+    // Celular: sin espacio para "En línea" y la calificación juntas → queda la calificación.
+    '@media (max-width:480px){.rated .status,.rated::before{display:none}}' +
     '@media (max-width:360px){.wa{width:38px;padding:0;justify-content:center}.wa .short{display:none}}' +
     // Escritorio / tablet: panel flotante.
     '@media (min-width:481px){' +
     '.fab{right:20px;bottom:20px;width:58px;height:58px}' +
     '.panel{inset:auto 20px 90px auto;width:400px;height:620px;max-height:calc(100vh - 110px);border-radius:16px;border:1px solid var(--line);box-shadow:0 8px 28px rgba(60,64,67,.28)}' +
     '.head{padding:10px 8px 10px 14px}.icon{width:36px;height:36px;border-radius:10px}' +
-    '.wa .short{display:none}.wa .long{display:inline}' +
     '.backdrop{display:block}.panel.open{animation:cerebro-pop .2s ease-out}' +
-    '.msgs{padding:14px}.composer{padding:10px}.callbar{padding:0 10px 8px}' +
+    '.msgs{padding:14px}.composer{padding:10px}.callbar{padding:0 10px 8px}.foot-on .composer{padding-bottom:4px}' +
     '}' +
     '.panel.open~.fab{display:none}' +
-    '@media (prefers-reduced-motion:reduce){.panel.open{animation:none}.backdrop{transition:none}}' +
+    '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg{animation:none}.backdrop{transition:none}}' +
     '@media (min-width:481px){.panel.open~.fab{display:grid}}' +
     '</style>' +
     '<div class="backdrop" aria-hidden="true"></div>' +
@@ -193,8 +220,9 @@
     '<div class="head">' +
     '<div class="who"><b></b><small></small></div>' +
     '<a class="wa" target="_blank" rel="noopener" hidden>' +
-    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20l1.3-5A8.5 8.5 0 1 1 21 11.5z"/></svg><span class="short"></span><span class="long"></span></a>' +
+    // Logo de WhatsApp: se reconoce sin leer.
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41z"/></svg><span class="short"></span></a>' +
     '<div class="tools">' +
     '<button class="icon reset" aria-label="Nueva conversación" title="Nueva conversación">' +
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -210,6 +238,7 @@
     '<button type="submit" class="send" aria-label="Enviar">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>' +
+    '<div class="foot" hidden></div>' +
     '</div>' +
     '<button class="fab" aria-label="Abrir chat">💬</button>';
 
@@ -254,12 +283,31 @@
     host.style.setProperty('--head-light', cfg.colors.header);
     host.style.setProperty('--head-text-light', cfg.colors.header_text);
     $('.who b').textContent = cfg.title;
-    $('.who small').textContent = cfg.subtitle;
+    // Cabecera: "● En línea · ★ 4.9 en Google" (la calificación queda visible toda la conversación).
+    var sub = $('.who small');
+    var status = document.createElement('span');
+    status.className = 'status';
+    status.textContent = cfg.subtitle;
+    sub.appendChild(status);
+    if (cfg.rating && cfg.rating.value) {
+      sub.classList.add('rated');
+      var dot = document.createElement('span');
+      dot.className = 'status';
+      dot.setAttribute('aria-hidden', 'true');
+      dot.textContent = '·';
+      sub.appendChild(dot);
+      sub.appendChild(ratingEl());
+    }
+    if (cfg.disclaimer) {
+      $('.foot').textContent = cfg.disclaimer;
+      $('.foot').hidden = false;
+      panel.classList.add('foot-on');
+    }
     if (cfg.whatsapp) {
       var wa = $('.wa');
-      wa.querySelector('.long').textContent = cfg.contact.label;
       wa.querySelector('.short').textContent = cfg.contact.short || 'WhatsApp';
       wa.setAttribute('aria-label', cfg.contact.label);
+      wa.title = cfg.contact.label;
       wa.href = waLink(cfg.contact.message);
       wa.hidden = false;
     }
@@ -295,11 +343,18 @@
   // Nueva conversación: borra el historial local y vuelve a la bienvenida.
   $('.reset').addEventListener('click', function () {
     if (busy) return;
+    // Vuelta del ícono como confirmación visual.
+    var btn = this;
+    btn.classList.remove('spin');
+    void btn.offsetWidth;
+    btn.classList.add('spin');
     state = fresh();
     save();
     renderAll();
     focusInput();
   });
+
+  $('.reset').addEventListener('animationend', function () { this.classList.remove('spin'); });
 
   function bubble(role, text, extra) {
     var el = document.createElement('div');
@@ -310,12 +365,35 @@
     return el;
   }
 
+  // "★ 4.9 en Google" (con textContent: nada del config se interpreta como HTML).
+  function ratingEl() {
+    var rating = document.createElement(cfg.rating.url ? 'a' : 'span');
+    rating.className = 'rating';
+    if (cfg.rating.url) {
+      rating.href = cfg.rating.url;
+      rating.target = '_blank';
+      rating.rel = 'noopener';
+      rating.title = 'Ver reseñas en ' + cfg.rating.source;
+    }
+    var star = document.createElement('span');
+    star.className = 'star';
+    star.setAttribute('aria-hidden', 'true');
+    star.textContent = '★';
+    var value = document.createElement('b');
+    value.textContent = cfg.rating.value;
+    rating.appendChild(star);
+    rating.appendChild(value);
+    rating.appendChild(document.createTextNode(' en ' + cfg.rating.source));
+    return rating;
+  }
+
   // Bienvenida: camino "quiero pagar" (WhatsApp directo) + chips de temas para el asistente.
   function welcome() {
     var box = document.createElement('div');
     box.className = 'welcome';
     var quick = document.createElement('div');
     quick.className = 'quick';
+
 
     if (cfg.pay && cfg.whatsapp) {
       var pay = document.createElement('a');
@@ -358,18 +436,30 @@
       box.appendChild(chips);
     }
 
+    // Link(s) del dueño al pie (recomendado: uno solo, ej. su blog).
+    if (cfg.links.length) {
+      var links = document.createElement('nav');
+      links.className = 'links';
+      links.setAttribute('aria-label', 'Más de ' + cfg.title);
+      cfg.links.forEach(function (link) {
+        var a = document.createElement('a');
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          (ICONS[link.type] || ICONS.link) + '</svg>';
+        a.appendChild(document.createTextNode(link.label));
+        links.appendChild(a);
+      });
+      box.appendChild(links);
+    }
+
     msgs.appendChild(box);
   }
 
   function renderAll() {
     msgs.innerHTML = '';
     bubble('bot', cfg.greeting);
-    if (cfg.disclaimer) {
-      var note = document.createElement('div');
-      note.className = 'notice';
-      note.textContent = cfg.disclaimer;
-      msgs.appendChild(note);
-    }
     if (!state.messages.length) welcome();
     state.messages.forEach(function (m) { bubble(m.role, m.content); });
     updateCallbar();

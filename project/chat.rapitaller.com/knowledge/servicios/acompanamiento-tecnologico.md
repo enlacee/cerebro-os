@@ -110,7 +110,7 @@ contratar un empleado a tiempo completo.
 
 ## Prueba social
 
-⭐ **5.0 en Google Reviews** (https://maps.app.goo.gl/JRrBrmTmXPokXJyt6) · TikTok:
+⭐ **4.9 en Google Reviews** (https://maps.app.goo.gl/JRrBrmTmXPokXJyt6) · TikTok:
 ~500 k visualizaciones, 7 k seguidores, 28 k likes. Reseñas destacan la asesoría
 técnica y el apoyo para publicar apps en Google Play.
 

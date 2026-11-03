@@ -31,6 +31,17 @@ foreach (range(1, 8) as $i) {
     }
 }
 
+// CEREBRO_LINKS: "tipo|url|texto (opcional), …" (tipo: blog, web, youtube, tiktok, facebook, instagram, linkedin u otro).
+// Solo http(s): nada de javascript: ni otros esquemas.
+$names = ['blog' => 'Blog', 'web' => 'Web', 'youtube' => 'YouTube', 'tiktok' => 'TikTok', 'facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn'];
+$links = collect(explode(',', env('CEREBRO_LINKS', '')))
+    ->map(fn (string $link) => array_map('trim', explode('|', $link, 3)) + [1 => '', 2 => ''])
+    ->filter(fn (array $link) => filled($link[0]) && preg_match('#^https?://#i', $link[1]) && filter_var($link[1], FILTER_VALIDATE_URL))
+    ->map(fn (array $link) => ['type' => strtolower($link[0]), 'label' => $link[2] ?: ($names[strtolower($link[0])] ?? $link[0]), 'url' => $link[1]])
+    ->values()->all();
+
+$ratingUrl = env('CEREBRO_RATING_URL', '');
+
 return [
 
     // Nombre del negocio que atiende el bot (aparece en el system prompt).
@@ -115,7 +126,7 @@ return [
     // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
     'widget' => [
         'title' => $business,
-        'subtitle' => 'Asistente en línea',
+        'subtitle' => 'En línea',
         'greeting' => env('CEREBRO_GREETING', "¡Hola! 👋 Soy el asistente de {$business}. ¿Qué necesitas?"),
         'disclaimer' => 'Respuestas con IA · pueden tener errores',
         // Colores (estilo sobrio tipo Google): azul = asistente, verde = WhatsApp (lo único verde para que
@@ -130,8 +141,8 @@ return [
 
         // Botón fijo arriba: hablar con una persona.
         'contact' => [
-            'label' => "Hablar con {$owner}",
-            'short' => 'WhatsApp', // en pantallas muy angostas (≤360px)
+            'label' => "Hablar con {$owner} por WhatsApp", // tooltip y lectores de pantalla
+            'short' => 'WhatsApp', // texto del botón (≤360px queda solo el logo)
             'message' => "Hola {$owner}, vengo del chat de la web 👋",
         ],
 
@@ -154,8 +165,18 @@ return [
         ],
 
         // Chips: al tocarlos se envía "message" al asistente.
-        'topics_title' => 'O pregúntale al asistente:',
+        'topics_title' => env('CEREBRO_TOPICS_TITLE', 'Lo más buscado'),
         'topics' => $topics,
+
+        // Prueba social en la bienvenida: "⭐ 4.9 en Google · Ver reseñas". Sin CEREBRO_RATING no se muestra.
+        'rating' => filled(env('CEREBRO_RATING')) ? [
+            'value' => (string) env('CEREBRO_RATING'),
+            'source' => env('CEREBRO_RATING_SOURCE', 'Google'),
+            'url' => preg_match('#^https?://#i', $ratingUrl) ? $ratingUrl : null,
+        ] : null,
+
+        // Link(s) del dueño al pie de la bienvenida (CEREBRO_LINKS). Recomendado: uno solo.
+        'links' => $links,
     ],
 
 ];

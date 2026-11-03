@@ -54,6 +54,7 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Repo único con Docker, backend (`laravel/`) y conocimiento (`knowledge/`, vault de Obsidian); nombres de contenedor legibles.
 - Chips con respuesta escrita (tercer campo de `CEREBRO_TOPIC_*` → `knowledge/respuestas/*.md`): sin IA ni tokens. `CEREBRO_LLM_MAX_TOKENS=3000` (el "pensamiento" de Gemini cuenta en el tope; con 800 se cortaban respuestas).
 - Fase 4 definida en el README (niveles hospedado / widget / self-hosted).
+- Widget (2026-11-03): "Nueva conversación" destacada en azul; título de chips configurable (`CEREBRO_TOPICS_TITLE`, "Lo más buscado"); calificación "★ 4.9 en Google" en la cabecera (`CEREBRO_RATING*`); aviso de IA al pie bajo el campo de texto; un solo link del dueño al pie de la bienvenida: el blog (`CEREBRO_LINKS="tipo|url|texto"`, solo http/https). Sin link a anibalcopitan.com ni al linktree: el widget vive ahí. Botón de WhatsApp con logo. 29 tests en verde.
 - Vault revisado (2026-11-03): precios unificados (Android SaaS S/49; AppMonetizable $10 solo código, sin soporte), planes viejos eliminados, estrategia interna movida a `~/sites/obsidian-vault/cerebro-os/estrategia-ventas.md`, caso Studio8Record anonimizado, wikilinks corregidos.
 
 **Siguiente**

@@ -103,6 +103,33 @@ class ChatTest extends TestCase
             ->assertJsonStructure(['title', 'greeting', 'whatsapp', 'contact', 'topics' => [['label', 'message']]]);
     }
 
+    public function test_widget_config_has_rating_and_only_safe_links(): void
+    {
+        // Se relee config/cerebro.php con otras variables (Laravel lee primero $_SERVER y $_ENV).
+        $vars = [
+            'CEREBRO_RATING' => '4.9',
+            'CEREBRO_RATING_SOURCE' => 'Google',
+            'CEREBRO_RATING_URL' => 'https://maps.app.goo.gl/x',
+            'CEREBRO_LINKS' => 'blog|https://blog.ejemplo.com/|Mi blog, youtube|javascript:alert(1), Mi tienda|https://tienda.ejemplo.com',
+        ];
+        $backup = [$_SERVER, $_ENV];
+        foreach ($vars as $key => $value) {
+            $_SERVER[$key] = $_ENV[$key] = $value;
+        }
+
+        try {
+            $widget = (require config_path('cerebro.php'))['widget'];
+        } finally {
+            [$_SERVER, $_ENV] = $backup;
+        }
+
+        $this->assertSame(['value' => '4.9', 'source' => 'Google', 'url' => 'https://maps.app.goo.gl/x'], $widget['rating']);
+        $this->assertSame([
+            ['type' => 'blog', 'label' => 'Mi blog', 'url' => 'https://blog.ejemplo.com/'],
+            ['type' => 'mi tienda', 'label' => 'Mi tienda', 'url' => 'https://tienda.ejemplo.com'],
+        ], $widget['links']);
+    }
+
     public function test_validates_input(): void
     {
         $this->postJson('/api/chat', ['session_id' => 'x', 'message' => ''])

@@ -72,6 +72,12 @@ CEREBRO_CALL_INTRO='Llamada rápida por WhatsApp (3 min) para conocerte y saber 
 # Con respuesta escrita (un .md de knowledge/) sale al instante y sin gastar tokens; sin ella, responde la IA.
 CEREBRO_TOPIC_1="🔧 Precios | ¿Cuánto cuesta un mantenimiento? | respuestas/precios.md"
 CEREBRO_TOPIC_2="📍 Ubicación | ¿Dónde están?"
+CEREBRO_TOPICS_TITLE="Lo más buscado"     # título encima de los chips
+
+# Al pie de la bienvenida (opcional; vacío = no se muestra).
+CEREBRO_RATING="4.8"                      # "⭐ 4.8 en Google · Ver reseñas"
+CEREBRO_RATING_URL=https://maps.app.goo.gl/...
+CEREBRO_LINKS="facebook|https://facebook.com/tallerjuan|Mira nuestros trabajos"   # "tipo|url|texto"; mejor un solo link
 ```
 
 Y además:
