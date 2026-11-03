@@ -51,12 +51,16 @@
     </div>
   </main>
 
-  <footer>Hecho por Aníbal Linux</footer>
+  <footer>Hecho por <span id="business">Cerebro OS</span></footer>
 
   <script>
     // El script apunta a este mismo servidor (localhost en desarrollo, tu dominio en producción).
     var snippet = '<script src="' + location.origin + '/widget.js" defer><\/script>';
     document.getElementById('snippet').textContent = snippet;
+    // El nombre del negocio sale de la configuración de la instancia (.env).
+    fetch('/api/widget').then(function (res) { return res.json(); }).then(function (cfg) {
+      if (cfg.title) document.getElementById('business').textContent = cfg.title;
+    });
     document.getElementById('copy').addEventListener('click', function () {
       var btn = this;
       navigator.clipboard.writeText(snippet).then(function () {

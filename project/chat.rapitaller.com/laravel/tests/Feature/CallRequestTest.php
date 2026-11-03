@@ -83,7 +83,7 @@ class CallRequestTest extends TestCase
         ])->assertCreated()
             // 3 pm en Lima = 9 pm en Madrid (horario de invierno desde el 25 de octubre).
             ->assertJsonPath('message', fn (string $m) => str_contains($m, 'Hoy · 9:00 pm – 10:00 pm (tu hora)')
-                && str_contains($m, 'en Perú: Hoy · 3:00 pm – 4:00 pm (hora Perú)'));
+                && str_contains($m, '(tu hora)** · Hoy · 3:00 pm – 4:00 pm (hora Perú)'));
 
         $this->assertSame('Europe/Madrid', CallRequest::sole()->timezone);
         Http::assertSent(fn (Request $request) => str_contains($request['text'], 'Cliente en Europe/Madrid — para él: Hoy · 9:00 pm'));

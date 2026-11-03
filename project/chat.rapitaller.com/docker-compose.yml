@@ -25,7 +25,10 @@ services:
     image: cerebro-os:dev
     container_name: ${NAME}-scheduler
     restart: unless-stopped
-    depends_on: [app]
+    # Espera a que app termine de arrancar (composer install, migraciones) antes de usar vendor/.
+    depends_on:
+      app:
+        condition: service_healthy
     entrypoint: ["php", "artisan", "schedule:work"]
     # No sirve web: el healthcheck de la imagen (Caddy) siempre fallaría aquí.
     healthcheck:

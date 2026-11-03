@@ -2,6 +2,5 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// La raíz muestra la página demo con el chat.
+Route::get('/', fn () => response()->file(public_path('demo.html')));
