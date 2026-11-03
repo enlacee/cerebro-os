@@ -2,6 +2,10 @@
 
 **Un solo repo** con todo: Docker, backend y conocimiento. Los secretos y datos (`.env`, SQLite, backups) nunca entran a git.
 
+
+![Asistente Ia / Chat](./docs/README/screenshot-v1.png)
+
+
 ```
 app/                                   ← este repo
 ├── common/
