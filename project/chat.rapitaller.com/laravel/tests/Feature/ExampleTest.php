@@ -12,6 +12,9 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $this->assertStringContainsString('/widget.js', $response->streamedContent());
+        $html = $response->streamedContent();
+        // El visitante ve el chat abierto, no el código para pegar.
+        $this->assertStringContainsString('src="/widget.js" data-open', $html);
+        $this->assertStringNotContainsString('Copiar', $html);
     }
 }

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chat</title>
+  <style>
+    :root { --bg: #f8f9fa; --fg: #202124; --muted: #5f6368; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #202124; --fg: #e8eaed; --muted: #9aa0a6; }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--fg);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main {
+      flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+      width: 100%; max-width: 640px; margin: 0 auto;
+      padding: calc(32px + env(safe-area-inset-top)) 16px 32px;
+    }
+    h1 { font-size: clamp(28px, 7vw, 40px); line-height: 1.15; margin: 0 0 10px; font-weight: 700; }
+    p { margin: 0; color: var(--muted); font-size: 17px; max-width: 30em; }
+    /* Espacio abajo para que el botón 💬 del chat no tape el footer. */
+    footer {
+      text-align: center; color: var(--muted); font-size: 14px;
+      padding: 16px 16px calc(96px + env(safe-area-inset-bottom));
+    }
+  </style>
+</head>
+<body>
+  <!-- Página del visitante: el chat empieza abierto (data-open). -->
+  <main>
+    <h1 id="business">Chat</h1>
+    <p id="greeting">Escríbenos en el chat 💬</p>
+  </main>
+
+  <footer>Hecho con Cerebro OS</footer>
+
+  <script>
+    // Nombre y saludo salen de la configuración de la instancia (laravel/.env).
+    fetch('/api/widget').then(function (res) { return res.json(); }).then(function (cfg) {
+      if (cfg.title) {
+        document.getElementById('business').textContent = cfg.title;
+        document.title = cfg.title + ' · Chat';
+      }
+      if (cfg.greeting) document.getElementById('greeting').textContent = cfg.greeting;
+    });
+  </script>
+  <script src="/widget.js" data-open defer></script>
+</body>
+</html>

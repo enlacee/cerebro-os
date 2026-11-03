@@ -12,7 +12,7 @@ Esta carpeta es **solo el backend**. Docker vive afuera (`../` = la instancia, `
 cd ..                     # carpeta de la instancia (ej. chat.rapitaller.com)
 cp .env.example .env      # Docker: nombre y puerto (el conocimiento está en ../knowledge)
 docker compose up -d --build
-xdg-open http://localhost/demo.html
+xdg-open http://localhost      # chat abierto (puerto: APP_PORT del .env)
 ```
 
 El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra y compila el conocimiento. Pon `GEMINI_API_KEY` (gratis en https://aistudio.google.com/apikey) en `laravel/.env`.
@@ -32,6 +32,10 @@ El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra 
 ```html
 <script src="https://chat.rapitaller.com/widget.js" defer></script>
 ```
+
+- Sale la burbuja 💬. Con `data-open` en el `<script>` el chat empieza abierto (así lo usa la raíz `/`, `public/chat.html`).
+- Cualquier link `<a href="#chat">` de la web abre el chat, y también entrar con `#chat` en la URL. Ejemplo para un linktree: `<a href="#chat">💬 Pregúntale a mi asistente</a>`.
+- La web tiene que estar en `CEREBRO_ALLOWED_ORIGINS` (CORS), ej. `https://anibalcopitan.com`.
 
 Saludo, colores (`colors`, estilo sobrio tipo Google: azul `#1a73e8` = asistente, verde `#188038` = WhatsApp, cabecera blanca), WhatsApp, botón **"Ya decidí, quiero pagar"** y **chips de temas** se editan en `config/cerebro.php` → `widget` (lo sirve `GET /api/widget`).
 

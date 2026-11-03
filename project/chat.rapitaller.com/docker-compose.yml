@@ -1,4 +1,4 @@
-# Desarrollo local: docker compose up -d --build  →  http://localhost/demo.html
+# Desarrollo local: docker compose up -d --build  →  http://localhost (chat abierto)
 services:
   app:
     build:

@@ -3,6 +3,7 @@
  *
  * Uso (todo lo demás se configura en config/cerebro.php → GET /api/widget):
  *   <script src="https://chat.tudominio.com/widget.js" defer></script>
+ *   data-open en el <script> → el chat empieza abierto. Un link <a href="#chat"> lo abre.
  */
 (function () {
   'use strict';
@@ -338,6 +339,16 @@
   $('.backdrop').addEventListener('click', function () { toggle(false); });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && panel.classList.contains('open')) toggle(false);
+  });
+
+  // Abrir solo: data-open en el <script> (página propia del chat) o al llegar con #chat en la URL.
+  if (script.hasAttribute('data-open') || location.hash === '#chat') toggle(true);
+  // Cualquier link a #chat de la web abre el chat (ej. un botón "Pregúntale a mi asistente").
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#chat"]');
+    if (!a) return;
+    e.preventDefault();
+    toggle(true);
   });
 
   // Nueva conversación: borra el historial local y vuelve a la bienvenida.
