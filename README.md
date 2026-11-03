@@ -25,7 +25,7 @@ Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la
 🔒 **`knowledge/` = solo lo público**: el bot puede revelar cualquier cosa que esté ahí. Notas internas, costos o datos de clientes van fuera (ej. `~/sites/obsidian-vault/cerebro-os`). Ábrelo en Obsidian con "Open folder as vault".
 Contenedores con nombre legible (`NAME`): `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (tareas).
 
-Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`** · Seguridad: **`SEGURIDAD.md`**.
+Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`** · Seguridad: **`SEGURIDAD.md`** · Cliente nuevo: **`NUEVA-INSTANCIA.md`**.
 
 ## Local
 
@@ -84,26 +84,7 @@ Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca co
 
 ## Nueva instancia
 
-Cada negocio es una carpeta en `project/`. La carpeta `laravel/` es igual en todas: **no se edita**. Lo propio de cada negocio está en 3 lugares:
-
-| Archivo | Qué cambias |
-|---|---|
-| `.env` | `NAME`, `DOMAIN`, `EMAIL`, `APP_PORT` (Docker) |
-| `laravel/.env` | Sección **Chat**: nombre, quien atiende, WhatsApp, saludo, color, horarios de llamada, chips · `CEREBRO_ALLOWED_ORIGINS`, `GEMINI_API_KEY`, Telegram |
-| `knowledge/` | Las notas de Obsidian del negocio (solo lo público) |
-
-```bash
-cd project
-mkdir chat.nuevo.com
-cp chat.anibalcopitan.com/{docker-compose.yml,docker-compose.prod.yml,.env.example} chat.nuevo.com/
-rsync -a --exclude vendor --exclude .env --exclude 'database/*.sqlite*' --exclude 'storage/app/*' \
-  chat.anibalcopitan.com/laravel/ chat.nuevo.com/laravel/
-cp chat.nuevo.com/.env.example chat.nuevo.com/.env                     # edita NAME, APP_PORT…
-cp chat.nuevo.com/laravel/.env.example chat.nuevo.com/laravel/.env     # edita la sección Chat
-mkdir chat.nuevo.com/knowledge                                         # sus notas
-```
-
-Arreglos de código: se hacen en una instancia y se copia `laravel/` a las demás (los `.env` y la base no se tocan).
+Cada negocio es una carpeta en `project/`, con `laravel/` idéntica en todas. Lo propio va en `.env`, `laravel/.env` (sección Chat) y `knowledge/`. Paso a paso, de los datos del cliente a producción: **`NUEVA-INSTANCIA.md`**.
 
 ## Nuevo cliente
 

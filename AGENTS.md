@@ -22,7 +22,7 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
     └── knowledge/                          ← vault de Obsidian de la instancia
 ```
 - `.env` de la instancia = Docker (`NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE` en el VPS). `laravel/.env` = la app (keys, CORS, límites) y la sección **Chat** (nombre, quien atiende, WhatsApp, saludo, horarios, chips).
-- `laravel/` debe ser idéntica en todas las instancias: nada propio de un negocio en el código (va en `laravel/.env` o en `knowledge/`). Nueva instancia: ver README.
+- `laravel/` debe ser idéntica en todas las instancias: nada propio de un negocio en el código (va en `laravel/.env` o en `knowledge/`). Nueva instancia: `NUEVA-INSTANCIA.md`.
 - Contenedores: `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (`schedule:work`: recordatorios cada minuto, `db:backup` 3 am, `data:prune` 3:30 am).
 - Comandos: desde la carpeta de la instancia, `docker compose exec app php artisan test`. Mantener los tests en verde.
 - Conocimiento: `knowledge/` de cada instancia = vault de Obsidian, montado solo lectura. **Solo contenido público** (el bot puede revelarlo). Lo interno (ej. `oportunidades.md`) vive en `~/sites/obsidian-vault/cerebro-os`, nunca en `knowledge/`.
