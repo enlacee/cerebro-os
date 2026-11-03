@@ -24,6 +24,7 @@
     pay: null,
     call: null,
     topics_title: '',
+    launcher: '',
     topics: [],
     rating: null,
     links: [],
@@ -115,8 +116,12 @@
     '*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}' +
     'button,a{touch-action:manipulation}' +
     '.fab{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));' +
-    'width:56px;height:56px;border-radius:50%;border:0;background:var(--c);color:#fff;display:grid;place-items:center;' +
-    'cursor:pointer;box-shadow:0 3px 10px rgba(60,64,67,.35);font-size:26px;z-index:2147483000}' +
+    'width:56px;height:56px;border-radius:50%;border:0;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;' +
+    'cursor:pointer;box-shadow:0 3px 10px rgba(60,64,67,.35);font:600 15px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;white-space:nowrap;z-index:2147483000}' +
+    // Botón con texto (píldora, CEREBRO_LAUNCHER_TEXT); abierto vuelve a ser círculo con ✕.
+    '.fab.ext{width:auto;height:50px;padding:0 20px 0 16px;border-radius:25px}' +
+    '.fab .x,.fab.open .chat,.fab.open .fab-text,.fab .fab-text:empty{display:none}.fab.open .x{display:block}' +
+    '.fab.ext.open{width:56px;height:56px;padding:0;border-radius:50%}' +
     '.panel{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;display:none;flex-direction:column;' +
     'background:var(--bg);color:var(--fg);overflow:hidden;z-index:2147483001}' +
     '.panel.open{display:flex}' +
@@ -206,7 +211,7 @@
     '@media (max-width:360px){.wa{width:38px;padding:0;justify-content:center}.wa .short{display:none}}' +
     // Escritorio / tablet: panel flotante.
     '@media (min-width:481px){' +
-    '.fab{right:20px;bottom:20px;width:58px;height:58px}' +
+    '.fab{right:20px;bottom:20px;width:58px;height:58px}.fab.ext{height:52px;border-radius:26px}.fab.ext.open{width:58px;height:58px;border-radius:50%}' +
     '.panel{inset:auto 20px 90px auto;width:400px;height:620px;max-height:calc(100vh - 110px);border-radius:16px;border:1px solid var(--line);box-shadow:0 8px 28px rgba(60,64,67,.28)}' +
     '.head{padding:10px 8px 10px 14px}.icon{width:36px;height:36px;border-radius:10px}' +
     '.backdrop{display:block}.panel.open{animation:cerebro-pop .2s ease-out}' +
@@ -214,7 +219,7 @@
     '}' +
     '.panel.open~.fab{display:none}' +
     '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg{animation:none}.backdrop{transition:none}}' +
-    '@media (min-width:481px){.panel.open~.fab{display:grid}}' +
+    '@media (min-width:481px){.panel.open~.fab{display:flex}}' +
     '</style>' +
     '<div class="backdrop" aria-hidden="true"></div>' +
     '<div class="panel" role="dialog" aria-label="Chat">' +
@@ -241,7 +246,13 @@
     '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>' +
     '<div class="foot" hidden></div>' +
     '</div>' +
-    '<button class="fab" aria-label="Abrir chat">💬</button>';
+    '<button class="fab" aria-label="Abrir chat">' +
+    // Ícono de chat dibujado (el emoji se veía distinto en cada sistema).
+    '<svg class="chat" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>' +
+    '<svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">' +
+    '<path d="M18 6 6 18M6 6l12 12"/></svg>' +
+    '<span class="fab-text"></span></button>';
 
   var $ = function (sel) { return root.querySelector(sel); };
   var panel = $('.panel'), msgs = $('.msgs'), typing = $('.typing'), form = $('.composer'), input = $('.composer input'), sendBtn = $('.composer button');
@@ -313,6 +324,10 @@
       wa.hidden = false;
     }
     if (cfg.call) $('.callbar button').textContent = cfg.call.short;
+    if (cfg.launcher) {
+      $('.fab .fab-text').textContent = cfg.launcher;
+      $('.fab').classList.add('ext');
+    }
   });
 
   $('.callbar button').addEventListener('click', function () { openCallForm(); });
@@ -325,7 +340,8 @@
   function toggle(open) {
     panel.classList.toggle('open', open);
     $('.backdrop').classList.toggle('show', open);
-    $('.fab').textContent = open ? '✕' : '💬';
+    $('.fab').classList.toggle('open', open);
+    $('.fab').setAttribute('aria-label', open ? 'Cerrar chat' : 'Abrir chat');
     fitViewport();
     if (open) {
       if (!msgs.children.length) ready.then(renderAll);

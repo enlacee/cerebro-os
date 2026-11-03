@@ -164,6 +164,9 @@ return [
             'privacy' => "🔒 Tus datos solo se usan para esta llamada y se borran a los {$retentionCalls} días.",
         ],
 
+        // Texto del botón flotante ("¿Dudas? Pregúntame"). Vacío = solo el ícono.
+        'launcher' => env('CEREBRO_LAUNCHER_TEXT', '¿Dudas? Pregúntame'),
+
         // Chips: al tocarlos se envía "message" al asistente.
         'topics_title' => env('CEREBRO_TOPICS_TITLE', 'Lo más buscado'),
         'topics' => $topics,

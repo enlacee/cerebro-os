@@ -173,6 +173,11 @@ class ChatTest extends TestCase
         $this->assertGreaterThan(strpos($prompt, 'Publicar app: $100'), strpos($prompt, '# Recordatorio'));
     }
 
+    public function test_widget_config_has_launcher_text(): void
+    {
+        $this->getJson('/api/widget')->assertJsonPath('launcher', config('cerebro.widget.launcher'));
+    }
+
     public function test_widget_shows_ai_disclaimer(): void
     {
         $this->getJson('/api/widget')->assertJsonPath('disclaimer', fn (string $d) => str_contains($d, 'IA'));
