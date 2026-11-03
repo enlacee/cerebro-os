@@ -15,7 +15,8 @@ servidores (VPS o casa).
 - Contenerización de aplicaciones (web, APIs, bases de datos).
 - Despliegue y orquestación básica de servicios en un servidor.
 - Ayuda con Docker incluida en los planes de **Acompañamiento Tecnológico**
-  (Profesional **$50/mes** y Premium **$100/mes** — ver `servicios/asesoria.md`).
+  (Brazo Derecho **$100/mes** e Implementación **$300/mes** — ver
+  `servicios/acompanamiento-tecnologico.md`).
 
 ## Importante (enfoque de venta)
 

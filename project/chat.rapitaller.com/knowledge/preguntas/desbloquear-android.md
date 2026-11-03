@@ -47,4 +47,4 @@ updated: 2026-10-22
 Para comprobar si una APK es segura: https://isthisapksafe.com/ (analiza con
 varios antivirus, permisos y firma).
 
-Ver también: [[desbloquear-iphone]] · [[publicar-app]] · [[soporte]]
+Ver también: [[desbloquear-iphone]] · [[preguntas/publicar-app|publicar-app]] · [[soporte]]

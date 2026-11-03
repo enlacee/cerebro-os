@@ -1,6 +1,6 @@
 ---
 title: Política – Soporte, entrega y clientes
-description: Cómo se entrega el acceso, condiciones de soporte, agenda y tipos de cliente (incluye "lista negra").
+description: Cómo se entrega el acceso, condiciones de soporte, agenda y tipos de cliente.
 type: politica
 updated: 2026-10-22
 ---
@@ -30,19 +30,18 @@ updated: 2026-10-22
 
 ## Tipos de cliente
 
-- **Acompañamiento tecnológico** → personas que quieren tu guía.
-- **Evaluación técnica y cotización** → clientes que quieren que tú construyas.
+- **Acompañamiento tecnológico** → personas que quieren la guía de Aníbal.
+- **Evaluación técnica y cotización** → clientes que quieren que Aníbal construya.
 
-### 🚩 Cliente "lista negra" (manejar con límite)
+### Casos especiales
 
-1. **Cliente que pega un bloque enorme** describiendo toda su app y pide que le
-   digas si es posible y lo argumentes gratis → responder:
-   > "Eso lo revisamos en una llamada corta de 2 min; ahí te digo rápido dónde
-   > puedo ayudar, y si necesitas más tiempo lo vemos en una reunión técnica con
-   > costo."
-2. **Cliente que pide devolución** alegando que el curso "no es para él".
-   Manejar con la política de cada producto; no prometer devoluciones no
-   pactadas.
+1. **Si alguien describe todo su proyecto** y pide que le digas gratis si es
+   posible → responder:
+   > "Eso lo revisamos en una llamada corta de 3 min; ahí te digo rápido dónde
+   > puedo ayudar, y si necesitas más tiempo lo vemos en la Consulta Técnica
+   > ($20)."
+2. **Si piden devolución** → aplicar `politicas/devoluciones.md`; no prometer
+   devoluciones no pactadas.
 
 > Frase de posicionamiento: *"Valoro mucho mi tiempo y el tuyo, por eso busco
 > trabajar con personas realmente interesadas."*

@@ -4,7 +4,7 @@ description: Material descargable y guías de Linux (migrar de Windows a Linux, 
 type: producto
 updated: 2026-10-27
 price_usd: "9"
-link_product: https://a.co/d/0bmvvdUS
+link_product: https://a.co/d/2wmoHbw
 ---
 
 # Producto – Ebook / Material Linux
@@ -32,12 +32,6 @@ parte se complementa con la **mentoría Linux 1 a 1** (`servicios/linux.md`).
   con cron, montar un mini-servidor en casa.
 - Material de apoyo: `alias.txt`, `script-backup.sh`, `mini-servidor/index.html`,
   `comandos.md`, `crons.md`.
-
-## Ideas de micro-productos Linux (registradas)
-
-- *"10 comandos que todo programador debe saber en Linux"* — punto de dolor:
-  "uso Linux pero no entiendo los comandos".
-- *"Manual de configuración simplificado"* (~10 soles) + asesoría express.
 
 > Precio oficial del ebook: **$9 USD** (Amazon). Para profundizar → **mentoría
 > Linux 1 a 1** (`servicios/linux.md`).

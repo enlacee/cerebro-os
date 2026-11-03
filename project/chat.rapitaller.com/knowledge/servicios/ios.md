@@ -37,4 +37,4 @@ Aníbal trabaja con apps iOS en producción, incluyendo apps **multiplataforma
   Plan Brazo Derecho (1 plataforma) o Implementación (ambas).
 - **Proyecto/mantenimiento a medida** → se cotiza tras la Consulta.
 
-Ver también: [[android]] · [[asesoria]] · [[casos-exito]]
+Ver también: [[android]] · [[servicios/asesoria|asesoria]] · [[casos-exito]]

@@ -24,7 +24,7 @@ Página de desarrollador: https://play.google.com/store/apps/developer?id=Anibal
 
 ## Proyectos de infraestructura / servidores
 
-- **Studio8Record** — servidor Ubuntu en casa con Caddy + Apache/PHP/MySQL + SMB,
+- **Estudio de grabación (cliente)** — servidor Ubuntu en casa con Caddy + Apache/PHP/MySQL + SMB,
   dominios y subdominios con HTTPS automático, almacenamiento en `/mnt/storage`.
 - **Tu VPS en Casa** — múltiples clientes montando servidores caseros.
 

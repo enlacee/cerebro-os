@@ -34,7 +34,7 @@ Configuración de infraestructura real: desde un **VPS en la nube** hasta un
 - Compartir archivos en red local con **SMB**.
 - Seguridad: UFW, claves SSH, MySQL solo local, respaldos.
 
-## Arquitectura típica (caso Studio8Record)
+## Arquitectura típica (caso real: estudio de grabación)
 
 ```
 Internet → Router 80/443 → Caddy → Apache:8080 → PHP/MySQL
@@ -44,11 +44,11 @@ Discos duros → /mnt/storage → Apache/SMB
 
 Subdominios por servicio sin abrir puertos al router:
 ```
-studio8record.com         → Apache 8080  (web PHP)
-panel.studio8record.com   → Node 3000
-nube.studio8record.com    → Nextcloud 8081
-api.studio8record.com     → Python 5000
-db.studio8record.com      → MySQL (NO se publica, solo local)
+midominio.com         → Apache 8080  (web PHP)
+panel.midominio.com   → Node 3000
+nube.midominio.com    → Nextcloud 8081
+api.midominio.com     → Python 5000
+MySQL                 → NO se publica, solo local
 ```
 
 ## Nota sobre IP pública / CGNAT
@@ -61,12 +61,12 @@ Cloudflare Tunnel o un VPS intermediario.
 
 ## Cómo se cotiza / se contrata
 
-1. **Aprender a montar el tuyo (1 a 1)** → mentoría VPS de la home, o el próximo
-   **Curso VPS en Casa** (`productos/vps-en-casa.md`).
+1. **Aprender a montar el tuyo (1 a 1)** → mentoría "Crea tu Propio Servidor" =
+   Plan Brazo Derecho $100/mes (`productos/vps-en-casa.md`).
 2. **Que te acompañe mientras lo haces** → **Acompañamiento Tecnológico desde
    $100/mes** (Plan Brazo Derecho: VPS + Linux + Docker + despliegues) o
    **$300/mes** (Plan Implementación: configura y despliega por ti).
-   Ver `servicios/asesoria.md`.
+   Ver `servicios/acompanamiento-tecnologico.md`.
 3. **Revisar un problema puntual primero** → **Consulta Técnica $20/S69** (45 min + 15 días de soporte por WhatsApp).
 
 Ver también: [[docker]] · [[linux]] · [[vps-en-casa]] · [[casos-exito]]

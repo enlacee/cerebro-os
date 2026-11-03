@@ -54,6 +54,6 @@ forense o empresas de ciberseguridad**, no para "ver el WhatsApp de alguien".
 **Asesoría de Seguridad iOS** (educativa): diferenciar herramientas oficiales de
 promesas falsas. Es una **Consulta Técnica ($20/S69)** como cualquier otra
 asesoría; si requiere seguimiento → Acompañamiento desde $100/mes.
-Ver [[asesoria]] · [[acompanamiento-tecnologico]].
+Ver [[servicios/asesoria|asesoria]] · [[acompanamiento-tecnologico]].
 
 Ver también: [[desbloquear-android]] · [[que-respondo-gratis]] · [[soporte]]

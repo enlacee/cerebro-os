@@ -16,6 +16,8 @@ updated: 2026-10-27
   cuesta **$20 y SIEMPRE incluye la asesoría Plan 1** (Consulta Técnica). Es
   decir, $20 = el recurso **+** la sesión 1 a 1. Y quien toma la Consulta $20 se
   lleva el recurso que necesita **+ el Ebook de regalo**.
+- **Excepción – AppMonetizable ($10):** solo el código fuente, sin soporte ni
+  asesoría.
 - **$100/mes (Plan 2 – Brazo Derecho):** acceso a **cualquier recurso disponible,
   sin límites, solo con pedirlo** + 30 días de soporte.
 - **$300/mes (Plan 3 – Implementación):** todo lo anterior + lo hace por ti +
@@ -29,7 +31,7 @@ updated: 2026-10-27
 | Ebook Linux (Amazon: a.co/d/2wmoHbw) | **$9** | Regalo con la Consulta $20 |
 | Pasarela de pago ("Cobra con 1 link") | **$20** | Incluye asesoría Plan 1; gratis dentro de Plan 1 |
 | Bot TikTok Live (todo el código) | **$20** | Incluye asesoría Plan 1 (con o sin asesoría es Plan 1) |
-| AppMonetizable Android (código fuente app monetizable) | **$20** | Incluye asesoría Plan 1; sin límites en planes mensuales |
+| AppMonetizable Android (código fuente app monetizable) | **$10** | Solo código fuente, **sin soporte ni asesoría**; gratis en planes mensuales |
 | Crea tu sistema con Google Sheets | **$20** | Para *"quiero crear mi sistema con Google Sheets"*; código fuente + asesoría Plan 1 |
 
 > 🖥️ **Tu VPS en Casa** no es producto suelto: es parte del **Plan Brazo Derecho
@@ -81,8 +83,8 @@ updated: 2026-10-27
 > recurso sin límites, solo pedirlo** (Android SaaS, Bot TikTok, Pasarela,
 > AppMonetizable, Ebook…). En la **Consulta $20** va el recurso que necesita + el
 > Ebook de regalo.
-> Máx. 10 clientes activos · respuesta < 24 h · sin permanencia · 1ª consulta sin
-> compromiso. Landing: anibalcopitan.com/acompanamiento-tecnologico/
+> Máx. 10 clientes activos · respuesta < 24 h · sin permanencia · la Consulta es
+> pago único, sin obligación de seguir. Landing: anibalcopitan.com/acompanamiento-tecnologico/
 
 ## Servidores / VPS
 
@@ -97,4 +99,4 @@ Sin precio fijo: cada proyecto se cotiza tras revisar el caso. El flujo es
 Para ejecución continua se usa el **Plan Brazo Derecho ($100/mes)** o
 **Implementación ($300/mes)**.
 
-Ver también: [[asesoria]] · [[pagos]] · [[objeciones]]
+Ver también: [[servicios/asesoria|asesoria]] · [[pagos]] · [[objeciones]]

@@ -19,9 +19,9 @@ programar, automatizar y administrar servidores. Enseña con ejemplos reales.
    resuelve tus dudas) 🎁 **+ Ebook Linux en PDF de regalo** ($9 incluido). Si
    quiere seguimiento continuo → **Acompañamiento $100/mes** (Brazo Derecho).
 2. **Aprender por tu cuenta:** comprar solo el **Ebook Linux — $9** (Amazon:
-   https://a.co/d/0bmvvdUS).
+   https://a.co/d/2wmoHbw).
 
-> 💡 Gancho de venta: por solo **$10 más** que el ebook ($9), con la Consulta
+> 💡 Gancho de venta: por solo **$11 más** que el ebook ($9), con la Consulta
 > Técnica ($20) **te llevas el ebook gratis + una asesoría 1 a 1 en vivo**. Casi
 > siempre conviene la opción 1. El ebook solo es para quien quiere autodidacta.
 
@@ -52,4 +52,4 @@ Navegador, gestor de archivos, Obsidian/Google Keep para notas, terminal
 (`top`, `kill`, `ssh pi@...`), comandos básicos (`ls`, `pwd`, `cat`),
 personalización (theme, escritorios virtuales), atajos de KDE.
 
-Ver también: [[bash]] · [[vps]] · [[asesoria]]
+Ver también: [[bash]] · [[vps]] · [[servicios/asesoria|asesoria]]

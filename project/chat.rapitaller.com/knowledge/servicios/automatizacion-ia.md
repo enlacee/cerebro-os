@@ -15,19 +15,19 @@ updated: 2026-10-22
 - **Web scraping**, integración de APIs, automatización de procesos.
 - Ideal para **mini-SaaS sin backend tradicional** y productos digitales.
 
-## Crear apps/software con IA (nuevo enfoque)
+## Crear apps/software con IA
 
-> Giro de negocio: enseñar a **crear aplicaciones con IA** a personas que no
-> saben programar (emprendedores, no técnicos).
+Aníbal enseña a **crear aplicaciones con IA** a personas que no saben programar
+(emprendedores, no técnicos).
 
 - Crear apps, apps web y software de escritorio con IA.
 - Crear scripts de Linux con IA.
 - Herramientas/flujo: `agents.md`, specs, skills; opencode, Claude, Codex.
 - Apoyo puntual: *"¿Necesitas login con Google? ¿Publicar tu app? ¿Elegir entre
-  web o app? Yo te ayudo."* — orientado a miembros con **membresía de 1–3 meses**.
+  web o app? Yo te ayudo."* — en la Consulta Técnica ($20) o en el Acompañamiento mensual.
 
-Público objetivo: más amplio que solo técnicos. Los técnicos aprenden solos; los
-**no técnicos quieren saber y pagan**.
+Para quién: emprendedores y personas no técnicas que quieren crear su propia
+herramienta, además de developers.
 
 ## Cómo se cotiza
 

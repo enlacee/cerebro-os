@@ -78,4 +78,4 @@ guía es 1 a 1.) Ver `productos/play-store.md`.
 Eso es otra cosa: el **Curso Android SaaS ($15)** enseña a construir apps reales.
 Ver `productos/android-saas.md`.
 
-Ver también: [[play-store]] · [[android]] · [[ios]] · [[precios]] · [[asesoria]]
+Ver también: [[play-store]] · [[android]] · [[ios]] · [[precios]] · [[servicios/asesoria|asesoria]]

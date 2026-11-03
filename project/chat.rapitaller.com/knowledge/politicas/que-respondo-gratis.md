@@ -52,4 +52,4 @@ updated: 2026-10-22
    ofrece la **Consulta Técnica ($20)** (o el plan que corresponda).
 3. Cierra con el link/WhatsApp para agendar.
 
-Ver también: [[asistente-guia]] · [[asesoria]] · [[acompanamiento-tecnologico]] · [[objeciones]]
+Ver también: [[asistente-guia]] · [[servicios/asesoria|asesoria]] · [[acompanamiento-tecnologico]] · [[objeciones]]

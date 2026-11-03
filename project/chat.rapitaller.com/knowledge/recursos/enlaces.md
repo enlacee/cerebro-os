@@ -1,5 +1,5 @@
 ---
-title: Directorio de enlaces oficiales (para el asistente / n8n)
+title: Directorio de enlaces oficiales (para el asistente del chat)
 description: Fuente única de URLs oficiales. El asistente envía SOLO estos links. Mapea tema/intención → enlace a enviar. Incluye redes, productos, apps, WhatsApp y media.
 type: reference
 updated: 2026-10-27

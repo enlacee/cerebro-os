@@ -33,10 +33,10 @@ App "My Linux" / Aníbal Linux. Ver `ventas/casos-exito.md`.
 
 ## Cómo se cotiza
 
-Proyecto a medida → **consultoría técnica primero** ([[servicios/asesoria.md]]). 
+Proyecto a medida → **consultoría técnica primero** ([[servicios/asesoria|asesoria]]). 
 
 
 Publicación de una app ya hecha → ver `productos/play-store.md`.
 Aprender a hacerlo tú mismo → **Curso Android SaaS** (`productos/android-saas.md`).
 
-Ver también: [[ios]] · [[automatizacion-ia]] · [[publicar-app]]
+Ver también: [[ios]] · [[automatizacion-ia]] · [[preguntas/publicar-app|publicar-app]]

@@ -22,7 +22,7 @@ compartido**.
 
 ## Precio
 
-- 🇵🇪 **S/39** (Yape)
+- 🇵🇪 **S/49** (Yape)
 - 🌎 **USD $15**
 - 🌎 **PayPal: USD $18** (incluye la comisión)
 - ✅ **Pago único · acceso permanente · sin mensualidades.**
@@ -50,7 +50,7 @@ empezar de cero.
 ## Cómo comprar y recibir el acceso
 
 1. Pagar por el medio elegido:
-   - 🇵🇪 **Yape:** 970142637 (titular: *Víctor Co\**)
+   - 🇵🇪 **Yape:** 970142637 (titular: *Víctor Copitan*)
    - 🌎 **Binance:** disponible para cualquier país
    - 🌎 **PayPal:** USD $18 (incluye comisión)
 2. Enviar el **comprobante** por WhatsApp.

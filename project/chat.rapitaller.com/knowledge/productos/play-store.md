@@ -1,6 +1,6 @@
 ---
 title: Producto/Servicio – Publicar tu App (Play Store / App Store)
-description: Servicio de publicación hecho-por-ti (Android y/o iOS), incluido en los planes del Acompañamiento, y curso para hacerlo tú mismo.
+description: Servicio de publicación hecho-por-ti (Android y/o iOS), incluido en los planes del Acompañamiento, o guía 1 a 1 (Consulta Técnica $20) para hacerlo tú mismo.
 type: producto
 precio_android_usd: 100
 precio_ios_usd: 150
@@ -10,8 +10,8 @@ updated: 2026-10-22
 
 # Publicar tu App (Play Store / App Store)
 
-Dos modalidades: que **Aníbal lo haga por ti** (servicio) o que **aprendas a
-hacerlo** (curso).
+Dos modalidades: que **Aníbal lo haga por ti** (servicio) o que **lo hagas tú
+con su guía** 1 a 1 (Consulta Técnica).
 
 ## A) Servicio "Publica tu App sin rechazos" (hecho por ti)
 
@@ -90,4 +90,4 @@ Nota: hoy **no hay un curso grabado** de "publicar paso a paso"; esa guía se da
   opciones y según tu caso quizás ni necesites gastar en una cuenta propia. Ahí
   te explico ventajas y desventajas y elegimos lo mejor para ti."*
 
-Ver también: [[publicar-app]] · [[android]] · [[asesoria]]
+Ver también: [[preguntas/publicar-app|publicar-app]] · [[android]] · [[servicios/asesoria|asesoria]]

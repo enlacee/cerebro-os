@@ -19,7 +19,7 @@ updated: 2026-10-22
 - **Soporte por WhatsApp durante 15 días** para dudas técnicas.
 - Sirve para **cualquier tema técnico**: revisar tu problema/proyecto,
   identificar la falla y definir próximos pasos.
-- Sin compromiso mensual. **Primera consulta sin compromiso.**
+- Pago único, sin compromiso mensual ni obligación de seguir.
 - 🎁 **Incluye el recurso que necesites para ese tema** (ej. la Pasarela de pago,
   el Bot) **+ el Ebook Linux en PDF de regalo** (valor $9). Gancho: *"Por $20 te
   llevas la asesoría 1 a 1 + un recurso + mi Ebook gratis."* (Acceso ilimitado a

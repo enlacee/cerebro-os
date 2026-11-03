@@ -31,11 +31,11 @@ si fuera su asistente: ChatGPT, Gemini, DeepSeek, Claude, etc.
 ## ⭐ Servicio bandera
 
 **Acompañamiento Tecnológico** — servicio principal, mensual, 1 a 1.
-Planes: **Plan 1** Consulta Técnica **$20/S69** · **Plan 2** Brazo Derecho **$100/mes** ·
-**Plan 3** Implementación **$300/mes**. Es el primero a recomendar cuando el cliente no
-sabe qué necesita.
-→ `servicios/acompanamiento-tecnologico.md` ·
-https://anibalcopitan.com/acompanamiento-tecnologico/
+Planes: 
+- **Plan 1** Consulta Técnica **$20/S69** 
+- **Plan 2** Brazo Derecho **$100/mes**
+- **Plan 3** Implementación **$300/mes**.
+Es el primero a recomendar cuando el cliente no sabe qué necesita. [[acompanamiento-tecnologico]]
 
 ## 📱 Canales oficiales
 
@@ -64,7 +64,7 @@ https://anibalcopitan.com/acompanamiento-tecnologico/
 ## 🗂️ Estructura
 
 ```
-Knowledge/
+knowledge/
 ├── README.md                 ← este índice
 ├── servicios/                ← lo que Aníbal ofrece como servicio
 │   ├── acompanamiento-tecnologico.md   ⭐ SERVICIO BANDERA
@@ -94,10 +94,11 @@ Knowledge/
 │   ├── soporte.md
 │   ├── devoluciones.md
 │   └── pagos.md
+├── respuestas/               ← respuestas fijas de los chips (sin IA)
 ├── ventas/                   ← argumentos y manejo de objeciones
 │   ├── objeciones.md
 │   └── casos-exito.md
-└── recursos/                 ← para el asistente IA / n8n
+└── recursos/                 ← para el asistente del chat
     ├── enlaces.md            ← directorio único de URLs (tema → link a enviar)
     └── asistente-guia.md     ← cómo debe responder el bot (persona, flujo, media)
 ```

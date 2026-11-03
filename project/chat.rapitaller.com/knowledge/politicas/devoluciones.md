@@ -31,9 +31,7 @@ updated: 2026-10-22
 
 ## Importante
 
-- **Avisar antes de cobrar** que los digitales no tienen devolución (evita
-  reclamos). Ver cliente "lista negra" en `politicas/soporte.md` (reclamo de
-  devolución del curso).
+- **Avisar antes de cobrar** que los digitales no tienen devolución.
 - Casos puntuales o excepciones → los decide **Aníbal directamente** por WhatsApp,
   no el asistente. El bot no promete reembolsos.
 

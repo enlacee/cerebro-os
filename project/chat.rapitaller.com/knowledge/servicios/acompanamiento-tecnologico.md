@@ -42,7 +42,7 @@ Recursos actuales:
 - 🤖 **Bot TikTok Live → Google Sheets** — $20
 - 💳 **Pasarela de pago** ("Cobra con 1 link") — $20
 - 📊 **Crea tu sistema con Google Sheets** (código fuente) — $20
-- 💰 **Plantilla AppMonetizable Android** — $10
+- 💰 **Plantilla AppMonetizable Android** — $10 (solo código fuente, sin soporte)
 - 📚 **Ebook Linux (PDF)** — $9
 
 > **Diferencia clave entre niveles:**
@@ -51,7 +51,8 @@ Recursos actuales:
 > - **Plan 2/3 (mensual):** **todos** los recursos, sin límites, solo pedirlos.
 >
 > Los recursos también se venden sueltos a $20 (incluyen la asesoría Plan 1) a
-> quien no toma plan mensual.
+> quien no toma plan mensual. Excepción: **AppMonetizable, $10, solo código
+> fuente sin soporte**.
 
 ## 🎁 Bono de la Consulta Técnica
 
@@ -66,7 +67,7 @@ Piénsalo como una escalera: mientras más alto el plan, **más cosas tienes**, 
 perder nada de lo de abajo.
 
 - **Plan 2 – Brazo Derecho ($100/mes)** → **incluye todo lo del Plan 1**
-  (la asesoría/Consulta Técnica) **y le suma** el soporte mensual de 30 días, la
+  (la asesoría/Consulta Técnica) **y le suma** el soporte mensual de 30 días, los
   recursos sin límites y tu VPS en Casa.
 - **Plan 3 – Implementación ($300/mes)** → **incluye todo lo del Plan 2**
   **y le suma** que publico tus apps en ambas plataformas, con prioridad y que
@@ -82,7 +83,7 @@ perder nada de lo de abajo.
   inscripciones hasta nuevo aviso.
 - Respuesta personal de Aníbal en **menos de 24 h**.
 - **Sin permanencia mínima** (sin cláusulas de cancelación).
-- **Primera consulta sin compromiso.**
+- La Consulta Técnica es pago único, **sin obligación de seguir** con un plan.
 - Reuniones por **Google Meet o Zoom**, coordinadas según disponibilidad.
 - Pago único para la Consulta Técnica; pago mensual para Brazo Derecho e
   Implementación.
@@ -120,4 +121,4 @@ CTAs de la landing: *"Escríbeme"* · *"Lo quiero"* (Consulta) ·
 *"Elegir Avance"* (Brazo Derecho) · *"Impulsar proyecto"* (Implementación).
 Cierre: *"Cuéntame qué estás construyendo y te diré cómo puedo ayudarte."*
 
-Ver también: [[asesoria]] · [[vps]] · [[precios]] · [[objeciones]] · [[casos-exito]]
+Ver también: [[servicios/asesoria|asesoria]] · [[vps]] · [[precios]] · [[objeciones]] · [[casos-exito]]

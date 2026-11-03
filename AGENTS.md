@@ -54,13 +54,14 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Repo único con Docker, backend (`laravel/`) y conocimiento (`knowledge/`, vault de Obsidian); nombres de contenedor legibles.
 - Chips con respuesta escrita (tercer campo de `CEREBRO_TOPIC_*` → `knowledge/respuestas/*.md`): sin IA ni tokens. `CEREBRO_LLM_MAX_TOKENS=3000` (el "pensamiento" de Gemini cuenta en el tope; con 800 se cortaban respuestas).
 - Fase 4 definida en el README (niveles hospedado / widget / self-hosted).
+- Vault revisado (2026-11-03): precios unificados (Android SaaS S/49; AppMonetizable $10 solo código, sin soporte), planes viejos eliminados, estrategia interna movida a `~/sites/obsidian-vault/cerebro-os/estrategia-ventas.md`, caso Studio8Record anonimizado, wikilinks corregidos.
 
 **Siguiente**
 1. Primer despliegue en el VPS de rapitaller (manual con git): repo privado `cerebro-os` en GitHub, DNS del subdominio, clonar, crear los dos `.env`, `docker compose up -d --build`.
 2. Pegar el widget en anibalcopitan.com y `/linktree`; probar en celulares reales.
 
 **Pendiente**
-- Fase 1: ajustar tono/prompt con conversaciones reales. Revisar los borradores de `knowledge/respuestas/` (precio Android SaaS: S/39 en `productos/android-saas.md` vs S/49 en `preguntas/precios.md`).
+- Fase 1: ajustar tono/prompt con conversaciones reales. Revisar los borradores de `knowledge/respuestas/`.
 - Fase 1.5: página de política de privacidad (Ley 29733) enlazada desde el aviso.
 - Fase 2: CRM con Filament en `/admin` (conversaciones, llamadas con estados, contactos con etapas, tool `guardar_lead`, métricas). Panel con 2FA, límite de intentos y, si se puede, Cloudflare Access.
 - Fase 3: webhooks → n8n.
