@@ -50,7 +50,10 @@ services:
     <<: *app
     container_name: ${NAME}-scheduler
     environment: *env
-    depends_on: [app]
+    # Espera a que app termine de arrancar (composer install, migraciones) antes de usar vendor/.
+    depends_on:
+      app:
+        condition: service_healthy
     entrypoint: ["php", "artisan", "schedule:work"]
     healthcheck:
       disable: true

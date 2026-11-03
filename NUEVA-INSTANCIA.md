@@ -101,7 +101,7 @@ docker compose up -d
 ```
 
 - Abre `http://localhost:8082/` (el puerto de `APP_PORT`).
-- La primera vez instala `vendor/` (1–2 min): el scheduler se reinicia solo hasta que termina.
+- La primera vez instala `vendor/` (1–2 min). `up` espera a que la app esté lista y recién arranca el scheduler (~30 s más).
 - Revisa: nombre, saludo, chips, botón de WhatsApp (abre el número del cliente) y "Que … me llame".
 - Pregunta cosas reales y algo fuera de tema (debe negarse).
 - ¿Cambiaste el `.env` de Docker? → `docker compose up -d --force-recreate`
