@@ -1,6 +1,12 @@
-# Repo de infraestructura: solo Docker y despliegue.
-# El backend (laravel/) es otro repo; los .env y el conocimiento nunca se versionan.
+# Un solo repo: Docker, backend y conocimiento. Nunca secretos ni datos de clientes.
 .env
-project/*/laravel/
-project/*/knowledge/
+.env.backup
+.env.production
+*.sqlite
+*.sqlite-*
+vendor/
+node_modules/
+storage/app/backups/
+.obsidian/workspace*.json
+.trash/
 .DS_Store
