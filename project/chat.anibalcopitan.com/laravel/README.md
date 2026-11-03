@@ -12,7 +12,7 @@ Esta carpeta es **solo el backend**. Docker vive afuera (`../` = la instancia, `
 cd ..                     # carpeta de la instancia (ej. chat.anibalcopitan.com)
 cp .env.example .env      # Docker: nombre y puerto (el conocimiento está en ../knowledge)
 docker compose up -d --build
-xdg-open http://localhost:8000/demo.html
+xdg-open http://localhost/demo.html
 ```
 
 El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra y compila el conocimiento. Pon `GEMINI_API_KEY` (gratis en https://aistudio.google.com/apikey) en `laravel/.env`.

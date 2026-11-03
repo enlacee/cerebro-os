@@ -30,7 +30,7 @@ Una instancia = un cliente: sus contenedores, su base SQLite y su conocimiento. 
 
 | Contenedor | Imagen | Orden | Red | Puertos | Volúmenes |
 |---|---|---|---|---|---|
-| `chat.anibalcopitan.com` (app) | `cerebro-os` (dev / prod) | `frankenphp run` → servidor web | propia + `red` | ninguno en prod (8000 en local) | `./laravel` → `/app`, `./knowledge` → `/app/knowledge` (solo lectura) |
+| `chat.anibalcopitan.com` (app) | `cerebro-os` (dev / prod) | `frankenphp run` → servidor web | propia + `red` | ninguno en prod (80 en local) | `./laravel` → `/app`, `./knowledge` → `/app/knowledge` (solo lectura) |
 | `chat.anibalcopitan.com-scheduler` | la misma | `php artisan schedule:work` → reloj | solo la propia | ninguno | `./laravel` → `/app` |
 | `nginx_proxy` / `cerebro-proxy` | `nginxproxy/nginx-proxy` + `acme-companion` | proxy + HTTPS | `red` | 80, 443 | `docker.sock` (solo lectura), certificados |
 

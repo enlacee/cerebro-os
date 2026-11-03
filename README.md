@@ -32,7 +32,7 @@ Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`*
 ```bash
 cd project/chat.anibalcopitan.com
 cp .env.example .env           # NAME y puerto
-docker compose up -d --build   # http://localhost:8000/demo.html
+docker compose up -d --build   # http://localhost/demo.html
 docker compose exec app php artisan test
 ```
 
