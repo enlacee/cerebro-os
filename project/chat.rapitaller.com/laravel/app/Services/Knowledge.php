@@ -51,6 +51,31 @@ class Knowledge
         ];
     }
 
+    /**
+     * Respuesta escrita de un chip (CEREBRO_TOPIC_*), o null si ese mensaje va a la IA.
+     */
+    public function answer(string $message): ?string
+    {
+        $name = config('cerebro.knowledge.answers')[trim($message)] ?? null;
+
+        if ($name === null || in_array($name, config('cerebro.knowledge.exclude'), true)) {
+            return null;
+        }
+
+        // Solo archivos dentro de la carpeta de conocimiento.
+        $root = realpath(config('cerebro.knowledge.path'));
+        $file = realpath(config('cerebro.knowledge.path')."/{$name}");
+
+        if ($root === false || $file === false || ! str_starts_with($file, $root.DIRECTORY_SEPARATOR)) {
+            report(new RuntimeException("No existe la respuesta escrita: {$name}"));
+
+            return null;
+        }
+
+        // Sin el frontmatter de Obsidian (--- … ---).
+        return trim(preg_replace('/\A---\R.*?\R---\R/s', '', File::get($file))) ?: null;
+    }
+
     public function systemPrompt(): string
     {
         $compiled = config('cerebro.knowledge.compiled');

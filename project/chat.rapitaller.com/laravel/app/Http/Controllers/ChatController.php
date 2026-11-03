@@ -41,6 +41,16 @@ class ChatController extends Controller
             ->values()
             ->all();
 
+        // Chip con respuesta escrita: sale al instante, sin gastar tokens.
+        if ($answer = $knowledge->answer($data['message'])) {
+            $conversation->messages()->create(['role' => 'assistant', 'content' => $answer]);
+
+            return response()->stream(function () use ($answer) {
+                $this->send(['delta' => $answer]);
+                $this->send(['done' => true]);
+            }, 200, $this->streamHeaders());
+        }
+
         return response()->stream(function () use ($conversation, $history, $knowledge) {
             set_time_limit(120); // el LLM puede tardar; 30s por defecto no alcanza con reintento
             $reply = '';
@@ -82,11 +92,16 @@ class ChatController extends Controller
             }
 
             $this->send(['done' => true]);
-        }, 200, [
+        }, 200, $this->streamHeaders());
+    }
+
+    private function streamHeaders(): array
+    {
+        return [
             'Content-Type' => 'text/event-stream',
             'Cache-Control' => 'no-cache',
             'X-Accel-Buffering' => 'no',
-        ]);
+        ];
     }
 
     private function send(array $payload): void

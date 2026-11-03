@@ -57,6 +57,44 @@ class ChatTest extends TestCase
         });
     }
 
+    public function test_topic_with_written_answer_skips_the_llm(): void
+    {
+        $fake = Prism::fake([]);
+        File::ensureDirectoryExists(config('cerebro.knowledge.path').'/respuestas');
+        File::put(config('cerebro.knowledge.path').'/respuestas/publicar.md', "---\ntitle: Publicar\n---\n\nPublicar cuesta **\$100** 🚀\n");
+        config(['cerebro.knowledge.answers' => ['Quiero publicar mi app' => 'respuestas/publicar.md']]);
+
+        $body = $this->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => 'Quiero publicar mi app'])
+            ->assertOk()
+            ->streamedContent();
+
+        $this->assertStringContainsString('Publicar cuesta **$100** 🚀', $body);
+        $this->assertStringContainsString('"done":true', $body);
+        $fake->assertCallCount(0);
+
+        // Queda en el historial para que la IA tenga contexto en la siguiente pregunta.
+        $messages = Conversation::firstWhere('session_id', self::SESSION)->messages;
+        $this->assertSame(['user', 'assistant'], $messages->pluck('role')->all());
+        $this->assertSame('Publicar cuesta **$100** 🚀', $messages->last()->content);
+    }
+
+    public function test_topic_without_answer_or_outside_knowledge_goes_to_the_llm(): void
+    {
+        $fake = Prism::fake([TextResponseFake::make()->withText('ok'), TextResponseFake::make()->withText('ok')]);
+        File::put(storage_path('framework/testing/fuera.md'), 'FUERA DEL VAULT');
+        config(['cerebro.knowledge.answers' => [
+            'Ruta mala' => '../fuera.md',
+            'Archivo que no existe' => 'respuestas/no-existe.md',
+        ]]);
+
+        foreach (['Ruta mala', 'Archivo que no existe'] as $message) {
+            $body = $this->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => $message])->streamedContent();
+            $this->assertStringNotContainsString('FUERA DEL VAULT', $body);
+        }
+
+        $fake->assertCallCount(2);
+    }
+
     public function test_widget_config_has_pay_button_and_topics(): void
     {
         $this->getJson('/api/widget')

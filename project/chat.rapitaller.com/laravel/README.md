@@ -9,7 +9,7 @@ Chat con IA para tu web que responde con **tu propio conocimiento** (carpeta `.m
 Esta carpeta es **solo el backend**. Docker vive afuera (`../` = la instancia, `../../../common/frankenphp` = la imagen):
 
 ```bash
-cd ..                     # carpeta de la instancia (ej. chat.anibalcopitan.com)
+cd ..                     # carpeta de la instancia (ej. chat.rapitaller.com)
 cp .env.example .env      # Docker: nombre y puerto (el conocimiento está en ../knowledge)
 docker compose up -d --build
 xdg-open http://localhost/demo.html
@@ -30,7 +30,7 @@ El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra 
 **Widget en tu web** (antes de `</body>`):
 
 ```html
-<script src="https://chat.anibalcopitan.com/widget.js" defer></script>
+<script src="https://chat.rapitaller.com/widget.js" defer></script>
 ```
 
 Saludo, colores (`colors`, estilo sobrio tipo Google: azul `#1a73e8` = asistente, verde `#188038` = WhatsApp, cabecera blanca), WhatsApp, botón **"Ya decidí, quiero pagar"** y **chips de temas** se editan en `config/cerebro.php` → `widget` (lo sirve `GET /api/widget`).
@@ -74,6 +74,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] Horarios para todo el mundo: hora local del visitante primero (hora Perú debajo), "en 17 h", aviso 🌙 de madrugada, código de país automático y hora del cliente en Telegram
 - [x] Crear el bot de Telegram y poner `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` (`php artisan telegram:setup`)
 - [x] Bienvenida con 2 caminos: "Ya decidí, quiero pagar" (WhatsApp directo) y chips de temas que preguntan al asistente
+- [x] Respuestas escritas para los chips (`knowledge/respuestas/`): al instante y sin tokens; lo que sigue lo responde la IA con ese contexto
 - [x] CORS y rate limit por IP · tests automáticos
 - [x] Probado con API key real de Gemini (`gemini-3.6-flash` + respaldo `gemini-3.5-flash-lite`)
 - [ ] Ajustar tono/prompt con conversaciones reales

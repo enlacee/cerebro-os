@@ -16,12 +16,18 @@ $hours = array_map(
     array_filter(explode(',', env('CEREBRO_CALL_HOURS', '11:00-12:00,15:00-16:00')))
 );
 
-// CEREBRO_TOPIC_1 … _8: "texto del botón | mensaje que se envía"
+// CEREBRO_TOPIC_1 … _8: "texto del botón | mensaje que se envía | respuesta escrita (opcional)"
+// La respuesta es un .md de knowledge/ (ej. respuestas/publicar-app.md): sale al instante, sin IA.
 $topics = [];
+$answers = [];
 foreach (range(1, 8) as $i) {
     if (filled($topic = env("CEREBRO_TOPIC_{$i}"))) {
-        [$label, $message] = array_map('trim', explode('|', $topic, 2)) + [1 => null];
+        [$label, $message, $answer] = array_map('trim', explode('|', $topic, 3)) + [1 => null, 2 => null];
         $topics[] = ['label' => $label, 'message' => $message ?: $label];
+
+        if (filled($answer)) {
+            $answers[$message ?: $label] = $answer;
+        }
     }
 }
 
@@ -49,6 +55,8 @@ return [
         'first' => ['README.md', 'recursos/asistente-guia.md'],
         // Red de seguridad: archivos que el bot no debe leer aunque estén en la carpeta.
         'exclude' => array_filter(explode(',', env('CEREBRO_KNOWLEDGE_EXCLUDE', ''))),
+        // Respuestas escritas de los chips: mensaje => archivo (ver CEREBRO_TOPIC_*).
+        'answers' => $answers,
     ],
 
     'chat' => [
