@@ -92,23 +92,19 @@ widget.js ──POST /api/chat──▶ proxy ──▶ app
 - **SQLite** en `laravel/database/database.sqlite`. Backups en `laravel/storage/app/backups/`.
 - **Nunca se versionan:** `.env`, la base de datos ni los backups.
 
-## 6. Repos y carpetas
+## 6. Repo y carpetas
 
 ```
-~/sites/cerebro-os/app/                  ← repo infraestructura (este)
+~/sites/cerebro-os/app/                  ← repo único (este)
 ├── common/frankenphp/                   imagen
 ├── common/proxy/                        proxy propio
 └── project/<instancia>/                 una carpeta por cliente
     ├── docker-compose(.prod).yml, .env  cómo se levanta
-    ├── laravel/                         ← repo backend (el producto, igual para todos)
-    └── knowledge/                       ← repo + vault de Obsidian (solo lo público)
+    ├── laravel/                         ← backend (el producto)
+    └── knowledge/                       ← vault de Obsidian (solo lo público)
 ```
 
-| Repo | Contiene | Quién lo cambia |
-|---|---|---|
-| infraestructura | Docker, proxy, docs | Tú |
-| backend (`laravel/`) | Código del producto | Tú; las empresas hacen `git pull` cuando quieren |
-| conocimiento (`knowledge/`) | Lo que sabe el bot | Cada cliente, el suyo |
+Secretos y datos (`.env`, SQLite, backups, `vendor/`) quedan fuera de git. Antes del primer cliente se separa el producto del repo (Fase 4).
 
 ## 7. Despliegue
 
@@ -126,4 +122,4 @@ flowchart LR
 ```
 
 - Producción no abre puertos propios: todo entra por el proxy de la red `red`.
-- Mudarse = clonar los 3 repos, crear los 2 `.env`, restaurar el backup y apuntar el DNS. No cambia ningún archivo del proyecto.
+- Mudarse = clonar el repo, crear los 2 `.env`, restaurar el backup y apuntar el DNS. No cambia ningún archivo del proyecto.

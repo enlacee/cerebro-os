@@ -1,12 +1,12 @@
 # 🧠 Cerebro OS
 
-Chat con IA para tu web que responde con **tu propio conocimiento** (carpeta `.md` de Obsidian) y guarda cada conversación en un **CRM ligero**. Se instala **una instancia por cliente** (ver repo de infraestructura).
+Chat con IA para tu web que responde con **tu propio conocimiento** (carpeta `.md` de Obsidian) y guarda cada conversación en un **CRM ligero**. Se instala **una instancia por cliente** (ver `README.md` de la raíz).
 
 **Stack:** Laravel 13 · SQLite · FrankenPHP (Docker) · Prism PHP (Gemini por defecto; cambiable a Groq, OpenRouter, DeepSeek, OpenAI, Claude u Ollama) · SSE para streaming.
 
 ## Arranque rápido
 
-Este repo es **solo el backend**. Docker vive afuera, en el repo de infraestructura (`../` = la instancia, `../../../common/frankenphp` = la imagen):
+Esta carpeta es **solo el backend**. Docker vive afuera (`../` = la instancia, `../../../common/frankenphp` = la imagen):
 
 ```bash
 cd ..                     # carpeta de la instancia (ej. chat.anibalcopitan.com)
@@ -25,7 +25,7 @@ El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra 
 | Tests | `docker compose exec app php artisan test` |
 | Logs | `docker compose logs -f app` |
 | Conectar avisos de Telegram | `docker compose exec app php artisan telegram:setup` |
-| Producción | ver `README.md` de la infraestructura (despliegue manual con git) |
+| Producción | ver `README.md` de la raíz (despliegue manual con git) |
 
 **Widget en tu web** (antes de `</body>`):
 
@@ -37,7 +37,7 @@ Saludo, colores (`colors`, estilo sobrio tipo Google: azul `#1a73e8` = asistente
 
 ## Cómo funciona
 
-Arquitectura completa (contenedores, scheduler, datos, despliegue): `ARQUITECTURA.md` en el repo de infraestructura.
+Arquitectura completa (contenedores, scheduler, datos, despliegue): `ARQUITECTURA.md` en la raíz del repo.
 
 ```
 web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ──▶ LLM
@@ -80,7 +80,7 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [ ] Pegar el widget en `/linktree` y en la web
 
 ### Fase 1.5 — Producción segura
-- [x] Docker separado del backend (repo de infraestructura): imagen en `common/frankenphp`, compose por instancia
+- [x] Docker separado del backend (por carpetas): imagen en `common/frankenphp`, compose por instancia
 - [x] Producción sin dependencias de dev, `php.ini` de producción + `docker-compose.prod.yml`
 - [x] `.env.production.example`: `APP_DEBUG=false`, CORS solo para anibalcopitan.com
 - [x] Cabeceras de seguridad (HSTS, nosniff, sin `Server`) y logs rotados
@@ -89,8 +89,8 @@ web estática ──widget.js──▶ POST /api/chat (SSE) ──▶ Prism ─�
 - [x] `composer audit` sin vulnerabilidades
 - [x] Publicación por nginx-proxy (el del VPS o el propio de Cerebro), contenedores con nombre legible, sin puertos propios
 - [x] IP real del visitante detrás de proxy/Cloudflare (`CEREBRO_TRUSTED_PROXIES`) · widget funciona en subdominio o carpeta
-- [ ] Repos privados en GitHub + primer despliegue manual (VPS compartido con rapitaller) + DNS del subdominio
-- [x] Anti-abuso del bot: prompt con alcance cerrado y anti-inyección, historial 10, respuesta máx. 800 tokens, tope global diario, aviso "puede equivocarse" (pendientes en `SEGURIDAD.md` de infraestructura)
+- [ ] Repo privado en GitHub + primer despliegue manual (VPS compartido con rapitaller) + DNS del subdominio
+- [x] Anti-abuso del bot: prompt con alcance cerrado y anti-inyección, historial 10, respuesta máx. 800 tokens, tope global diario, aviso "puede equivocarse" (pendientes en `SEGURIDAD.md` en la raíz)
 - [ ] Alerta y tope de gasto en la API key de Gemini
 - [ ] Página de política de privacidad (Ley 29733) enlazada desde el aviso
 
@@ -114,6 +114,7 @@ Modelo: sin SaaS. Cada empresa tiene su instancia aislada (código, datos y cono
 3. Self-hosted: su servidor, su código (bifurcable; `git pull` del producto cuando quiera)
 
 **Antes del primer cliente**
+- [ ] Separar el producto del repo único (`git subtree split`, conserva el historial)
 - [ ] Producto genérico: sacar la marca "Aníbal" del código; chat.anibalcopitan.com pasa a ser un cliente más
 - [ ] Separar núcleo (no se toca) de personalización (.env, textos, colores, prompt, conocimiento) → `git pull` sin conflictos
 - [ ] Página de chat a pantalla completa en `/` (nivel 1)

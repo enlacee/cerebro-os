@@ -1,6 +1,6 @@
-# 🧠 Cerebro OS · Infraestructura
+# 🧠 Cerebro OS
 
-Cómo se **levanta** Cerebro OS (Docker + despliegue). El backend vive aparte, en `project/<instancia>/laravel/` (su propio repo git).
+**Un solo repo** con todo: Docker, backend y conocimiento. Los secretos y datos (`.env`, SQLite, backups) nunca entran a git.
 
 ```
 app/                                   ← este repo
@@ -12,9 +12,9 @@ app/                                   ← este repo
         ├── docker-compose.yml         ← local
         ├── docker-compose.prod.yml    ← VPS: sin puertos, se publica por el proxy (red "red")
         ├── .env                       ← Docker: NAME, DOMAIN, EMAIL… (no se versiona)
-        ├── laravel/                   ← repo del backend (no se versiona aquí)
+        ├── laravel/                   ← backend
         │   └── .env                   ← la app: keys de Gemini y Telegram, CORS…
-        └── knowledge/                 ← repo + vault de Obsidian de ESTA instancia (no se versiona aquí)
+        └── knowledge/                 ← vault de Obsidian de ESTA instancia
 ```
 
 Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la app**.
@@ -40,15 +40,14 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
 
 **Una sola vez:**
 1. DNS: registro `A` del subdominio → IP del VPS. Si pasa por Cloudflare (nube naranja), pon `CEREBRO_TRUSTED_PROXIES=docker,cloudflare` en `laravel/.env`.
-2. En el VPS, una **deploy key de solo lectura** para los tres repos privados (infra, backend, conocimiento):
+2. En el VPS, una **deploy key de solo lectura** para el repo privado:
    ```bash
    ssh-keygen -t ed25519 -f ~/.ssh/cerebro_deploy -N ""   # la .pub va en GitHub → repo → Settings → Deploy keys
    ```
 3. Clonar con la misma estructura que en el PC:
    ```bash
-   git clone git@github.com:USUARIO/cerebro-os-infra.git ~/cerebro-os
-   git clone git@github.com:USUARIO/cerebro-os.git ~/cerebro-os/project/chat.anibalcopitan.com/laravel
-   git clone git@github.com:USUARIO/knowledge-anibalcopitan.git ~/cerebro-os/project/chat.anibalcopitan.com/knowledge
+   GIT_SSH_COMMAND="ssh -i ~/.ssh/cerebro_deploy -o IdentitiesOnly=yes" git clone git@github.com:USUARIO/cerebro-os.git ~/cerebro-os
+   git -C ~/cerebro-os config core.sshCommand "ssh -i ~/.ssh/cerebro_deploy -o IdentitiesOnly=yes"   # para los próximos git pull
    ```
 4. Crear los dos `.env` en `~/cerebro-os/project/chat.anibalcopitan.com/` (`chmod 600`):
    - `.env` → `NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE=docker-compose.prod.yml` (y `UID`/`GID` si no son 1000)
@@ -64,9 +63,9 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
 
 | Cambio | Comando |
 |---|---|
-| Código (backend) | `git -C laravel pull && docker compose restart` |
+| Código (backend) | `git pull && docker compose restart` |
 | Docker (imagen o compose) | `git pull && docker compose up -d --build` |
-| Conocimiento (Obsidian) | `git -C knowledge pull && docker compose exec app php artisan knowledge:sync` |
+| Conocimiento (Obsidian) | `git pull && docker compose exec app php artisan knowledge:sync` |
 | Logs | `docker compose logs -f app` |
 | Backup a tu PC | `scp USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/laravel/storage/app/backups/* ~/sites/cerebro-os/database/` |
 
@@ -81,10 +80,8 @@ Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca co
 
 ## Nuevo cliente
 
-```bash
-cp -r project/chat.anibalcopitan.com project/chat.cliente.com   # sin laravel/, knowledge/ ni .env
-git clone <repo-backend> project/chat.cliente.com/laravel
-mkdir project/chat.cliente.com/knowledge && git -C project/chat.cliente.com/knowledge init   # su vault, su repo
-```
+Este repo tiene tu conocimiento e historial: **no se entrega a un cliente**. Antes del primero (Fase 4), separa el producto genérico conservando su historial:
 
-En su `.env`: `NAME`/`DOMAIN` = `chat.cliente.com`. En su `laravel/.env`: sus keys. Comparte el proxy del VPS con las demás instancias.
+```bash
+git subtree split --prefix=project/chat.anibalcopitan.com/laravel -b producto
+```

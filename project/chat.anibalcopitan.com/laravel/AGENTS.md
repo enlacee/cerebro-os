@@ -1,4 +1,4 @@
-<!-- Contexto y estado del proyecto: ../../../AGENTS.md (repo de infraestructura) -->
+<!-- Contexto y estado del proyecto: ../../../AGENTS.md (raíz del repo) -->
 
 <laravel-boost-guidelines>
 # Laravel Application
