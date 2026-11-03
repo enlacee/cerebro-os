@@ -17,7 +17,7 @@ Una instancia = una carpeta en `project/`. La carpeta `laravel/` es **igual en t
 - [ ] Días y horas en que acepta llamadas, y su zona horaria
 - [ ] Su web (dominios donde irá el chat) y el subdominio del chat (ej. `chat.tallerjuan.com`)
 - [ ] Servicios, precios, preguntas frecuentes, links oficiales → para `knowledge/`
-- [ ] 3 a 6 temas para los chips (ej. "🔧 Precios")
+- [ ] 3 a 6 temas para los chips (ej. "🔧 Precios") y, mejor, su respuesta escrita en `knowledge/respuestas/`
 - [ ] Color de su marca (opcional)
 - [ ] API key de Gemini **de pago, a su nombre** (el plan gratis puede usar los datos para entrenar)
 
@@ -28,7 +28,7 @@ Desde la raíz del repo (`~/sites/cerebro-os/app`). Copia solo lo versionado: si
 ```bash
 N=chat.tallerjuan.com
 mkdir project/$N
-git archive HEAD:project/chat.anibalcopitan.com | tar -x -C project/$N --exclude=knowledge
+git archive HEAD:project/chat.rapitaller.com | tar -x -C project/$N --exclude=knowledge
 mkdir -p project/$N/knowledge/recursos
 ```
 
@@ -68,8 +68,9 @@ CEREBRO_CALL_TIMEZONE_LABEL="hora Perú"
 CEREBRO_CALL_COUNTRY_CODE="+51"
 CEREBRO_CALL_INTRO='Llamada rápida por WhatsApp (3 min) para conocerte y saber qué necesitas.'
 
-# Chips (máx. 8): "texto del botón | mensaje que se envía". Borra los que sobren.
-CEREBRO_TOPIC_1="🔧 Precios | ¿Cuánto cuesta un mantenimiento?"
+# Chips (máx. 8): "texto del botón | mensaje que se envía | respuesta escrita (opcional)". Borra los que sobren.
+# Con respuesta escrita (un .md de knowledge/) sale al instante y sin gastar tokens; sin ella, responde la IA.
+CEREBRO_TOPIC_1="🔧 Precios | ¿Cuánto cuesta un mantenimiento? | respuestas/precios.md"
 CEREBRO_TOPIC_2="📍 Ubicación | ¿Dónde están?"
 ```
 
@@ -92,7 +93,7 @@ CEREBRO_ALLOWED_ORIGINS=*                 # local; en producción, su web (paso 
 | `recursos/asistente-guia.md` | **Obligatorio.** Tono, cómo vender, qué no decir. Va segundo |
 | `servicios/`, `productos/`, `preguntas/`, `politicas/`… | Una nota por tema, con precios y links oficiales |
 
-Usa las de `chat.anibalcopitan.com/knowledge/` como modelo de estructura, pero **reescríbelas**: no copies contenido de Aníbal.
+Usa las de `chat.rapitaller.com/knowledge/` como modelo de estructura, pero **reescríbelas**: no copies contenido de Aníbal.
 
 ## 6. Probar en local
 
@@ -148,10 +149,10 @@ Y que configure un tope de gasto en su API key de Gemini.
 
 ## Actualizar el código de todas las instancias
 
-Los arreglos se hacen en `chat.anibalcopitan.com/laravel/`. Para pasarlos a otra instancia (desde la raíz, después del commit):
+Los arreglos se hacen en `chat.rapitaller.com/laravel/`. Para pasarlos a otra instancia (desde la raíz, después del commit):
 
 ```bash
-git archive HEAD:project/chat.anibalcopitan.com/laravel | tar -x -C project/chat.tallerjuan.com/laravel
+git archive HEAD:project/chat.rapitaller.com/laravel | tar -x -C project/chat.tallerjuan.com/laravel
 ```
 
 Sobrescribe el código y no toca `.env`, base de datos ni `vendor/`. Si se **borró** algún archivo en el original, bórralo a mano en la copia. Luego `git commit`, `git push` y en el VPS `git pull && docker compose restart`.

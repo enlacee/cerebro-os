@@ -8,7 +8,7 @@ Cómo funciona por dentro. Para levantarlo y desplegarlo: `README.md`.
 flowchart LR
     U((Visitante)) --> P[proxy]
 
-    subgraph chat.anibalcopitan.com
+    subgraph chat.rapitaller.com
         A[app]
         S[scheduler]
         D[(SQLite)]
@@ -30,8 +30,8 @@ Una instancia = un cliente: sus contenedores, su base SQLite y su conocimiento. 
 
 | Contenedor | Imagen | Orden | Red | Puertos | Volúmenes |
 |---|---|---|---|---|---|
-| `chat.anibalcopitan.com` (app) | `cerebro-os` (dev / prod) | `frankenphp run` → servidor web | propia + `red` | ninguno en prod (80 en local) | `./laravel` → `/app`, `./knowledge` → `/app/knowledge` (solo lectura) |
-| `chat.anibalcopitan.com-scheduler` | la misma | `php artisan schedule:work` → reloj | solo la propia | ninguno | `./laravel` → `/app` |
+| `chat.rapitaller.com` (app) | `cerebro-os` (dev / prod) | `frankenphp run` → servidor web | propia + `red` | ninguno en prod (80 en local) | `./laravel` → `/app`, `./knowledge` → `/app/knowledge` (solo lectura) |
+| `chat.rapitaller.com-scheduler` | la misma | `php artisan schedule:work` → reloj | solo la propia | ninguno | `./laravel` → `/app` |
 | `nginx_proxy` / `cerebro-proxy` | `nginxproxy/nginx-proxy` + `acme-companion` | proxy + HTTPS | `red` | 80, 443 | `docker.sock` (solo lectura), certificados |
 
 - **Imagen** (`common/frankenphp/Dockerfile`): PHP 8.4 + Caddy (FrankenPHP). No contiene el código: el código se monta desde `./laravel`.
@@ -112,10 +112,10 @@ Secretos y datos (`.env`, SQLite, backups, `vendor/`) quedan fuera de git. Antes
 flowchart LR
     subgraph Hoy["VPS compartido"]
         NP[proxy rapitaller] --> R[rapitaller]
-        NP --> C1[chat.anibalcopitan.com]
+        NP --> C1[chat.rapitaller.com]
     end
     subgraph Luego["VPS exclusivo"]
-        CP[cerebro-proxy] --> C2[chat.anibalcopitan.com]
+        CP[cerebro-proxy] --> C2[chat.rapitaller.com]
         CP --> C3[chat-cliente]
     end
     Hoy -. git clone + backup .-> Luego

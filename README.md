@@ -12,7 +12,7 @@ app/                                   ← este repo
 │   ├── frankenphp/                    ← la imagen: PHP 8.4 + Caddy (targets dev / prod)
 │   └── proxy/                         ← nginx-proxy + HTTPS (solo si el VPS no tiene otro proxy)
 └── project/
-    └── chat.anibalcopitan.com/        ← una carpeta por instancia (cliente)
+    └── chat.rapitaller.com/        ← una carpeta por instancia (cliente)
         ├── docker-compose.yml         ← local
         ├── docker-compose.prod.yml    ← VPS: sin puertos, se publica por el proxy (red "red")
         ├── .env                       ← Docker: NAME, DOMAIN, EMAIL… (no se versiona)
@@ -23,18 +23,36 @@ app/                                   ← este repo
 
 Dos `.env` distintos: **`.env` de la instancia = Docker**, **`laravel/.env` = la app**.
 🔒 **`knowledge/` = solo lo público**: el bot puede revelar cualquier cosa que esté ahí. Notas internas, costos o datos de clientes van fuera (ej. `~/sites/obsidian-vault/cerebro-os`). Ábrelo en Obsidian con "Open folder as vault".
-Contenedores con nombre legible (`NAME`): `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (tareas).
+Contenedores con nombre legible (`NAME`): `chat.rapitaller.com` (web) y `chat.rapitaller.com-scheduler` (tareas).
 
 Cómo funciona por dentro (contenedores, scheduler, datos): **`ARQUITECTURA.md`** · Seguridad: **`SEGURIDAD.md`** · Cliente nuevo: **`NUEVA-INSTANCIA.md`**.
 
 ## Local
 
 ```bash
-cd project/chat.anibalcopitan.com
+cd project/chat.rapitaller.com
 cp .env.example .env           # NAME y puerto
 docker compose up -d --build   # http://localhost/demo.html
 docker compose exec app php artisan test
 ```
+
+
+## nueva instancias: `chat.rapitaller.com`
+
+
+importante en .env descomentar:
+
+```
+COMPOSE_FILE=docker-compose.prod.yml
+```
+
+
+```bash
+docker compose down
+docker compose up -d --build --force-recreate
+
+```
+
 
 Dos contenedores con la misma imagen y el mismo código: `app` (web) y `scheduler` (recordatorios, backup diario 3 am y borrado de datos vencidos).
 
@@ -53,14 +71,14 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
    GIT_SSH_COMMAND="ssh -i ~/.ssh/cerebro_deploy -o IdentitiesOnly=yes" git clone git@github.com:USUARIO/cerebro-os.git ~/cerebro-os
    git -C ~/cerebro-os config core.sshCommand "ssh -i ~/.ssh/cerebro_deploy -o IdentitiesOnly=yes"   # para los próximos git pull
    ```
-4. Crear los dos `.env` en `~/cerebro-os/project/chat.anibalcopitan.com/` (`chmod 600`):
+4. Crear los dos `.env` en `~/cerebro-os/project/chat.rapitaller.com/` (`chmod 600`):
    - `.env` → `NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE=docker-compose.prod.yml` (y `UID`/`GID` si no son 1000)
    - `laravel/.env` → desde `laravel/.env.production.example` (keys reales; `APP_KEY`: `echo "base64:$(openssl rand -base64 32)"`)
 5. Levantar y comprobar:
    ```bash
    docker ps --filter name=nginx_proxy && docker network ls | grep red   # el proxy existe
    docker compose up -d --build && docker compose logs -f app
-   curl -I https://chat.anibalcopitan.com/up
+   curl -I https://chat.rapitaller.com/up
    ```
 
 **Cada vez (en el VPS, carpeta de la instancia):**
@@ -71,7 +89,7 @@ Cerebro **no abre puertos**: se publica a través de un **nginx-proxy en la red 
 | Docker (imagen o compose) | `git pull && docker compose up -d --build` |
 | Conocimiento (Obsidian) | `git pull && docker compose exec app php artisan knowledge:sync` |
 | Logs | `docker compose logs -f app` |
-| Backup a tu PC | `scp USUARIO@IP:~/cerebro-os/project/chat.anibalcopitan.com/laravel/storage/app/backups/* ~/sites/cerebro-os/database/` |
+| Backup a tu PC | `scp USUARIO@IP:~/cerebro-os/project/chat.rapitaller.com/laravel/storage/app/backups/* ~/sites/cerebro-os/database/` |
 
 Al arrancar, el contenedor corre `composer install`, migraciones y recachea la config: para cambios de código basta `restart`.
 Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca corras `docker system prune --volumes` en un VPS compartido.
@@ -91,5 +109,5 @@ Cada negocio es una carpeta en `project/`, con `laravel/` idéntica en todas. Lo
 Este repo tiene tu conocimiento e historial: **no se entrega a un cliente**. Antes del primero (Fase 4), separa el producto genérico conservando su historial:
 
 ```bash
-git subtree split --prefix=project/chat.anibalcopitan.com/laravel -b producto
+git subtree split --prefix=project/chat.rapitaller.com/laravel -b producto
 ```
