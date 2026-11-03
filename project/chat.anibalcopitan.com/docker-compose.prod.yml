@@ -49,6 +49,7 @@ services:
   scheduler:
     <<: *app
     container_name: ${NAME}-scheduler
+    pull_policy: never # la imagen la construye app; no existe en Docker Hub
     environment: *env
     # Espera a que app termine de arrancar (composer install, migraciones) antes de usar vendor/.
     depends_on:
