@@ -1,0 +1,60 @@
+# Producción: la app no abre puertos; la publica un nginx-proxy en la red "red"
+# (el que ya exista en el VPS, o common/proxy en un VPS propio).
+x-app: &app
+  image: cerebro-os:prod
+  restart: always
+  volumes:
+    - ./laravel:/app
+  logging:
+    options: { max-size: 10m, max-file: "3" } # que los logs no llenen el disco
+  deploy:
+    resources:
+      limits: { memory: 512M }
+
+x-env: &env
+  APP_ENV: production
+  LOG_CHANNEL: stderr # se ve con "docker compose logs"
+
+services:
+  app:
+    <<: *app
+    build:
+      context: ../../common/frankenphp
+      target: prod
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    container_name: ${NAME:?Pon NAME en .env}
+    environment:
+      <<: *env
+      SERVER_NAME: ":80" # HTTP interno; el HTTPS lo pone el proxy
+      CADDY_SERVER_EXTRA_DIRECTIVES: |
+        header /widget.js Cache-Control "no-cache"
+        header {
+          -Server
+          X-Content-Type-Options nosniff
+          Referrer-Policy strict-origin-when-cross-origin
+        }
+      # nginx-proxy + acme-companion detectan el contenedor por estas variables.
+      VIRTUAL_HOST: ${DOMAIN:?Pon DOMAIN en .env}
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${EMAIL:?Pon EMAIL en .env}
+    volumes:
+      - ./laravel:/app
+      - ./knowledge:/app/knowledge:ro # vault de Obsidian de esta instancia
+    networks: [default, red]
+
+  # Sin red "red": no recibe web, solo sale a internet (Telegram).
+  scheduler:
+    <<: *app
+    container_name: ${NAME}-scheduler
+    environment: *env
+    depends_on: [app]
+    entrypoint: ["php", "artisan", "schedule:work"]
+    healthcheck:
+      disable: true
+
+networks:
+  red:
+    external: true

@@ -1,0 +1,4 @@
+# Estado personal de Obsidian (paneles abiertos, etc.)
+.obsidian/workspace*.json
+.trash/
+.DS_Store
