@@ -41,6 +41,25 @@
     linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><path d="M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
   };
+  // Teléfono (SVG): igual en todos los sistemas, a diferencia del emoji.
+  var PHONE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  // Texto del botón sin el emoji del .env (el ícono ya es SVG): "📞 Que Aníbal me llame" → "Que Aníbal me llame".
+  function callText() {
+    return (cfg.call.short || cfg.call.title).replace(/^[^\p{L}\p{N}¿¡]+/u, '');
+  }
+  // Botón "que me llame" con ícono SVG.
+  function callButton(className) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = className;
+    b.innerHTML = PHONE;
+    b.appendChild(document.createTextNode(callText()));
+    b.title = cfg.call.subtitle;
+    b.addEventListener('click', function () { openCallForm(); });
+    return b;
+  }
+
   var ready = fetch(base + '/api/widget')
     .then(function (res) { return res.ok ? res.json() : {}; })
     .then(function (remote) { Object.assign(cfg, remote); })
@@ -110,9 +129,9 @@
     '--bg:#fff;--fg:#202124;--muted:#5f6368;--bot:#f1f3f4;--line:#dadce0;' +
     'font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}' +
     '@media (prefers-color-scheme:dark){:host{--bg:#202124;--fg:#e8eaed;--muted:#9aa0a6;--bot:#303134;--line:#3c4043;--head:#202124;--head-fg:#e8eaed;--icon:#9aa0a6;--hover:#303134}' +
-    ':host .chip,:host .callbar button{color:#8ab4f8}' +
+    ':host .chip,:host .icon.phone{color:#8ab4f8}' +
     ':host .icon.reset,:host .icon.reset:hover{color:#8ab4f8;background:rgba(138,180,248,.14)}' +
-    ':host .chip:hover,:host .chip:active,:host .callbar button:hover,:host .callbar button:active{background:rgba(138,180,248,.12);border-color:var(--line)}}' +
+    ':host .chip:hover,:host .chip:active{background:rgba(138,180,248,.12);border-color:var(--line)}}' +
     '*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}' +
     'button,a{touch-action:manipulation}' +
     '.fab{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));' +
@@ -156,6 +175,9 @@
     '.welcome{display:flex;flex-direction:column;gap:6px}' +
     // Acciones principales en una fila de botones compactos (bajan de línea si no caben).
     '.quick{display:flex;flex-wrap:wrap;gap:8px}' +
+    // "Que me llame": ícono de teléfono en la cabecera y como chip dentro de la conversación.
+    '.icon.phone{color:var(--c)}.pay.call svg,.offer svg{flex:none;margin-right:6px}' +
+    '.offer{align-self:flex-start;display:inline-flex;align-items:center}' +
     '.pay{display:inline-flex;align-items:center;min-height:38px;padding:7px 14px;border-radius:999px;background:var(--wa);color:#fff;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap}' +
     '.pay.call{background:var(--bg);color:var(--fg);border:1px solid var(--line);font:inherit;font-weight:600;font-size:14px;cursor:pointer}' +
     '.label{color:var(--muted);font-size:13px;margin-top:4px}' +
@@ -170,7 +192,7 @@
     // Temas en lista vertical compacta: cada chip ocupa solo el ancho de su texto.
     '.chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}' +
     '.chip{min-height:32px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-align:left}' +
-    '.chip:active,.callbar button:active{background:#e8f0fe;border-color:#d2e3fc}.pay.call:active{background:var(--hover)}' +
+    '.chip:active{background:#e8f0fe;border-color:#d2e3fc}.pay.call:active{background:var(--hover)}' +
     '.card{background:var(--bot);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;align-self:stretch}' +
     '.card p{margin:0;font-size:14px}' +
     '.card label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}' +
@@ -192,8 +214,6 @@
     '.card .error{color:#dc2626;font-size:13px;margin:0}' +
     '.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}' +
     '.typing{flex:none;color:var(--muted);font-size:13px;padding:0 16px 6px;display:none}' +
-    '.callbar{flex:none;padding:0 calc(10px + env(safe-area-inset-right)) 8px calc(10px + env(safe-area-inset-left));display:none}' +
-    '.callbar button{min-height:36px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}' +
     '.composer{flex:none;display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);background:var(--bg);' +
     'padding:8px calc(10px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}' +
     // 16px en campos: evita el zoom automático de iPhone al tocarlos.
@@ -204,10 +224,10 @@
     '.send:disabled{opacity:.5;cursor:default}' +
     '@media (hover:hover){.links a:hover{background:var(--hover);color:var(--fg)}.rating[href]:hover{text-decoration:underline}' +
     '.icon:hover{background:var(--hover);color:var(--fg)}.icon.reset:hover{background:#d2e3fc;color:var(--c)}.wa:hover{filter:brightness(.95)}' +
-    '.chip:hover,.callbar button:hover{background:#e8f0fe;border-color:#d2e3fc}.pay.call:hover{background:var(--hover)}}' +
+    '.chip:hover{background:#e8f0fe;border-color:#d2e3fc}.pay.call:hover{background:var(--hover)}}' +
     // Celular angosto (≤360px): el botón de WhatsApp queda solo con ícono.
-    // Celular: sin espacio para "En línea" y la calificación juntas → queda la calificación.
-    '@media (max-width:480px){.rated .status,.rated::before{display:none}}' +
+    // Cabecera angosta (celular y panel de 400px, con el botón de llamada): queda la calificación, sin "En línea".
+    '.rated .status,.rated::before{display:none}' +
     '@media (max-width:360px){.wa{width:38px;padding:0;justify-content:center}.wa .short{display:none}}' +
     // Escritorio / tablet: panel flotante.
     '@media (min-width:481px){' +
@@ -215,7 +235,7 @@
     '.panel{inset:auto 20px 90px auto;width:400px;height:620px;max-height:calc(100vh - 110px);border-radius:16px;border:1px solid var(--line);box-shadow:0 8px 28px rgba(60,64,67,.28)}' +
     '.head{padding:10px 8px 10px 14px}.icon{width:36px;height:36px;border-radius:10px}' +
     '.backdrop{display:block}.panel.open{animation:cerebro-pop .2s ease-out}' +
-    '.msgs{padding:14px}.composer{padding:10px}.callbar{padding:0 10px 8px}.foot-on .composer{padding-bottom:4px}' +
+    '.msgs{padding:14px}.composer{padding:10px}.foot-on .composer{padding-bottom:4px}' +
     '}' +
     '.panel.open~.fab{display:none}' +
     '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg{animation:none}.backdrop{transition:none}}' +
@@ -230,6 +250,7 @@
     '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
     '<path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41z"/></svg><span class="short"></span></a>' +
     '<div class="tools">' +
+    '<button class="icon phone" aria-label="Pedir una llamada" title="Pedir una llamada" hidden>' + PHONE + '</button>' +
     '<button class="icon reset" aria-label="Nueva conversación" title="Nueva conversación">' +
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></button>' +
@@ -239,7 +260,6 @@
     '</div></div>' +
     '<div class="msgs" aria-live="polite"></div>' +
     '<div class="typing">Escribiendo…</div>' +
-    '<div class="callbar"><button type="button"></button></div>' +
     '<form class="composer"><input maxlength="1000" placeholder="Escribe tu mensaje…" aria-label="Mensaje" enterkeyhint="send" autocomplete="off">' +
     '<button type="submit" class="send" aria-label="Enviar">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -323,18 +343,27 @@
       wa.href = waLink(cfg.contact.message);
       wa.hidden = false;
     }
-    if (cfg.call) $('.callbar button').textContent = cfg.call.short;
+    if (cfg.call) $('.icon.phone').hidden = false;
     if (cfg.launcher) {
       $('.fab .fab-text').textContent = cfg.launcher;
       $('.fab').classList.add('ext');
     }
   });
 
-  $('.callbar button').addEventListener('click', function () { openCallForm(); });
+  $('.icon.phone').addEventListener('click', function () { openCallForm(); });
 
-  // El acceso fijo a "que me llame" aparece cuando ya no está la bienvenida ni el formulario.
-  function updateCallbar() {
-    $('.callbar').style.display = cfg.call && !$('.welcome') && !$('.card') ? 'block' : 'none';
+  // Chip "Que Aníbal me llame" bajo una respuesta del bot: una vez tras la 2.ª respuesta
+  // y cada vez que el bot sugiere la llamada. Se guarda en el mensaje (m.call) para redibujarlo.
+  function wantsCallChip(reply) {
+    if (!cfg.call) return false;
+    var replies = state.messages.filter(function (m) { return m.role === 'assistant'; }).length;
+    var offered = state.messages.some(function (m) { return m.call; });
+    return (replies === 2 && !offered) || reply.toLowerCase().indexOf(callText().toLowerCase()) !== -1;
+  }
+  function callChip() {
+    var chip = callButton('chip offer');
+    msgs.appendChild(chip);
+    msgs.scrollTop = msgs.scrollHeight;
   }
 
   function toggle(open) {
@@ -433,15 +462,7 @@
       quick.appendChild(pay);
     }
 
-    if (cfg.call) {
-      var call = document.createElement('button');
-      call.type = 'button';
-      call.className = 'pay call';
-      call.textContent = cfg.call.short || cfg.call.title;
-      call.title = cfg.call.subtitle;
-      call.addEventListener('click', function () { openCallForm(); });
-      quick.appendChild(call);
-    }
+    if (cfg.call) quick.appendChild(callButton('pay call'));
 
     if (quick.children.length) box.appendChild(quick);
 
@@ -488,8 +509,10 @@
     msgs.innerHTML = '';
     bubble('bot', cfg.greeting);
     if (!state.messages.length) welcome();
-    state.messages.forEach(function (m) { bubble(m.role, m.content); });
-    updateCallbar();
+    state.messages.forEach(function (m) {
+      bubble(m.role, m.content);
+      if (m.call && cfg.call) callChip();
+    });
   }
 
   // ---------- Horarios en la hora del visitante (cualquier país) ----------
@@ -570,7 +593,6 @@
     card.querySelector('.intro').innerHTML = format(cfg.call.intro);
     msgs.appendChild(card);
     msgs.scrollTop = msgs.scrollHeight;
-    updateCallbar();
 
     fetch(base + '/api/call-slots?count=9')
       .then(function (res) { return res.json(); })
@@ -581,7 +603,6 @@
   function closeCallForm(card) {
     card.remove();
     if (!state.messages.length) renderAll();
-    updateCallbar();
   }
 
   function buildCallForm(card, data) {
@@ -694,7 +715,6 @@
         bubble('bot', body.message);
         state.messages.push({ role: 'assistant', content: body.message });
         save();
-        updateCallbar();
       })
       .catch(function (err) {
         error.textContent = err.message;
@@ -717,7 +737,6 @@
     var card = $('.card');
     if (card) card.remove();
     bubble('user', text);
-    updateCallbar();
     state.messages.push({ role: 'user', content: text });
     save();
     ask(text);
@@ -774,7 +793,12 @@
       .catch(function (err) { bubble('bot', err.message, 'err'); })
       .then(function () {
         if (reply) {
-          state.messages.push({ role: 'assistant', content: reply });
+          var msg = { role: 'assistant', content: reply };
+          state.messages.push(msg);
+          if (wantsCallChip(reply)) {
+            msg.call = true;
+            callChip();
+          }
           save();
         }
         setBusy(false);
