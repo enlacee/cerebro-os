@@ -1,9 +1,35 @@
 <?php
 
+// Lo que cambia de un negocio a otro va en el .env (sección "Chat"); este archivo es igual en todas las instancias.
+$business = env('CEREBRO_BUSINESS_NAME', 'Mi negocio');
+$owner = env('CEREBRO_OWNER_NAME') ?: $business; // quien atiende: "Hablar con …", "Que … me llame"
+$retentionCalls = (int) env('CEREBRO_RETENTION_CALLS_DAYS', 90);
+
+// "1-5" o "1,3,5" (ISO: 1 = lunes … 7 = domingo).
+$days = collect(explode(',', env('CEREBRO_CALL_DAYS', '1-5')))
+    ->flatMap(fn (string $part) => str_contains($part, '-') ? range(...array_map('intval', explode('-', $part, 2))) : [(int) $part])
+    ->values()->all();
+
+// "11:00-12:00,15:00-16:00"
+$hours = array_map(
+    fn (string $range) => array_map('trim', explode('-', $range, 2)),
+    array_filter(explode(',', env('CEREBRO_CALL_HOURS', '11:00-12:00,15:00-16:00')))
+);
+
+// CEREBRO_TOPIC_1 … _8: "texto del botón | mensaje que se envía"
+$topics = [];
+foreach (range(1, 8) as $i) {
+    if (filled($topic = env("CEREBRO_TOPIC_{$i}"))) {
+        [$label, $message] = array_map('trim', explode('|', $topic, 2)) + [1 => null];
+        $topics[] = ['label' => $label, 'message' => $message ?: $label];
+    }
+}
+
 return [
 
     // Nombre del negocio que atiende el bot (aparece en el system prompt).
-    'business_name' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
+    'business_name' => $business,
+    'owner_name' => $owner,
 
     'timezone' => env('CEREBRO_TIMEZONE', 'America/Lima'),
 
@@ -34,19 +60,19 @@ return [
         'global_per_day' => (int) env('CEREBRO_CHAT_GLOBAL_PER_DAY', 1000),
     ],
 
-    // "Que Aníbal me llame": franjas internas en las que se aceptan llamadas (hora de 'timezone').
+    // "Que me llame": franjas internas en las que se aceptan llamadas (hora de 'timezone').
     'calls' => [
-        'days' => [1, 2, 3, 4, 5], // ISO: 1 = lunes … 7 = domingo
-        'windows' => [['11:00', '12:00'], ['15:00', '16:00']],
+        'days' => $days,
+        'windows' => $hours,
         'slots_shown' => 3,
         'slots_max' => 9, // el widget pide más si las primeras le caen de madrugada al visitante
-        'timezone_label' => 'hora Perú',
+        'timezone_label' => env('CEREBRO_CALL_TIMEZONE_LABEL', 'hora local'),
         'per_day' => (int) env('CEREBRO_CALLS_PER_DAY', 3), // solicitudes por IP al día
     ],
 
     // Ley 29733 (Perú): no guardar datos personales más de lo necesario. Ver: php artisan data:prune
     'retention' => [
-        'calls_days' => (int) env('CEREBRO_RETENTION_CALLS_DAYS', 90),
+        'calls_days' => $retentionCalls,
         'conversations_days' => (int) env('CEREBRO_RETENTION_CONVERSATIONS_DAYS', 180),
     ],
 
@@ -72,7 +98,7 @@ return [
         'keep' => (int) env('CEREBRO_BACKUP_KEEP', 14),
     ],
 
-    // Avisos a Aníbal (nuevas llamadas y recordatorios). Ver: php artisan telegram:setup
+    // Avisos al dueño (nuevas llamadas y recordatorios). Ver: php artisan telegram:setup
     'telegram' => [
         'token' => env('TELEGRAM_BOT_TOKEN'),
         'chat_id' => env('TELEGRAM_CHAT_ID'),
@@ -80,55 +106,48 @@ return [
 
     // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
     'widget' => [
-        'title' => env('CEREBRO_BUSINESS_NAME', 'Aníbal Linux'),
+        'title' => $business,
         'subtitle' => 'Asistente en línea',
-        'greeting' => '¡Hola! 👋 Soy el asistente de Aníbal Linux. ¿Qué necesitas?',
+        'greeting' => env('CEREBRO_GREETING', "¡Hola! 👋 Soy el asistente de {$business}. ¿Qué necesitas?"),
         'disclaimer' => 'Respuestas con IA · pueden tener errores',
         // Colores (estilo sobrio tipo Google): azul = asistente, verde = WhatsApp (lo único verde para que
         // "quiero pagar" destaque), cabecera clara. En modo oscuro la cabecera pasa a gris oscuro sola.
         'colors' => [
-            'accent' => '#1a73e8',
+            'accent' => env('CEREBRO_COLOR_ACCENT', '#1a73e8'),
             'whatsapp' => '#188038',
             'header' => '#ffffff',
             'header_text' => '#202124',
         ],
-        'whatsapp' => env('CEREBRO_WHATSAPP', '51970142637'),
+        'whatsapp' => env('CEREBRO_WHATSAPP', ''),
 
         // Botón fijo arriba: hablar con una persona.
         'contact' => [
-            'label' => 'Hablar con Aníbal',
+            'label' => "Hablar con {$owner}",
             'short' => 'WhatsApp', // en pantallas muy angostas (≤360px)
-            'message' => 'Hola Aníbal, vengo del chat de la web 👋',
+            'message' => "Hola {$owner}, vengo del chat de la web 👋",
         ],
 
         // Camino directo para quien ya decidió: WhatsApp sin pasar por la IA.
         'pay' => [
             'title' => '💳 Ya decidí, quiero pagar',
             'short' => '💳 Quiero pagar', // texto del botón; title/subtitle quedan como descripción
-            'subtitle' => 'Hablar con Aníbal por WhatsApp',
-            'message' => 'Hola Aníbal, ya decidí y quiero pagar 🙌',
+            'subtitle' => "Hablar con {$owner} por WhatsApp",
+            'message' => "Hola {$owner}, ya decidí y quiero pagar 🙌",
         ],
 
         // Llamada rápida: el visitante deja su WhatsApp y elige una franja.
         'call' => [
-            'title' => '📞 Prefiero que Aníbal me llame',
+            'title' => "📞 Prefiero que {$owner} me llame",
             'subtitle' => 'Llamada rápida por WhatsApp · 3 min',
-            'short' => '📞 Que Aníbal me llame',
-            'intro' => 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto. **No es asesoría**: lo técnico lo vemos en la Consulta Técnica ($20).',
-            'country_code' => '+51', // si no se detecta el país del visitante
-            'privacy' => '🔒 Tus datos solo se usan para esta llamada y se borran a los 90 días.',
+            'short' => "📞 Que {$owner} me llame",
+            'intro' => env('CEREBRO_CALL_INTRO', 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto.'),
+            'country_code' => env('CEREBRO_CALL_COUNTRY_CODE', '+51'), // si no se detecta el país del visitante
+            'privacy' => "🔒 Tus datos solo se usan para esta llamada y se borran a los {$retentionCalls} días.",
         ],
 
         // Chips: al tocarlos se envía "message" al asistente.
         'topics_title' => 'O pregúntale al asistente:',
-        'topics' => [
-            ['label' => '📱 Crear mi app Android', 'message' => 'Quiero crear mi propia app Android'],
-            ['label' => '🚀 Publicar mi app Android/iOS', 'message' => 'Quiero publicar mi app en Play Store o App Store'],
-            ['label' => '🤝 Asesoría / Acompañamiento', 'message' => 'Quiero una asesoría o acompañamiento'],
-            ['label' => '🐧 Aprender Linux', 'message' => 'Quiero aprender Linux'],
-            ['label' => '🖥️ Mi servidor en casa / VPS', 'message' => 'Quiero crear mi servidor en casa o VPS'],
-            ['label' => '⭐ Ver tus apps publicadas', 'message' => 'Quiero ver tus apps publicadas'],
-        ],
+        'topics' => $topics,
     ],
 
 ];

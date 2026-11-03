@@ -14,7 +14,7 @@ class Telegram
     }
 
     /**
-     * Envía un aviso (HTML) a Aníbal. Nunca rompe el flujo: si falla, lo registra en el log.
+     * Envía un aviso (HTML) al dueño del negocio. Nunca rompe el flujo: si falla, lo registra en el log.
      */
     public function send(string $html): bool
     {

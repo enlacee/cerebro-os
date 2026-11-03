@@ -439,7 +439,7 @@
     return tz;
   }
 
-  // ---------- "Que Aníbal me llame": formulario dentro del chat ----------
+  // ---------- "Que me llame": formulario dentro del chat ----------
   function openCallForm() {
     if (busy) return;
     var existing = $('.card');

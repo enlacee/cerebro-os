@@ -82,6 +82,29 @@ Lo único compartido con rapitaller es la puerta de entrada (el proxy). Nunca co
 3. `docker compose stop`, copiar el backup a `laravel/database/database.sqlite`, `docker compose start`.
 4. Apuntar el DNS a la IP nueva. 🔒 Rota las keys de Gemini y Telegram si el VPS anterior era compartido.
 
+## Nueva instancia
+
+Cada negocio es una carpeta en `project/`. La carpeta `laravel/` es igual en todas: **no se edita**. Lo propio de cada negocio está en 3 lugares:
+
+| Archivo | Qué cambias |
+|---|---|
+| `.env` | `NAME`, `DOMAIN`, `EMAIL`, `APP_PORT` (Docker) |
+| `laravel/.env` | Sección **Chat**: nombre, quien atiende, WhatsApp, saludo, color, horarios de llamada, chips · `CEREBRO_ALLOWED_ORIGINS`, `GEMINI_API_KEY`, Telegram |
+| `knowledge/` | Las notas de Obsidian del negocio (solo lo público) |
+
+```bash
+cd project
+mkdir chat.nuevo.com
+cp chat.anibalcopitan.com/{docker-compose.yml,docker-compose.prod.yml,.env.example} chat.nuevo.com/
+rsync -a --exclude vendor --exclude .env --exclude 'database/*.sqlite*' --exclude 'storage/app/*' \
+  chat.anibalcopitan.com/laravel/ chat.nuevo.com/laravel/
+cp chat.nuevo.com/.env.example chat.nuevo.com/.env                     # edita NAME, APP_PORT…
+cp chat.nuevo.com/laravel/.env.example chat.nuevo.com/laravel/.env     # edita la sección Chat
+mkdir chat.nuevo.com/knowledge                                         # sus notas
+```
+
+Arreglos de código: se hacen en una instancia y se copia `laravel/` a las demás (los `.env` y la base no se tocan).
+
 ## Nuevo cliente
 
 Este repo tiene tu conocimiento e historial: **no se entrega a un cliente**. Antes del primero (Fase 4), separa el producto genérico conservando su historial:

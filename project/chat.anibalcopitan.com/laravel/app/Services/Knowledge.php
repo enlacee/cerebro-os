@@ -61,6 +61,10 @@ class Knowledge
 
         return strtr(File::get(resource_path('prompts/sistema.md')), [
             '{negocio}' => config('cerebro.business_name'),
+            '{contacto}' => config('cerebro.owner_name'),
+            '{boton_contacto}' => '💬 '.config('cerebro.widget.contact.label'),
+            '{boton_llamada}' => config('cerebro.widget.call.short'),
+            '{llamada}' => config('cerebro.widget.call.intro'),
             '{fecha}' => now(config('cerebro.timezone'))->locale('es')->isoFormat('dddd D [de] MMMM [de] YYYY'),
             '{conocimiento}' => File::get($compiled),
         ]);

@@ -21,7 +21,8 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
     ├── laravel/                            ← backend
     └── knowledge/                          ← vault de Obsidian de la instancia
 ```
-- `.env` de la instancia = Docker (`NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE` en el VPS). `laravel/.env` = la app (keys, CORS, límites).
+- `.env` de la instancia = Docker (`NAME`, `DOMAIN`, `EMAIL`, `COMPOSE_FILE` en el VPS). `laravel/.env` = la app (keys, CORS, límites) y la sección **Chat** (nombre, quien atiende, WhatsApp, saludo, horarios, chips).
+- `laravel/` debe ser idéntica en todas las instancias: nada propio de un negocio en el código (va en `laravel/.env` o en `knowledge/`). Nueva instancia: ver README.
 - Contenedores: `chat.anibalcopitan.com` (web) y `chat.anibalcopitan.com-scheduler` (`schedule:work`: recordatorios cada minuto, `db:backup` 3 am, `data:prune` 3:30 am).
 - Comandos: desde la carpeta de la instancia, `docker compose exec app php artisan test`. Mantener los tests en verde.
 - Conocimiento: `knowledge/` de cada instancia = vault de Obsidian, montado solo lectura. **Solo contenido público** (el bot puede revelarlo). Lo interno (ej. `oportunidades.md`) vive en `~/sites/obsidian-vault/cerebro-os`, nunca en `knowledge/`.
@@ -61,6 +62,6 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Fase 1.5: página de política de privacidad (Ley 29733) enlazada desde el aviso.
 - Fase 2: CRM con Filament en `/admin` (conversaciones, llamadas con estados, contactos con etapas, tool `guardar_lead`, métricas). Panel con 2FA, límite de intentos y, si se puede, Cloudflare Access.
 - Fase 3: webhooks → n8n.
-- Fase 4: separar el producto del repo único (`git subtree split`), producto genérico (sacar marca "Aníbal" del código), separar núcleo/personalización, chat a pantalla completa en `/`, DNS comodín + script de nueva instancia, versiones + CHANGELOG, licencia, contratos.
+- Fase 4: separar el producto del repo único (`git subtree split`), chat a pantalla completa en `/`, DNS comodín + script de nueva instancia, versiones + CHANGELOG, licencia, contratos.
 - Fuera de alcance (no tocar sin ok): proxy de rapitaller con versiones de 2022 y `common/.env_example` con contraseñas reales.
 

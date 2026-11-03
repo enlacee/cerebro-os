@@ -77,10 +77,11 @@ class CallRequestController extends Controller
             $local ? '🌍 Cliente en '.e($visitorTz).' — para él: '.e($local) : null,
         ])));
 
+        $owner = config('cerebro.owner_name');
         $message = match (true) {
-            $slot['now'] => "Listo ✅ Aníbal te llamará por WhatsApp en los próximos minutos al +{$whatsapp}.",
-            $local !== null => "Listo ✅ Aníbal te llamará por WhatsApp: **{$local} (tu hora)** · en Perú: {$slot['label']}. Número: +{$whatsapp}.",
-            default => "Listo ✅ Aníbal te llamará por WhatsApp: **{$slot['label']}** al +{$whatsapp}.",
+            $slot['now'] => "Listo ✅ {$owner} te llamará por WhatsApp en los próximos minutos al +{$whatsapp}.",
+            $local !== null => "Listo ✅ {$owner} te llamará por WhatsApp: **{$local} (tu hora)** · {$slot['label']}. Número: +{$whatsapp}.",
+            default => "Listo ✅ {$owner} te llamará por WhatsApp: **{$slot['label']}** al +{$whatsapp}.",
         };
 
         return response()->json(['message' => $message], 201);
