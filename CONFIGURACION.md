@@ -64,6 +64,8 @@ calificación, links).
 | Variable | Ejemplo | Qué hace |
 |---|---|---|
 | `CEREBRO_LAUNCHER_TEXT` | `"¿Dudas? Pregúntame"` | Texto del botón flotante, junto al ícono de chat. Vacío = solo el ícono. |
+| `CEREBRO_NUDGE` | `¿Tienes dudas? Te ayudo 👋` | Globito que invita junto a la burbuja cerrada (una vez por visita, sin sonido). Vacío = no sale. |
+| `CEREBRO_NUDGE_DELAY` | `20` | Segundos en la página antes de mostrar el globito. |
 | `CEREBRO_TOPICS_TITLE` | `"Lo más buscado"` | Título encima de los chips. |
 | `CEREBRO_TOPIC_1` … `_8` | `"🐧 Aprender Linux \| Quiero aprender Linux \| respuestas/aprender-linux.md"` | `texto del botón \| mensaje que se envía \| respuesta escrita`. Con la 3.ª parte (un `.md` de `knowledge/`) responde **al instante y sin IA**; sin ella, responde Gemini (~6 s y gasta tokens). |
 | `CEREBRO_RATING` | `"4.9"` | "★ 4.9 en Google" en la cabecera. Vacío = no se muestra. |

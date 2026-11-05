@@ -272,6 +272,16 @@
     '.fab.unread::after{content:"";position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#d93025;border:2px solid #fff}' +
     '.foot .snd{border:0;background:transparent;color:var(--muted);font:inherit;font-size:11px;cursor:pointer;padding:2px 4px;border-radius:6px}' +
     '.foot .snd:hover{color:var(--fg)}' +
+    // Bienvenida: los botones y chips entran uno tras otro.
+    '.in{animation:cerebro-in .32s ease backwards}@keyframes cerebro-in{from{opacity:0;transform:translateY(6px)}}' +
+    // Globito que invita junto a la burbuja cerrada (una vez por visita).
+    '.nudge{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(84px + env(safe-area-inset-bottom));z-index:2147483000;' +
+    'display:flex;align-items:center;gap:2px;max-width:min(280px,calc(100vw - 32px));padding:4px 4px 4px 14px;background:var(--bg);color:var(--fg);' +
+    'border-radius:16px 16px 4px 16px;box-shadow:0 6px 20px rgba(60,64,67,.25),0 0 0 1px rgba(60,64,67,.08);animation:cerebro-pop .3s ease}' +
+    '.nudge[hidden]{display:none}' +
+    '.nudge-text{flex:1;border:0;background:none;color:inherit;font:inherit;font-size:14px;text-align:left;cursor:pointer;padding:8px 0}' +
+    '.nudge-x{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:none;color:var(--muted);font:inherit;font-size:14px;cursor:pointer}' +
+    '.panel.open~.nudge{display:none}' +
     '.composer{flex:none;display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);background:var(--bg);' +
     'padding:8px calc(10px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}' +
     // 16px en campos: evita el zoom automático de iPhone al tocarlos.
@@ -288,6 +298,7 @@
     '.rated .status,.rated::before{display:none}' +
     '@media (max-width:360px){.wa{width:38px;padding:0;justify-content:center}.wa .short{display:none}}' +
     // Escritorio / tablet: panel flotante.
+    '@media (min-width:481px){.nudge{right:20px;bottom:90px}}' +
     '@media (min-width:481px){' +
     '.fab{right:20px;bottom:20px;width:58px;height:58px}.fab.ext{height:52px;border-radius:26px}.fab.ext.open{width:58px;height:58px;border-radius:50%}' +
     '.panel{inset:auto 20px 90px auto;width:400px;height:620px;max-height:calc(100vh - 110px);border-radius:16px;border:1px solid var(--line);box-shadow:0 8px 28px rgba(60,64,67,.28)}' +
@@ -296,7 +307,7 @@
     '.msgs{padding:14px}.composer{padding:10px}.foot-on .composer{padding-bottom:4px}' +
     '}' +
     '.panel.open~.fab{display:none}' +
-    '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg,.dots i,.m.bot.fresh{animation:none}.backdrop{transition:none}}' +
+    '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg,.dots i,.m.bot.fresh,.in,.nudge{animation:none}.backdrop{transition:none}}' +
     '@media (min-width:481px){.panel.open~.fab{display:flex}}' +
     '</style>' +
     '<div class="backdrop" aria-hidden="true"></div>' +
@@ -330,7 +341,9 @@
     '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>' +
     '<svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">' +
     '<path d="M18 6 6 18M6 6l12 12"/></svg>' +
-    '<span class="fab-text"></span></button>';
+    '<span class="fab-text"></span></button>' +
+    '<div class="nudge" role="status" hidden><button type="button" class="nudge-text"></button>' +
+    '<button type="button" class="nudge-x" aria-label="Cerrar">✕</button></div>';
 
   var $ = function (sel) { return root.querySelector(sel); };
   var panel = $('.panel'), msgs = $('.msgs'), typing = $('.typing'), form = $('.composer'), input = $('.composer input'), sendBtn = $('.composer button');
@@ -439,7 +452,10 @@
     toEnd();
   }
 
-  function toggle(open) {
+  // byUser: lo abrió/cerró el visitante (clic, Esc). Solo entonces suena: sin clic el navegador no deja.
+  function toggle(open, byUser) {
+    if (byUser && open !== panel.classList.contains('open')) (open ? openSound : closeSound)();
+    if (open) hideNudge();
     panel.classList.toggle('open', open);
     $('.backdrop').classList.toggle('show', open);
     $('.fab').classList.toggle('open', open);
@@ -453,12 +469,12 @@
     }
   }
 
-  $('.fab').addEventListener('click', function () { toggle(!panel.classList.contains('open')); });
-  $('.close').addEventListener('click', function () { toggle(false); });
+  $('.fab').addEventListener('click', function () { toggle(!panel.classList.contains('open'), true); });
+  $('.close').addEventListener('click', function () { toggle(false, true); });
   // Clic fuera del chat o tecla Esc: se cierra.
-  $('.backdrop').addEventListener('click', function () { toggle(false); });
+  $('.backdrop').addEventListener('click', function () { toggle(false, true); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && panel.classList.contains('open')) toggle(false);
+    if (e.key === 'Escape' && panel.classList.contains('open')) toggle(false, true);
   });
 
   // Abrir solo: data-open en el <script> (página propia del chat) o al llegar con #chat en la URL.
@@ -468,8 +484,28 @@
     var a = e.target.closest && e.target.closest('a[href="#chat"]');
     if (!a) return;
     e.preventDefault();
-    toggle(true);
+    toggle(true, true);
   });
+
+  // ---------- Globito que invita (una vez por visita, sin sonido) ----------
+  var NUDGE = 'cerebro-nudge', everOpened = panel.classList.contains('open');
+  function hideNudge() {
+    everOpened = true;
+    $('.nudge').hidden = true;
+  }
+  ready.then(function () {
+    var n = cfg.nudge;
+    if (!n || !n.text || everOpened || state.messages.length) return;
+    try { if (sessionStorage.getItem(NUDGE)) return; } catch (e) {}
+    setTimeout(function () {
+      if (everOpened || panel.classList.contains('open')) return;
+      $('.nudge-text').textContent = n.text;
+      $('.nudge').hidden = false;
+      try { sessionStorage.setItem(NUDGE, '1'); } catch (e) {}
+    }, Math.max(3, n.delay || 20) * 1000);
+  });
+  $('.nudge-text').addEventListener('click', function () { toggle(true, true); });
+  $('.nudge-x').addEventListener('click', function () { $('.nudge').hidden = true; });
 
   // Nueva conversación: borra el historial local y vuelve a la bienvenida.
   $('.reset').addEventListener('click', function () {
@@ -519,7 +555,27 @@
   }
 
   // Bienvenida: camino "quiero pagar" (WhatsApp directo) + chips de temas para el asistente.
-  function welcome() {
+  function greet(el) {
+    var text = cfg.greeting, shown = 0;
+    el.hidden = true;
+    typing.style.display = 'flex';
+    setTimeout(function () {
+      typing.style.display = busy ? 'flex' : 'none';
+      if (!el.isConnected) return; // la cerraron o reiniciaron a mitad
+      el.hidden = false;
+      (function step() {
+        if (!el.isConnected) return;
+        shown = Math.min(text.length, shown + 2);
+        el.innerHTML = format(text.slice(0, shown));
+        tick();
+        toEnd();
+        if (shown < text.length) setTimeout(step, 22);
+        else if (!state.messages.length && !$('.card')) welcome(true);
+      })();
+    }, 650);
+  }
+
+  function welcome(animate) {
     var box = document.createElement('div');
     box.className = 'welcome';
     var quick = document.createElement('div');
@@ -578,10 +634,25 @@
     }
 
     msgs.appendChild(box);
+    // Entrada escalonada (60 ms entre cada uno): se siente que el chat "se arma" para ti.
+    if (animate) {
+      box.querySelectorAll('.quick > *, .label, .chip, .links a').forEach(function (item, i) {
+        item.style.animationDelay = (i * 60) + 'ms';
+        item.classList.add('in');
+      });
+    }
+    toEnd();
   }
 
   function renderAll() {
     msgs.innerHTML = '';
+    // Primera vez (o tras "Nueva conversación"): el saludo se escribe en vivo, como si alguien atendiera.
+    if (!state.messages.length && !state.greeted) {
+      state.greeted = true;
+      save();
+      greet(bubble('bot', ''));
+      return;
+    }
     bubble('bot', cfg.greeting);
     if (!state.messages.length) welcome();
     state.messages.forEach(function (m) {
@@ -1138,6 +1209,24 @@
       osc.stop(t + 0.4);
     });
   }
+
+  // Abrir: "pop" corto que sube (algo empieza). Cerrar: más bajo y descendente, casi imperceptible.
+  function glide(from, to, dur, vol) {
+    var a = audioCtx();
+    if (!a) return;
+    var osc = a.createOscillator(), gain = a.createGain(), t = a.currentTime;
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(from, t);
+    osc.frequency.exponentialRampToValueAtTime(to, t + dur);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.05);
+    osc.connect(gain).connect(a.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.08);
+  }
+  function openSound() { glide(420, 880, 0.13, 0.08); }
+  function closeSound() { glide(620, 380, 0.1, 0.04); }
 
   function paintSound() {
     var b = $('.foot .snd');

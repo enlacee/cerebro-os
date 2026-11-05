@@ -188,6 +188,12 @@ return [
         // Texto del botón flotante ("¿Dudas? Pregúntame"). Vacío = solo el ícono.
         'launcher' => env('CEREBRO_LAUNCHER_TEXT', '¿Dudas? Pregúntame'),
 
+        // Globito que invita junto a la burbuja cerrada, tras X segundos en la página (una vez por visita). Vacío = no sale.
+        'nudge' => [
+            'text' => env('CEREBRO_NUDGE', '¿Tienes dudas? Te ayudo 👋'),
+            'delay' => (int) env('CEREBRO_NUDGE_DELAY', 20),
+        ],
+
         // Chips: al tocarlos se envía "message" al asistente.
         'topics_title' => env('CEREBRO_TOPICS_TITLE', 'Lo más buscado'),
         'topics' => $topics,
