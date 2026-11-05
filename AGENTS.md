@@ -61,6 +61,8 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - Vault revisado (2026-11-03): precios unificados (Android SaaS S/49; AppMonetizable $10 solo código, sin soporte), planes viejos eliminados, estrategia interna movida a `~/sites/obsidian-vault/cerebro-os/estrategia-ventas.md`, caso Studio8Record anonimizado, wikilinks corregidos.
 
 - Nueva instancia en preparación: `project/sonidos.rapitaller.com` (Sonidos Especiales, Luciva360: canciones, jingles, perifoneos). Por ahora solo `knowledge/`, reordenado al formato de Cerebro (bot vendedor que toma pedidos: guía con flujo de pedido, 5 servicios, 8 respuestas de chips). El material original (widget sin IA, prompt n8n, integraciones) está en `referencia/`, fuera del prompt; la sección Chat sugerida está en `referencia/env-chat.md`. Falta crear Docker, `.env` y `laravel/`. (2026-11-04)
+- Respuestas cortadas (2026-11-05): `CEREBRO_LLM_THINKING=low` limita el pensamiento de Gemini (salía del tope de tokens y cortaba frases). Si igual se corta (tokens o filtro de seguridad), se cierra con un aviso amable y queda `Respuesta cortada` en el log; si no llegó texto, se usa el modelo de respaldo. 32 tests en verde.
+- Ver conversaciones por terminal (2026-11-05): `php artisan chat:ver` (últimas; `--n=50`, `--buscar=texto`) y `chat:ver <#>` (una completa, hora Perú). Sin panel web por ahora. 33 tests en verde.
 
 **Siguiente**
 1. Primer despliegue en el VPS de rapitaller (manual con git): repo privado `cerebro-os` en GitHub, DNS del subdominio, clonar, crear los dos `.env`, `docker compose up -d --build`.
