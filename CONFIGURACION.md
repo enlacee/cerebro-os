@@ -82,6 +82,7 @@ calificación, links).
 | `CEREBRO_LLM_MODEL` | `gemini-3.6-flash` | Modelo principal. |
 | `CEREBRO_LLM_FALLBACK_MODEL` | `gemini-3.5-flash-lite` | Respaldo si el principal falla antes de responder. |
 | `CEREBRO_LLM_MAX_TOKENS` | `3000` | Tope por respuesta; **incluye lo que el modelo "piensa"**. Con menos de ~2000 se cortan respuestas. |
+| `CEREBRO_LLM_THINKING` | `low` | Cuánto "piensa" Gemini (`minimal`, `low`, `medium`, `high`; vacío = lo del modelo). Lo pensado sale del tope de tokens: con más, la respuesta puede cortarse. |
 | `GEMINI_API_KEY` | — | Clave del proveedor (la del cliente). Secreta. |
 | `CEREBRO_KNOWLEDGE_EXCLUDE` | `"borrador.md,notas/x.md"` | Red de seguridad: archivos de `knowledge/` que el bot no debe leer. Lo interno no va en `knowledge/`. |
 

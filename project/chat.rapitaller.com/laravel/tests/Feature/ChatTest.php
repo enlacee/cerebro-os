@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Conversation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
+use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 use Tests\TestCase;
@@ -55,6 +56,36 @@ class ChatTest extends TestCase
             $this->assertStringContainsString('Publicar app: $100', $system);
             $this->assertStringNotContainsString('SECRETO INTERNO', $system);
         });
+    }
+
+    public function test_cut_reply_is_closed_and_thinking_is_limited(): void
+    {
+        config(['cerebro.llm.provider' => 'gemini', 'cerebro.llm.thinking' => 'low']);
+        $fake = Prism::fake([TextResponseFake::make()->withText('No realizo hackeos ni')->withFinishReason(FinishReason::Length)]);
+
+        $body = $this->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => 'hola'])->streamedContent();
+
+        $this->assertStringContainsString('Se me cortó la respuesta', $body);
+        $this->assertStringContainsString('"done":true', $body);
+        $stored = Conversation::firstWhere('session_id', self::SESSION)->messages->last()->content;
+        $this->assertStringStartsWith('No realizo hackeos ni…', $stored);
+
+        $fake->assertRequest(fn (array $requests) => $this->assertSame('low', $requests[0]->providerOptions('thinkingLevel')));
+    }
+
+    public function test_empty_cut_reply_uses_fallback_model(): void
+    {
+        config(['cerebro.llm.model' => 'principal', 'cerebro.llm.fallback_model' => 'respaldo']);
+        $fake = Prism::fake([
+            TextResponseFake::make()->withText('')->withFinishReason(FinishReason::ContentFilter),
+            TextResponseFake::make()->withText('Respuesta completa'),
+        ]);
+
+        $body = $this->postJson('/api/chat', ['session_id' => self::SESSION, 'message' => 'hola'])->streamedContent();
+
+        $this->assertStringNotContainsString('Se me cortó', $body);
+        $this->assertSame('Respuesta completa', Conversation::firstWhere('session_id', self::SESSION)->messages->last()->content);
+        $fake->assertRequest(fn (array $requests) => $this->assertSame('respaldo', $requests[1]->model()));
     }
 
     public function test_topic_with_written_answer_skips_the_llm(): void

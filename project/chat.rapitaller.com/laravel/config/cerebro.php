@@ -56,6 +56,9 @@ return [
         'model' => env('CEREBRO_LLM_MODEL', 'gemini-3.6-flash'),
         'fallback_model' => env('CEREBRO_LLM_FALLBACK_MODEL'),
         'max_tokens' => (int) env('CEREBRO_LLM_MAX_TOKENS', 800),
+        // Cuánto "piensa" Gemini antes de responder: minimal, low, medium, high. Vacío = lo que diga el modelo.
+        // Lo pensado sale de max_tokens: si piensa de más, la respuesta se corta.
+        'thinking' => env('CEREBRO_LLM_THINKING', 'low'),
     ],
 
     'knowledge' => [
