@@ -142,6 +142,47 @@ class CallRequestTest extends TestCase
         $this->assertSame(0, CallRequest::count());
         Http::assertNothingSent();
     }
+    public function test_validates_mobile_number_by_country(): void
+    {
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+        config(['cerebro.calls.per_day' => 20]); // aquí no se prueba el límite diario
+        $send = fn (string $code, string $number) => $this->postJson('/api/call-request', [
+            'name' => 'Rosa', 'country_code' => $code, 'whatsapp' => $number, 'project' => 'App', 'slot' => '2026-10-28T11:00',
+        ]);
+
+        // Perú: 9 dígitos y empieza con 9.
+        $send('+51', '99988877')->assertJsonValidationErrors(['whatsapp' => 'Tu celular debe tener 9 dígitos y empezar con 9.']);
+        $send('+51', '9998887771')->assertJsonValidationErrors('whatsapp');
+        $send('+51', '899888777')->assertJsonValidationErrors('whatsapp');
+        $send('+57', '999888777')->assertJsonValidationErrors('whatsapp'); // Colombia: 10 dígitos, empieza con 3
+
+        // Repitió el código o puso un 0 adelante: se corrige solo.
+        $send('+51', '51 999 888 777')->assertCreated()->assertJsonPath('message', fn (string $m) => str_contains($m, '+51 999 888 777'));
+        $send('+593', '0991234567')->assertCreated();
+        $this->assertSame(['51999888777', '593991234567'], CallRequest::pluck('whatsapp')->all());
+    }
+
+    public function test_formats_name(): void
+    {
+        $this->assertSame('Juan Carlos Pérez', \App\Services\Name::format('  juan   carlos PÉREZ '));
+        $this->assertSame('María de la Cruz', \App\Services\Name::format('maría DE LA cruz'));
+        $this->assertSame("Ana-María O'Brien", \App\Services\Name::format("ANA-MARÍA o'brien"));
+        $this->assertSame('De la Torre', \App\Services\Name::format('de la torre'));
+
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+        $this->postJson('/api/call-request', [
+            'name' => 'rosa DEL carmen', 'whatsapp' => '+51 999 888 777', 'project' => 'ápp en Play Store', 'slot' => '2026-10-28T11:00',
+        ])->assertCreated();
+        $this->assertSame('Rosa del Carmen', CallRequest::sole()->name);
+        $this->assertSame('Ápp en Play Store', CallRequest::sole()->project); // solo la primera letra
+    }
+
+    public function test_requires_real_name_and_project(): void
+    {
+        $this->postJson('/api/call-request', [
+            'name' => '1', 'whatsapp' => '+51 999 888 777', 'project' => 'a', 'slot' => '2026-10-28T11:00',
+        ])->assertJsonValidationErrors(['name' => 'Escribe tu nombre.', 'project']);
+    }
 
     public function test_reminds_once_when_slot_starts(): void
     {

@@ -129,6 +129,7 @@ return [
     // Lo que ve el visitante al abrir el chat (lo entrega GET /api/widget).
     'widget' => [
         'title' => $business,
+        'owner' => $owner, // quien llama (tarjeta de confirmación)
         'subtitle' => 'En línea',
         'greeting' => env('CEREBRO_GREETING', "¡Hola! 👋 Soy el asistente de {$business}. ¿Qué necesitas?"),
         'disclaimer' => 'Respuestas con IA · pueden tener errores',
@@ -162,9 +163,26 @@ return [
             'title' => "📞 Prefiero que {$owner} me llame",
             'subtitle' => 'Llamada rápida por WhatsApp · 3 min',
             'short' => "📞 Que {$owner} me llame",
-            'intro' => env('CEREBRO_CALL_INTRO', 'Llamada rápida por WhatsApp (3 min) para conocerte y saber de tu proyecto.'),
+            'intro' => env('CEREBRO_CALL_INTRO', 'Para conocerte y ver tu proyecto.'),
             'country_code' => env('CEREBRO_CALL_COUNTRY_CODE', '+51'), // si no se detecta el país del visitante
-            'privacy' => "🔒 Tus datos solo se usan para esta llamada y se borran a los {$retentionCalls} días.",
+            'privacy' => "🔒 Solo para esta llamada · se borran a los {$retentionCalls} días",
+            // Celulares por código de país: dígitos (sin el código) y con qué empiezan. Otros países: 6 a 13 dígitos.
+            // La misma regla valida el widget (mientras escribe) y el servidor.
+            'phones' => [
+                '51' => ['digits' => [9], 'starts' => '9', 'example' => '987 654 321'],     // Perú
+                '52' => ['digits' => [10], 'starts' => '', 'example' => '55 1234 5678'],    // México
+                '54' => ['digits' => [10, 11], 'starts' => '', 'example' => '9 11 2345 6789'], // Argentina
+                '55' => ['digits' => [11], 'starts' => '', 'example' => '11 91234 5678'],   // Brasil
+                '56' => ['digits' => [9], 'starts' => '9', 'example' => '9 1234 5678'],     // Chile
+                '57' => ['digits' => [10], 'starts' => '3', 'example' => '300 123 4567'],   // Colombia
+                '58' => ['digits' => [10], 'starts' => '4', 'example' => '412 123 4567'],   // Venezuela
+                '591' => ['digits' => [8], 'starts' => '67', 'example' => '7123 4567'],     // Bolivia
+                '593' => ['digits' => [9], 'starts' => '9', 'example' => '99 123 4567'],   // Ecuador
+                '595' => ['digits' => [9], 'starts' => '9', 'example' => '981 123 456'],   // Paraguay
+                '598' => ['digits' => [8], 'starts' => '9', 'example' => '94 123 456'],    // Uruguay
+                '34' => ['digits' => [9], 'starts' => '67', 'example' => '612 345 678'],    // España
+                '1' => ['digits' => [10], 'starts' => '', 'example' => '202 555 0123'],     // EE. UU. y Canadá
+            ],
         ],
 
         // Texto del botón flotante ("¿Dudas? Pregúntame"). Vacío = solo el ícono.

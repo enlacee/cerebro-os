@@ -193,27 +193,85 @@
     '.chips{display:flex;flex-direction:column;align-items:flex-start;gap:6px}' +
     '.chip{min-height:32px;border:1px solid var(--line);background:var(--bg);color:var(--c);font-weight:500;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-align:left}' +
     '.chip:active{background:#e8f0fe;border-color:#d2e3fc}.pay.call:active{background:var(--hover)}' +
-    '.card{background:var(--bot);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;align-self:stretch}' +
-    '.card p{margin:0;font-size:14px}' +
-    '.card label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}' +
-    '.card input{flex:none;width:100%}' +
-    '.card .slot{flex-direction:row;align-items:flex-start;gap:10px;font-size:14px;color:var(--fg);cursor:pointer;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}' +
-    '.card .slot:has(input:checked){border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}' +
-    '.card .when-title{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}' +
-    '.card .when-title small{font-size:12px;color:var(--c)}' +
-    '.card .privacy{font-size:12px;color:var(--muted);margin:8px 0 0}.card .privacy:empty{display:none}' +
-    '.card .night-note{font-size:12px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-top:4px}' +
-    '.card .slot>span{flex:1;min-width:0}.card .slot .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}' +
-    '.card .slot em{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}' +
-    '.card .slot.night b{color:var(--muted);font-weight:600}' +
-    '.card .slot input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--c);flex:none}.card .slot small{display:block;color:var(--muted);font-size:12px}' +
-    '.card .actions{display:flex;gap:8px}' +
-    '.card .actions button{flex:1;min-height:46px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;cursor:pointer;background:var(--bg);color:var(--fg)}' +
-    '.card .actions .main{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}' +
-    '.card .actions button:disabled{opacity:.5;cursor:default}' +
+    // Formulario: tarjeta blanca con cabecera azul, para que se lea como algo aparte de los mensajes.
+    '.card{flex:none;align-self:stretch;background:var(--bg);border-radius:18px;overflow:hidden;' +
+    'box-shadow:0 0 0 1px rgba(26,115,232,.18),0 8px 24px rgba(26,115,232,.18),0 2px 6px rgba(60,64,67,.12);animation:cerebro-pop .25s ease}' +
+    // Cabecera premium: degradado azul, título + subtítulo.
+    // Con el formulario abierto, el campo de mensaje y el aviso se esconden: así entra todo sin scroll (la ✕ los devuelve).
+    '.panel:has(.card) .composer,.panel:has(.card) .foot{display:none}' +
+    '.card .card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#fff;padding:10px 8px 10px 16px;' +
+    'background:linear-gradient(135deg,var(--c) 0%,#1557b0 100%)}' +
+    '.card .card-head b{display:block;font-size:16px;font-weight:700;letter-spacing:.1px}' +
+    '.card .card-head small{display:block;font-size:12.5px;opacity:.9;margin-top:2px}' +
+    '.card .x{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#fff;font:inherit;font-size:18px;line-height:1;cursor:pointer}' +
+    '.card .x:active{background:rgba(255,255,255,.2)}' +
+    '.card .body{display:flex;flex-direction:column;gap:8px;padding:10px 14px 12px}' +
+    '.card p{margin:0;font-size:14px}.card .intro{font-size:12.5px;line-height:1.35;color:var(--muted)}' +
+    '.card input{flex:none;width:100%}.card input:not([type=radio]),.card textarea{min-height:46px;padding:19px 12px 5px}' +
+    // Etiqueta flotante: centrada como placeholder; al enfocar o con texto, sube chica arriba.
+    '.card .fl{position:relative;display:block}' +
+    '.card .fl .lb{position:absolute;left:13px;right:10px;top:13px;font-size:15px;color:var(--muted);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' +
+    'transition:top .15s,font-size .15s,color .15s}' +
+    '.card .fl :focus~.lb,.card .fl :not(:placeholder-shown)~.lb{top:5px;font-size:11.5px;font-weight:500}.card .fl :focus~.lb{color:var(--c)}' +
+    '.card .bad .lb{color:#dc2626!important}' +
+    '.card textarea{display:block;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg);font:inherit;font-size:16px;resize:none;line-height:1.35}' +
+    '.card textarea:focus{outline:2px solid var(--c);outline-offset:-1px;border-color:transparent}' +
+    '.card ::placeholder{color:var(--muted);opacity:.8}' +
+    // WhatsApp: código de país angosto + número; al completarlo, el número ya listo.
+    '.card .num-box input{padding-right:34px}' +
+    '.card .ok{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--c);font-weight:700;pointer-events:none}.card .ok[hidden]{display:none}' +
+    '.card .err{display:block;font-size:12px;font-weight:400;margin:3px 0 0 2px}' +
+    '.card .err{color:#dc2626}.card .err:empty{display:none}.card .bad input,.card .bad textarea{border-color:#dc2626}' +
+    // Horarios: botones chicos en 2 columnas.
+    '.card .when{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500}.card .when small{font-weight:400;color:var(--muted);font-size:12px}' +
+    '.card .slots{display:grid;grid-template-columns:1fr 1fr;gap:6px}' +
+    '.card .slot{position:relative;flex-direction:row;align-items:center;justify-content:center;min-height:38px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;' +
+    'background:var(--bg);color:var(--fg);font-size:13px;font-weight:500;text-align:center;cursor:pointer}' +
+    '.card .slot input{position:absolute;opacity:0;pointer-events:none}' +
+    '.card .slot:has(input:checked){border-color:var(--c);background:rgba(26,115,232,.1);color:var(--c);font-weight:600}' +
+    '.card .slot:has(input:focus-visible){outline:2px solid var(--c);outline-offset:1px}.card .slot.night{color:var(--muted)}' +
+    '.card .night-note{font-size:12px;font-weight:400;color:var(--muted)}' +
+    '.card .privacy{font-size:11.5px;color:var(--muted);text-align:center}.card .privacy:empty{display:none}' +
+    '.card .main{width:100%;min-height:46px;border:0;border-radius:14px;padding:10px;color:#fff;font:inherit;font-size:15px;font-weight:700;cursor:pointer;' +
+    'background:linear-gradient(135deg,var(--c) 0%,#1557b0 100%);box-shadow:0 4px 12px rgba(26,115,232,.35);transition:transform .15s,box-shadow .15s}' +
+    '.card .main:active{transform:scale(.98);box-shadow:0 2px 6px rgba(26,115,232,.3)}' +
+    '.card .main:disabled{opacity:.5;cursor:default}' +
     '.card .error{color:#dc2626;font-size:13px;margin:0}' +
+    // Botón cargando, temblor en campos con error.
+    '.card .main .spin{display:inline-block;width:15px;height:15px;margin-right:8px;vertical-align:-2px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:cerebro-spin .7s linear infinite}' +
+    '.shake{animation:cerebro-shake .35s ease}' +
+    '@keyframes cerebro-shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}' +
+    // Tarjeta de llamada agendada.
+    '.booked{flex:none;align-self:stretch;background:var(--bg);border-radius:18px;padding:18px 16px 14px;text-align:center;animation:cerebro-pop .3s ease;' +
+    'box-shadow:0 0 0 1px rgba(26,115,232,.18),0 8px 24px rgba(26,115,232,.16)}' +
+    '.booked .check{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;color:#fff;' +
+    'background:linear-gradient(135deg,var(--c),#1557b0);box-shadow:0 4px 12px rgba(26,115,232,.35);animation:cerebro-check .5s cubic-bezier(.2,1.5,.4,1)}' +
+    '.booked .check path{stroke-dasharray:24;animation:cerebro-draw .4s .25s ease backwards}' +
+    '@keyframes cerebro-check{from{transform:scale(0)}to{transform:scale(1)}}@keyframes cerebro-draw{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}' +
+    '.booked h3{margin:0;font-size:18px}.booked .sub{margin:3px 0 0;color:var(--muted);font-size:13px}' +
+    '.booked .info{margin:14px 0 0;padding:12px 4px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px;font-size:14px;text-align:left}' +
+    '.booked .info b{font-weight:600}' +
+    '.booked .cal{display:flex;gap:6px;margin-top:14px}' +
+    '.booked .cal a{flex:1;display:flex;align-items:center;justify-content:center;min-height:40px;padding:6px 8px;border:1px solid var(--line);border-radius:12px;' +
+    'color:var(--c);font-size:13px;font-weight:600;text-decoration:none;background:var(--bg)}' +
+    '.booked .cal a:active{background:rgba(26,115,232,.08)}' +
+    '@media (prefers-reduced-motion:reduce){.booked,.booked .check,.booked .check path,.shake{animation:none}}' +
+    // Pantallas bajas (laptop con ventana chica): más compacto para que siga entrando sin scroll.
+    '@media (max-height:700px){.card .body{gap:6px;padding:8px 14px 10px}.card .card-head{padding:8px 8px 8px 16px}' +
+    '.card textarea{height:46px;min-height:46px}.card .main{min-height:42px}.card .slot{min-height:36px}}' +
     '.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}' +
-    '.typing{flex:none;color:var(--muted);font-size:13px;padding:0 16px 6px;display:none}' +
+    // "Escribiendo" con tres puntos animados (se nota que hay reacción).
+    '.typing{flex:none;color:var(--muted);font-size:13px;padding:0 16px 6px;display:none;align-items:center;gap:6px}' +
+    '.dots{display:inline-flex;gap:3px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--c);opacity:.35;animation:cerebro-dot 1.1s infinite ease-in-out}' +
+    '.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}' +
+    '@keyframes cerebro-dot{0%,60%,100%{opacity:.35;transform:none}30%{opacity:1;transform:translateY(-3px)}}' +
+    // Respuesta recién terminada: un destello azul suave para que el ojo la encuentre.
+    '.m.bot.fresh{animation:cerebro-fresh 1.8s ease-out}' +
+    '@keyframes cerebro-fresh{0%{box-shadow:0 0 0 2px rgba(26,115,232,.55);background:rgba(26,115,232,.12)}100%{box-shadow:0 0 0 0 rgba(26,115,232,0)}}' +
+    // Burbuja cerrada con respuesta sin leer: punto rojo.
+    '.fab.unread::after{content:"";position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#d93025;border:2px solid #fff}' +
+    '.foot .snd{border:0;background:transparent;color:var(--muted);font:inherit;font-size:11px;cursor:pointer;padding:2px 4px;border-radius:6px}' +
+    '.foot .snd:hover{color:var(--fg)}' +
     '.composer{flex:none;display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);background:var(--bg);' +
     'padding:8px calc(10px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}' +
     // 16px en campos: evita el zoom automático de iPhone al tocarlos.
@@ -238,7 +296,7 @@
     '.msgs{padding:14px}.composer{padding:10px}.foot-on .composer{padding-bottom:4px}' +
     '}' +
     '.panel.open~.fab{display:none}' +
-    '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg{animation:none}.backdrop{transition:none}}' +
+    '@media (prefers-reduced-motion:reduce){.panel.open,.reset.spin svg,.dots i,.m.bot.fresh{animation:none}.backdrop{transition:none}}' +
     '@media (min-width:481px){.panel.open~.fab{display:flex}}' +
     '</style>' +
     '<div class="backdrop" aria-hidden="true"></div>' +
@@ -259,12 +317,12 @@
     '<path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
     '</div></div>' +
     '<div class="msgs" aria-live="polite"></div>' +
-    '<div class="typing">Escribiendo…</div>' +
+    '<div class="typing" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="typing-text">Escribiendo…</span></div>' +
     '<form class="composer"><input maxlength="1000" placeholder="Escribe tu mensaje…" aria-label="Mensaje" enterkeyhint="send" autocomplete="off">' +
     '<button type="submit" class="send" aria-label="Enviar">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button></form>' +
-    '<div class="foot" hidden></div>' +
+    '<div class="foot"><span class="disc"></span><button type="button" class="snd"></button></div>' +
     '</div>' +
     '<button class="fab" aria-label="Abrir chat">' +
     // Ícono de chat dibujado (el emoji se veía distinto en cada sistema).
@@ -286,12 +344,29 @@
 
   // Celular: el chat ocupa la pantalla visible (sin teclado ni barras) y la página de fondo no se mueve.
   var vv = window.visualViewport, savedOverflow = null;
+  // ---------- Scroll "pegado abajo" ----------
+  // Si el visitante está al final, se queda al final aunque el área cambie de alto ("Escribiendo…",
+  // teclado del celular, formulario). Si subió a leer, no se le mueve mientras llega la respuesta.
+  var stick = true;
+  msgs.addEventListener('scroll', function () {
+    stick = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 60;
+  }, { passive: true });
+  function toEnd(force) {
+    if (force || stick) {
+      msgs.scrollTop = msgs.scrollHeight;
+      stick = true;
+    }
+  }
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { if (stick) msgs.scrollTop = msgs.scrollHeight; }).observe(msgs);
+  }
+
   function fitViewport() {
     var full = panel.classList.contains('open') && mobile.matches;
     if (full && vv) {
       panel.style.height = vv.height + 'px';
       panel.style.top = vv.offsetTop + 'px';
-      if (state.messages.length) msgs.scrollTop = msgs.scrollHeight;
+      if (state.messages.length) toEnd();
     } else {
       panel.style.height = panel.style.top = '';
     }
@@ -331,9 +406,7 @@
       sub.appendChild(ratingEl());
     }
     if (cfg.disclaimer) {
-      $('.foot').textContent = cfg.disclaimer;
-      $('.foot').hidden = false;
-      panel.classList.add('foot-on');
+      $('.foot .disc').textContent = cfg.disclaimer + ' · ';
     }
     if (cfg.whatsapp) {
       var wa = $('.wa');
@@ -363,7 +436,7 @@
   function callChip() {
     var chip = callButton('chip offer');
     msgs.appendChild(chip);
-    msgs.scrollTop = msgs.scrollHeight;
+    toEnd();
   }
 
   function toggle(open) {
@@ -374,6 +447,8 @@
     fitViewport();
     if (open) {
       if (!msgs.children.length) ready.then(renderAll);
+      $('.fab').classList.remove('unread');
+      if (pendingFlash && !document.hidden) { flash(pendingFlash); pendingFlash = null; }
       focusInput();
     }
   }
@@ -417,7 +492,7 @@
     el.className = 'm ' + (role === 'user' ? 'user' : 'bot') + (extra ? ' ' + extra : '');
     el.innerHTML = format(text);
     msgs.appendChild(el);
-    msgs.scrollTop = msgs.scrollHeight;
+    toEnd();
     return el;
   }
 
@@ -510,7 +585,8 @@
     bubble('bot', cfg.greeting);
     if (!state.messages.length) welcome();
     state.messages.forEach(function (m) {
-      bubble(m.role, m.content);
+      if (m.booked) bookedCard(m.booked);
+      else bubble(m.role, m.content);
       if (m.call && cfg.call) callChip();
     });
   }
@@ -556,6 +632,14 @@
     return d.charAt(0).toUpperCase() + d.slice(1);
   }
   // Rango de horas en el formato del país del visitante (12 h con am/pm o 24 h).
+  // "Hoy", "Mañana" o "Lun 10".
+  function shortDay(date, tz) {
+    var d = dayLabel(date, tz);
+    if (d === 'Hoy' || d === 'Mañana') return d;
+    d = new Intl.DateTimeFormat('es', { timeZone: tz, weekday: 'short', day: 'numeric' }).format(date).replace('.', '').replace(',', '');
+    return d.charAt(0).toUpperCase() + d.slice(1);
+  }
+
   function timeRange(start, end, tz) {
     var f = new Intl.DateTimeFormat(undefined, { timeZone: tz, hour: 'numeric', minute: '2-digit' });
     return f.formatRange ? f.formatRange(start, end) : f.format(start) + ' – ' + f.format(end);
@@ -589,10 +673,15 @@
 
     var card = document.createElement('form');
     card.className = 'card';
-    card.innerHTML = '<p class="intro"></p><p class="loading">Buscando horarios…</p>';
+    card.setAttribute('autocomplete', 'off'); // sin sugerencias de nombres o números guardados
+    card.setAttribute('aria-label', 'Agendar llamada');
+    card.innerHTML = '<div class="card-head"><span><b>📞 Agendar llamada</b><small></small></span><button type="button" class="x" aria-label="Cerrar">✕</button></div>' +
+      '<div class="body"><p class="intro"></p><p class="loading">Buscando horarios…</p></div>';
     card.querySelector('.intro').innerHTML = format(cfg.call.intro);
+    card.querySelector('.card-head small').textContent = cfg.call.subtitle || '';
+    card.querySelector('.x').addEventListener('click', function () { closeCallForm(card); });
     msgs.appendChild(card);
-    msgs.scrollTop = msgs.scrollHeight;
+    toEnd();
 
     fetch(base + '/api/call-slots?count=9')
       .then(function (res) { return res.json(); })
@@ -607,11 +696,12 @@
 
   function buildCallForm(card, data) {
     card.querySelector('.loading').remove();
+    var body = card.querySelector('.body');
 
     if (!data.slots || !data.slots.length) {
       var none = document.createElement('p');
       none.textContent = 'Ahora no hay horarios libres. Escríbele por WhatsApp con el botón de arriba 🙏';
-      card.appendChild(none);
+      body.appendChild(none);
       return;
     }
 
@@ -625,66 +715,261 @@
       return !slot.now && (h >= 22 || h < 7);
     };
 
-    // Se muestran 3 franjas; si las 3 le caen de noche al visitante, se agregan las siguientes que no.
-    var shown = data.slots.slice(0, 3);
+    // Se muestran las 2 próximas franjas; si ambas le caen de noche al visitante, se agregan las 2 siguientes que no.
+    var shown = data.slots.slice(0, 2);
     if (shown.every(night)) {
-      shown = shown.concat(data.slots.slice(3).filter(function (slot) { return !night(slot); }).slice(0, 3));
+      shown = shown.concat(data.slots.slice(2).filter(function (slot) { return !night(slot); }).slice(0, 2));
     }
     var firstDay = shown.filter(function (slot) { return !night(slot); })[0] || shown[0];
 
     var html =
-      '<label>Tu nombre<input name="name" maxlength="80" required autocomplete="name"></label>' +
-      '<label>Tu WhatsApp (con código de país)<input name="whatsapp" type="tel" maxlength="25" required autocomplete="tel"></label>' +
-      '<label>¿De qué es tu proyecto?<input name="project" maxlength="300" required></label>' +
-      '<label class="hp" aria-hidden="true">Web<input name="website" tabindex="-1" autocomplete="off"></label>' +
-      '<div class="when-title">¿Cuándo te llamo?<small></small></div>';
-    card.insertAdjacentHTML('beforeend', html);
-    if (differs) card.querySelector('.when-title small').textContent = 'Horarios en tu hora: ' + tzName(visitorTz);
+      // Etiqueta flotante: va dentro del campo y sube al escribir (ahorra una línea por campo).
+      '<div data-f="name"><label class="fl"><input data-k="name" maxlength="80" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder=" " enterkeyhint="next"><span class="lb">Tu nombre</span></label><small class="err"></small></div>' +
+      // Un solo campo: empieza con el código del país del visitante (+51 ) y solo escribe su número.
+      '<div data-f="whatsapp"><label class="fl num-box"><input data-k="whatsapp" inputmode="tel" maxlength="22" placeholder=" " autocomplete="off" enterkeyhint="next">' +
+      '<span class="lb">Tu WhatsApp</span><span class="ok" hidden aria-hidden="true">✓</span></label><small class="err"></small></div>' +
+      '<div data-f="project"><label class="fl"><textarea data-k="project" rows="2" maxlength="300" placeholder=" " autocomplete="off" autocapitalize="sentences" enterkeyhint="send"></textarea><span class="lb">¿De qué quieres hablar? (ej: publicar mi app)</span></label><small class="err"></small></div>' +
+      '<label class="hp" aria-hidden="true">Web<input name="website" data-k="website" tabindex="-1" autocomplete="off"></label>' +
+      '<div class="when">¿Cuándo te llamo?<small hidden></small><div class="slots"></div></div>';
+    body.insertAdjacentHTML('beforeend', html);
+    var note = card.querySelector('.when small');
+    if (differs) { note.hidden = false; note.textContent = 'En tu hora (' + tzName(visitorTz) + ')'; }
     if (shown.every(night)) {
-      card.querySelector('.when-title').insertAdjacentHTML('beforeend', '<span class="night-note"></span>');
-      card.querySelector('.night-note').textContent = '🌙 En tu país estos horarios caen de noche. Si prefieres, escríbele por WhatsApp con el botón de arriba.';
+      card.querySelector('.when').insertAdjacentHTML('beforeend', '<span class="night-note"></span>');
+      card.querySelector('.night-note').textContent = '🌙 En tu país estos horarios caen de noche. Si prefieres, escríbele por WhatsApp.';
     }
+    var slotsBox = card.querySelector('.slots');
 
     shown.forEach(function (slot) {
       var start = new Date(slot.start), end = new Date(slot.end);
       var opt = document.createElement('label');
       opt.className = 'slot' + (night(slot) ? ' night' : '');
-      opt.innerHTML = '<input type="radio" name="slot" required><span><span class="row"><b></b><em></em></span><small></small></span>';
+      opt.innerHTML = '<input type="radio" name="slot" required><span></span>';
       opt.querySelector('input').value = slot.id;
+      card._slots = card._slots || {};
+      card._slots[slot.id] = { start: slot.start, end: slot.end, now: !!slot.now,
+        text: slot.now ? 'Ahora, en los próximos minutos' : dayLabel(start, tz) + ' · ' + timeRange(start, end, tz) };
       opt.querySelector('input').checked = slot === firstDay;
-      opt.querySelector('b').textContent = slot.now
-        ? 'Ahora (en los próximos minutos)'
-        : (night(slot) ? '🌙 ' : '') + dayLabel(start, tz) + ' · ' + timeRange(start, end, tz);
-      opt.querySelector('em').textContent = slot.now ? '' : countdown(start);
-      var notes = [];
-      if (differs && !slot.now) notes.push(timeRange(start, end, data.timezone) + ' ' + data.timezone_label);
-      if (night(slot)) notes.push(hourIn(start, tz) < 7 ? 'de madrugada para ti' : 'de noche para ti');
-      opt.querySelector('small').textContent = notes.join(' · ');
-      card.appendChild(opt);
+      opt.querySelector('span').textContent = slot.now
+        ? 'Ahora mismo'
+        : (night(slot) ? '🌙 ' : '') + shortDay(start, tz) + ' ' + timeRange(start, end, tz).replace(/:00/g, '');
+      // Detalle completo al pasar el mouse o con lector de pantalla.
+      opt.title = slot.now ? 'En los próximos minutos' : dayLabel(start, tz) + ' · ' + timeRange(start, end, tz) + ' · ' + countdown(start) +
+        (differs ? ' · ' + timeRange(start, end, data.timezone) + ' ' + data.timezone_label : '');
+      slotsBox.appendChild(opt);
     });
 
-    card.insertAdjacentHTML('beforeend',
-      '<p class="privacy"></p><p class="error" hidden></p>' +
-      '<div class="actions"><button type="button" class="cancel">Cancelar</button>' +
-      '<button type="submit" class="main">Agendar llamada</button></div>');
+    body.insertAdjacentHTML('beforeend',
+      '<p class="error" hidden></p><button type="submit" class="main">Agendar mi llamada →</button><p class="privacy"></p>');
 
     card.querySelector('.privacy').textContent = cfg.call.privacy || '';
-    card.querySelector('[name=whatsapp]').value = dialCode() + ' ';
-    card.querySelector('.cancel').addEventListener('click', function () { closeCallForm(card); });
+    card.noValidate = true; // validamos nosotros, con mensajes claros bajo cada campo
+    var num = card.querySelector('[data-k=whatsapp]');
+    num.value = dialCode() === '+' ? '+' : dialCode() + ' ';
+    var refresh = function (strict) { phoneFeedback(card, strict); };
+    // Solo números y espacios ("+" únicamente al inicio); con el cursor al final, se agrupa: +51 987 654 321.
+    num.addEventListener('input', function () {
+      var v = num.value, atEnd = num.selectionStart === v.length;
+      v = (v.trim()[0] === '+' ? '+' : '') + v.replace(/[^\d ]/g, '').replace(/^\s+/, '');
+      num.value = atEnd ? phoneFormat(v) : v;
+      refresh(false);
+    });
+    // Nombre con formato mientras escribe ("juan PÉREZ" → "Juan Pérez"), sin mover el cursor.
+    // En celular el teclado arma cada palabra ("composición"): tocar el texto a mitad rompe letras,
+    // así que se espera a que termine la palabra (compositionend). Al salir se limpian espacios dobles.
+    var nameInput = card.querySelector('[data-k=name]');
+    liveFormat(nameInput, titleLive);
+    nameInput.addEventListener('blur', function () { nameInput.value = titleName(nameInput.value); });
+    // Tema: solo la primera letra en mayúscula (lo demás como lo escribió: "Play Store", "WhatsApp").
+    liveFormat(card.querySelector('[data-k=project]'), firstUpper);
+    // Enter / "Siguiente" del teclado: pasa al campo siguiente; en el último, envía.
+    var order = ['name', 'whatsapp', 'project'];
+    order.forEach(function (key, i) {
+      card.querySelector('[data-k=' + key + ']').addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+        e.preventDefault();
+        if (order[i + 1]) card.querySelector('[data-k=' + order[i + 1] + ']').focus();
+        else if (card.requestSubmit) card.requestSubmit();
+        else card.dispatchEvent(new Event('submit', { cancelable: true }));
+      });
+    });
+    // Al tocarlo, el cursor va al final (después del +51).
+    num.addEventListener('focus', function () { setTimeout(function () { num.setSelectionRange(num.value.length, num.value.length); }, 0); });
+    num.addEventListener('blur', function () { if (num.value.trim()) refresh(true); });
+    ['name', 'project'].forEach(function (name) {
+      card.querySelector('[data-k=' + name + ']').addEventListener('input', function () { fieldError(card, name, ''); });
+    });
+    refresh(false);
     card.addEventListener('submit', function (e) {
       e.preventDefault();
-      submitCall(card);
+      if (checkCallForm(card)) submitCall(card);
     });
-    focusInput(card.querySelector('[name=name]'));
-    msgs.scrollTop = msgs.scrollHeight;
+    focusInput(card.querySelector('[data-k=name]'));
+    // Que se vea el formulario desde arriba (no solo el final).
+    msgs.scrollTop += card.getBoundingClientRect().top - msgs.getBoundingClientRect().top - 8;
+  }
+
+  // ---------- Validación del celular (mismas reglas que el servidor: cfg.call.phones) ----------
+  // Número completo en un campo: "+51 987 654 321". Sin "+", se asume el país del visitante.
+  function phoneSplit(value) {
+    var v = String(value).trim(), d = v.replace(/\D/g, '');
+    if (!d) return { error: 'Escribe tu número de WhatsApp.', empty: true };
+    if (v[0] !== '+') {
+      var home = String(dialCode() === '+' ? cfg.call.country_code || '' : dialCode()).replace(/\D/g, '');
+      d = home + d.replace(/^0+/, '');
+    }
+    var codes = Object.keys(cfg.call.phones || {}).sort(function (a, b) { return b.length - a.length; });
+    for (var i = 0; i < codes.length; i++) {
+      if (d.indexOf(codes[i]) === 0) return phoneCheck(codes[i], d.slice(codes[i].length));
+    }
+    return d.length >= 8 && d.length <= 15
+      ? { pretty: '+' + d, digits: d }
+      : { error: 'Revisa tu número con el código de país (ej. +51 987 654 321).', short: d.length < 8 };
+  }
+
+  function phoneCheck(code, number) {
+    code = String(code).replace(/\D/g, '');
+    var national = String(number).replace(/\D/g, '');
+    var rule = (cfg.call.phones || {})[code];
+    var max = rule ? Math.max.apply(null, rule.digits) : 13;
+    if (!code) return { error: 'Escribe el código de país (ej. +51).' };
+    if (national.indexOf(code) === 0 && national.length > max) national = national.slice(code.length); // repitió el código
+    national = national.replace(/^0+/, ''); // 0 de larga distancia
+    if (!national) return { error: 'Escribe tu número de WhatsApp.', empty: true };
+    if (rule) {
+      var starts = rule.starts && rule.starts.indexOf(national[0]) === -1;
+      if (starts) return { error: 'Tu celular debe empezar con ' + rule.starts.split('').join(' o ') + '.' };
+      if (national.length > max) return { error: 'Tiene ' + national.length + ' dígitos: un celular aquí tiene ' + rule.digits.join(' u ') + '.' };
+      if (rule.digits.indexOf(national.length) === -1) return { error: 'Faltan dígitos: un celular aquí tiene ' + rule.digits.join(' u ') + '.', short: true };
+    } else if (national.length < 6 || (code + national).length > 15) {
+      return { error: 'Revisa tu número de WhatsApp.', short: national.length < 6 };
+    }
+    return { pretty: '+' + code + ' ' + groupDigits(national), digits: code + national };
+  }
+
+  // Mientras escribe: agrupa según el largo esperado del país (Perú 3-3-3 desde el primer dígito).
+  function phoneFormat(v) {
+    var plus = v[0] === '+', d = v.replace(/\D/g, ''), phones = cfg.call.phones || {};
+    var code = '', rest = d;
+    if (plus) {
+      code = Object.keys(phones).sort(function (a, b) { return b.length - a.length; })
+        .filter(function (c) { return d.indexOf(c) === 0; })[0];
+      if (!code) return '+' + d; // código sin regla: se deja como está
+      rest = d.slice(code.length);
+      if (!rest) return '+' + code + (/\s$/.test(v) ? ' ' : '');
+    }
+    var home = plus ? code : String(dialCode() === '+' ? cfg.call.country_code || '' : dialCode()).replace(/\D/g, '');
+    var rule = phones[home], max = rule ? Math.max.apply(null, rule.digits) : 0;
+    var sizes = { 8: [4, 4], 9: [3, 3, 3], 10: [3, 3, 4], 11: [3, 4, 4] }[max];
+    var grouped;
+    if (!sizes || rest.length > max) grouped = rest.replace(/(\d{3})(?=\d)/g, '$1 ');
+    else {
+      var out = [], r = rest;
+      sizes.forEach(function (n) { if (r) { out.push(r.slice(0, n)); r = r.slice(n); } });
+      grouped = out.join(' ');
+    }
+    return plus ? '+' + code + ' ' + grouped : grouped;
+  }
+
+  // "maría DE LA cruz" → "María de la Cruz" (misma regla que el servidor: App\Services\Name).
+  var PARTICLES = ['de', 'del', 'la', 'las', 'los', 'y', 'e', 'da', 'do', 'dos', 'van', 'von'];
+  function titleName(v) {
+    return v.trim().split(/\s+/).filter(Boolean).map(function (w, i) {
+      var l = w.toLowerCase();
+      if (i > 0 && PARTICLES.indexOf(l) !== -1) return l;
+      return l.replace(/(^|[-'’])(\p{L})/gu, function (m, a, b) { return a + b.toUpperCase(); });
+    }).join(' ');
+  }
+
+  // Aplica un formato mientras escribe sin mover el cursor. En celular el teclado arma cada palabra
+  // ("composición"): tocar el texto a mitad duplica letras, así que se espera a que la termine.
+  function liveFormat(el, fn) {
+    var composing = false;
+    var apply = function () {
+      var v = el.value, next = fn(v);
+      if (next === v || next.length !== v.length) return;
+      var a = el.selectionStart, b = el.selectionEnd;
+      el.value = next;
+      if (root.activeElement === el && a !== null) el.setSelectionRange(a, b);
+    };
+    el.addEventListener('compositionstart', function () { composing = true; });
+    el.addEventListener('compositionend', function () { composing = false; apply(); });
+    el.addEventListener('input', function (e) { if (!composing && !e.isComposing) apply(); });
+  }
+
+  // "quiero publicar mi app" → "Quiero publicar mi app".
+  function firstUpper(v) {
+    return v.replace(/^(\s*)(\p{L})/u, function (m, sp, ch) { return sp + ch.toUpperCase(); });
+  }
+
+  // Versión en vivo: mismo largo (el cursor no se mueve) y la palabra que se está escribiendo no se
+  // pasa a partícula hasta terminarla ("De" → "de" al poner espacio; así "Delia" no parpadea).
+  function titleLive(v) {
+    var out = v.replace(/\S+/g, function (w, at) {
+      var l = w.toLowerCase(), first = !v.slice(0, at).trim(), done = /\s/.test(v.charAt(at + w.length));
+      if (!first && done && PARTICLES.indexOf(l) !== -1) return l;
+      return l.replace(/(^|[-'’])(\p{L})/gu, function (m, a, b) { return a + b.toUpperCase(); });
+    });
+    return out.length === v.length ? out : v; // letras raras que cambian de largo: no se toca
+  }
+
+  function shake(el) {
+    if (!el) return;
+    el.classList.remove('shake');
+    void el.offsetWidth;
+    el.classList.add('shake');
+  }
+
+  function groupDigits(d) {
+    var sizes = { 8: [4, 4], 9: [3, 3, 3], 10: [3, 3, 4], 11: [3, 4, 4] }[d.length];
+    if (!sizes) return d.replace(/(\d{3})(?=\d)/g, '$1 ');
+    var out = [];
+    sizes.forEach(function (n) { out.push(d.slice(0, n)); d = d.slice(n); });
+    return out.join(' ');
+  }
+
+  // Pista del país mientras escribe; el error solo si ya se pasó, empieza mal o salió del campo.
+  function phoneFeedback(card, strict) {
+    var ok = card.querySelector('[data-f=whatsapp] .ok');
+    var res = phoneSplit(card.querySelector('[data-k=whatsapp]').value);
+    ok.hidden = !res.pretty;
+    fieldError(card, 'whatsapp', res.error && !res.empty && (strict || !res.short) ? res.error : '');
+    return res;
+  }
+
+  function fieldError(card, name, message) {
+    var box = card.querySelector('[data-f=' + name + ']');
+    if (!box) return false;
+    box.querySelector('.err').textContent = message || '';
+    box.classList.toggle('bad', !!message);
+    return !!message;
+  }
+
+  function checkCallForm(card) {
+    var value = function (name) { return card.querySelector('[data-k=' + name + ']').value.trim(); };
+    var bad = [];
+    var nameEl = card.querySelector('[data-k=name]');
+    nameEl.value = titleName(nameEl.value);
+    if (fieldError(card, 'name', /\p{L}.*\p{L}/u.test(value('name')) ? '' : 'Escribe tu nombre.')) bad.push('name');
+    var phone = phoneSplit(value('whatsapp'));
+    phoneFeedback(card, true);
+    if (phone.error) { fieldError(card, 'whatsapp', phone.error); bad.push('whatsapp'); }
+    if (fieldError(card, 'project', value('project').length >= 3 ? '' : 'Cuéntame en pocas palabras de qué quieres hablar.')) bad.push('project');
+    bad.forEach(function (key) { shake(card.querySelector('[data-f=' + key + ']')); });
+    if (bad.length) card.querySelector('[data-k=' + bad[0] + ']').focus();
+    return !bad.length;
   }
 
   function submitCall(card) {
-    var field = function (name) { return card.querySelector('[name=' + name + ']'); };
+    var field = function (name) { return card.querySelector('[data-k=' + name + ']'); };
     var error = card.querySelector('.error');
     var submit = card.querySelector('.main');
+    var label = submit.textContent;
     submit.disabled = true;
+    submit.innerHTML = '<span class="spin" aria-hidden="true"></span>Agendando…';
     error.hidden = true;
+    var slotId = card.querySelector('[name=slot]:checked').value;
+    var info = { name: titleName(field('name').value), phone: phoneSplit(field('whatsapp').value).pretty, slot: (card._slots || {})[slotId] || {} };
 
     fetch(base + '/api/call-request', {
       method: 'POST',
@@ -692,8 +977,8 @@
       body: JSON.stringify({
         session_id: state.session,
         name: field('name').value.trim(),
-        whatsapp: field('whatsapp').value.trim(),
-        project: field('project').value.trim(),
+        whatsapp: '+' + phoneSplit(field('whatsapp').value).digits, // ya validado y normalizado
+        project: firstUpper(field('project').value.trim()),
         slot: card.querySelector('[name=slot]:checked').value,
         timezone: visitorTz,
         website: field('website').value,
@@ -705,6 +990,12 @@
           if (!res.ok) {
             var errors = body.errors || {};
             var first = Object.keys(errors)[0];
+            // Error de un campo: se muestra bajo ese campo.
+            if (first && fieldError(card, first, errors[first][0])) {
+              shake(card.querySelector('[data-f=' + first + ']'));
+              card.querySelector('[data-k=' + first + ']').focus();
+              throw new Error('');
+            }
             throw new Error(first ? errors[first][0] : 'No se pudo agendar. Intenta de nuevo.');
           }
           return body;
@@ -712,15 +1003,58 @@
       })
       .then(function (body) {
         card.remove();
-        bubble('bot', body.message);
-        state.messages.push({ role: 'assistant', content: body.message });
+        var booked = { name: info.name, phone: info.phone, when: info.slot.text || '', start: info.slot.start, end: info.slot.end, now: info.slot.now };
+        bookedCard(booked);
+        var thanks = '¡Gracias, ' + info.name.split(' ')[0] + '! Mientras tanto, ¿te ayudo con algo más? 😊';
+        bubble('bot', thanks);
+        state.messages.push({ role: 'assistant', content: body.message, booked: booked }, { role: 'assistant', content: thanks });
         save();
+        chime();
+        if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
+        focusInput();
       })
       .catch(function (err) {
         error.textContent = err.message;
-        error.hidden = false;
+        error.hidden = !err.message;
         submit.disabled = false;
+        submit.textContent = label;
       });
+  }
+
+  // ---------- Llamada agendada: tarjeta con resumen y "agregar al calendario" ----------
+  function bookedCard(b) {
+    var el = document.createElement('div');
+    el.className = 'booked';
+    el.setAttribute('role', 'status');
+    el.innerHTML = '<div class="check"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h3></h3><p class="sub"></p>' +
+      '<div class="info"><span>📅 <b class="when"></b></span><span>📱 <b class="phone"></b></span></div>';
+    el.querySelector('h3').textContent = '¡Listo, ' + String(b.name || '').split(' ')[0] + '!';
+    el.querySelector('.sub').textContent = (cfg.owner || 'Te') + (cfg.owner ? ' te' : '') + ' llamará por WhatsApp';
+    el.querySelector('.when').textContent = b.when;
+    el.querySelector('.phone').textContent = b.phone;
+
+    // Calendario: se arma en el navegador (sin servidor). Solo si la llamada es más adelante.
+    if (b.start && b.end && !b.now && new Date(b.end) > new Date()) {
+      var title = 'Llamada con ' + (cfg.owner || cfg.title) + ' por WhatsApp';
+      var stamp = function (iso) { return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+      var google = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(title) +
+        '&dates=' + stamp(b.start) + '/' + stamp(b.end) + '&details=' + encodeURIComponent('Llamada rápida por WhatsApp.');
+      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Cerebro//Chat//ES', 'BEGIN:VEVENT',
+        'UID:' + stamp(b.start) + '-' + state.session + '@cerebro', 'DTSTAMP:' + stamp(new Date().toISOString()),
+        'DTSTART:' + stamp(b.start), 'DTEND:' + stamp(b.end), 'SUMMARY:' + title,
+        'BEGIN:VALARM', 'TRIGGER:-PT10M', 'ACTION:DISPLAY', 'DESCRIPTION:' + title, 'END:VALARM',
+        'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      var cal = document.createElement('div');
+      cal.className = 'cal';
+      cal.innerHTML = '<a class="g" target="_blank" rel="noopener">📆 Google Calendar</a><a class="i" download="llamada.ics">📆 Apple / Outlook</a>';
+      cal.querySelector('.g').href = google;
+      cal.querySelector('.i').href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+      el.appendChild(cal);
+    }
+    msgs.appendChild(el);
+    toEnd();
+    return el;
   }
 
   form.addEventListener('submit', function (e) {
@@ -737,20 +1071,154 @@
     var card = $('.card');
     if (card) card.remove();
     bubble('user', text);
+    toEnd(true); // lo que acaba de escribir siempre se ve completo
     state.messages.push({ role: 'user', content: text });
     save();
+    audioCtx(); // toque del visitante: el navegador ya deja sonar
     ask(text);
   }
 
   function setBusy(on) {
     busy = on;
     sendBtn.disabled = on;
-    typing.style.display = on ? 'block' : 'none';
+    typing.style.display = on ? 'flex' : 'none';
+    toEnd(); // el indicador le quita alto al área de mensajes
   }
+
+  // ---------- Sonido: sintetizado con Web Audio (0 KB, nada que descargar del servidor) ----------
+  var SOUND = 'cerebro-sound', audio = null, noise = null, lastTick = 0;
+  var soundOn = (function () { try { return localStorage.getItem(SOUND) !== 'off'; } catch (e) { return true; } })();
+
+  // El navegador solo deja sonar después de un toque o tecla del visitante: se activa al enviar.
+  function audioCtx() {
+    if (!soundOn) return null;
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    try {
+      if (!audio) audio = new Ctx();
+      if (audio.state === 'suspended') audio.resume();
+    } catch (e) { return null; }
+    return audio;
+  }
+
+  // Tecla suave: un golpe de ruido de 25 ms filtrado, a volumen bajo y con ritmo irregular (como una persona).
+  function tick() {
+    var now = Date.now();
+    if (document.hidden || now - lastTick < 45 + Math.random() * 90) return;
+    var a = audioCtx();
+    if (!a) return;
+    lastTick = now;
+    if (!noise) {
+      noise = a.createBuffer(1, Math.floor(a.sampleRate * 0.025), a.sampleRate);
+      var d = noise.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+    }
+    var src = a.createBufferSource(), filter = a.createBiquadFilter(), gain = a.createGain();
+    src.buffer = noise;
+    filter.type = 'bandpass';
+    filter.frequency.value = 1800 + Math.random() * 1400;
+    gain.gain.value = 0.05 + Math.random() * 0.03;
+    src.connect(filter).connect(gain).connect(a.destination);
+    src.start();
+  }
+
+  // Respuesta lista: dos notas suaves que suben (sobrio, se oye aunque estés en otra pestaña).
+  function chime() {
+    var a = audioCtx();
+    if (!a) return;
+    [[659.25, 0], [987.77, 0.11]].forEach(function (n) {
+      var osc = a.createOscillator(), gain = a.createGain(), t = a.currentTime + n[1];
+      osc.type = 'sine';
+      osc.frequency.value = n[0];
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.09, t + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      osc.connect(gain).connect(a.destination);
+      osc.start(t);
+      osc.stop(t + 0.4);
+    });
+  }
+
+  function paintSound() {
+    var b = $('.foot .snd');
+    b.textContent = soundOn ? '🔊 Sonido' : '🔇 Sin sonido';
+    b.setAttribute('aria-label', soundOn ? 'Quitar sonido' : 'Activar sonido');
+  }
+  paintSound();
+  panel.classList.add('foot-on'); // el pie siempre está (aviso de IA + botón de sonido)
+  $('.foot .snd').addEventListener('click', function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem(SOUND, soundOn ? 'on' : 'off'); } catch (e) {}
+    paintSound();
+    if (soundOn) chime(); // así sabe cómo suena
+  });
+
+  // ---------- Aviso de respuesta: para quien tiene muchas pestañas y se olvida del chat ----------
+  var titleTimer = null, savedTitle = '', pendingFlash = null;
+
+  function notifyReply(el) {
+    chime();
+    if (!panel.classList.contains('open')) $('.fab').classList.add('unread');
+    if (document.hidden) {
+      pendingFlash = el; // el destello se muestra cuando vuelva a la pestaña
+      if (!titleTimer) {
+        savedTitle = document.title;
+        var on = false;
+        titleTimer = setInterval(function () {
+          on = !on;
+          document.title = on ? '💬 Nueva respuesta' : savedTitle;
+        }, 1200);
+      }
+    } else {
+      flash(el);
+    }
+  }
+
+  function flash(el) {
+    if (!el) return;
+    el.classList.remove('fresh');
+    void el.offsetWidth; // reinicia la animación
+    el.classList.add('fresh');
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) return;
+    if (titleTimer) {
+      clearInterval(titleTimer);
+      titleTimer = null;
+      document.title = savedTitle;
+    }
+    if (pendingFlash && panel.classList.contains('open')) {
+      flash(pendingFlash);
+      pendingFlash = null;
+    }
+  });
 
   function ask(text) {
     setBusy(true);
-    var reply = '', el = null;
+    var reply = '', el = null, shown = 0, timer = null, caught = null;
+
+    // Escritura progresiva: el texto llega en bloques y se muestra letra a letra (más rápido si hay mucho pendiente).
+    function step() {
+      timer = null;
+      var left = reply.length - shown;
+      if (left <= 0) {
+        if (caught) caught();
+        return;
+      }
+      shown = document.hidden ? reply.length : Math.min(reply.length, shown + Math.max(2, Math.ceil(left / 25)));
+      el.innerHTML = format(reply.slice(0, shown));
+      toEnd();
+      tick();
+      timer = setTimeout(step, 28);
+    }
+    function caughtUp() {
+      return new Promise(function (resolve) {
+        if (shown >= reply.length) return resolve();
+        caught = resolve;
+        if (!timer) step();
+      });
+    }
 
     fetch(base + '/api/chat', {
       method: 'POST',
@@ -779,8 +1247,7 @@
               if (data.delta) {
                 reply += data.delta;
                 if (!el) el = bubble('bot', '');
-                el.innerHTML = format(reply);
-                msgs.scrollTop = msgs.scrollHeight;
+                if (!timer) step();
               } else if (data.error) {
                 bubble('bot', data.error, 'err');
               }
@@ -791,8 +1258,11 @@
         return read();
       })
       .catch(function (err) { bubble('bot', err.message, 'err'); })
+      .then(caughtUp)
       .then(function () {
         if (reply) {
+          el.innerHTML = format(reply);
+          notifyReply(el);
           var msg = { role: 'assistant', content: reply };
           state.messages.push(msg);
           if (wantsCallChip(reply)) {

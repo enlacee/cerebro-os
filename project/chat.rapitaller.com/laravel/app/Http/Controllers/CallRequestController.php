@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\CallRequest;
 use App\Models\Conversation;
 use App\Services\CallSlots;
+use App\Services\Name;
+use App\Services\Phone;
 use App\Services\Telegram;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CallRequestController extends Controller
@@ -26,12 +29,21 @@ class CallRequestController extends Controller
     {
         $data = $request->validate([
             'session_id' => ['nullable', 'uuid'],
-            'name' => ['required', 'string', 'max:80'],
+            'name' => ['required', 'string', 'min:2', 'max:80', 'regex:/\p{L}/u'],
+            'country_code' => ['nullable', 'string', 'max:5'], // "+51"; sin él, va dentro de whatsapp
             'whatsapp' => ['required', 'string', 'max:25'],
-            'project' => ['required', 'string', 'max:300'],
+            'project' => ['required', 'string', 'min:3', 'max:300'],
             'slot' => ['required', 'string'],
             'timezone' => ['nullable', 'timezone:all'], // zona horaria del visitante (navegador)
             'website' => ['nullable', 'string'], // trampa para bots: un humano no la ve
+        ], [
+            'name.required' => 'Escribe tu nombre.',
+            'name.min' => 'Escribe tu nombre.',
+            'name.regex' => 'Escribe tu nombre.',
+            'whatsapp.required' => 'Escribe tu número de WhatsApp.',
+            'project.required' => 'Cuéntame en pocas palabras de qué quieres hablar.',
+            'project.min' => 'Cuéntame en pocas palabras de qué quieres hablar.',
+            'slot.required' => 'Elige un horario.',
         ]);
 
         // Bot detectado: respondemos "ok" sin guardar nada.
@@ -39,10 +51,13 @@ class CallRequestController extends Controller
             return response()->json(['message' => 'Listo ✅']);
         }
 
-        $whatsapp = preg_replace('/\D/', '', $data['whatsapp']);
-        if (strlen($whatsapp) < 8 || strlen($whatsapp) > 15) {
-            throw ValidationException::withMessages(['whatsapp' => 'Revisa tu número de WhatsApp (con código de país).']);
+        $phone = filled($data['country_code'] ?? null)
+            ? Phone::parse($data['country_code'], $data['whatsapp'])
+            : Phone::parseFull($data['whatsapp']);
+        if (is_string($phone)) {
+            throw ValidationException::withMessages(['whatsapp' => $phone]);
         }
+        $whatsapp = $phone['digits'];
 
         $slot = $slots->find($data['slot']);
         if (! $slot) {
@@ -53,9 +68,9 @@ class CallRequestController extends Controller
             'conversation_id' => isset($data['session_id'])
                 ? Conversation::firstWhere('session_id', $data['session_id'])?->id
                 : null,
-            'name' => $data['name'],
+            'name' => Name::format($data['name']),
             'whatsapp' => $whatsapp,
-            'project' => $data['project'],
+            'project' => Str::ucfirst(trim($data['project'])),
             'timezone' => $data['timezone'] ?? null,
             'slot_start' => $slot['start'],
             'slot_end' => $slot['end'],
@@ -71,7 +86,7 @@ class CallRequestController extends Controller
         $telegram->send(implode("\n", array_filter([
             '📞 <b>Nueva llamada solicitada</b>',
             '👤 '.e($call->name),
-            '📱 <a href="'.$call->whatsappLink().'">+'.$call->whatsapp.'</a>',
+            '📱 <a href="'.$call->whatsappLink().'">'.$phone['pretty'].'</a>',
             '💬 '.e($call->project),
             '🕐 '.e($slot['label']),
             $local ? '🌍 Cliente en '.e($visitorTz).' — para él: '.e($local) : null,
@@ -79,9 +94,9 @@ class CallRequestController extends Controller
 
         $owner = config('cerebro.owner_name');
         $message = match (true) {
-            $slot['now'] => "Listo ✅ {$owner} te llamará por WhatsApp en los próximos minutos al +{$whatsapp}.",
-            $local !== null => "Listo ✅ {$owner} te llamará por WhatsApp: **{$local} (tu hora)** · {$slot['label']}. Número: +{$whatsapp}.",
-            default => "Listo ✅ {$owner} te llamará por WhatsApp: **{$slot['label']}** al +{$whatsapp}.",
+            $slot['now'] => "Listo ✅ {$owner} te llamará por WhatsApp en los próximos minutos al {$phone['pretty']}.",
+            $local !== null => "Listo ✅ {$owner} te llamará por WhatsApp: **{$local} (tu hora)** · {$slot['label']}. Número: {$phone['pretty']}.",
+            default => "Listo ✅ {$owner} te llamará por WhatsApp: **{$slot['label']}** al {$phone['pretty']}.",
         };
 
         return response()->json(['message' => $message], 201);
