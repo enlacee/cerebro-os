@@ -35,11 +35,6 @@
     .code { display: flex; align-items: center; gap: 8px; background: var(--code); border: 1px solid var(--line); border-radius: 12px; padding: 6px 6px 6px 14px; }
     .code code { flex: 1; min-width: 0; overflow-wrap: anywhere; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--fg); }
     .code button { flex: none; min-height: 36px; padding: 6px 14px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
-    /* Espacio abajo para que el botón 💬 del chat no tape el footer. */
-    footer {
-      text-align: center; color: var(--muted); font-size: 14px;
-      padding: 16px 16px calc(96px + env(safe-area-inset-bottom));
-    }
   </style>
 </head>
 <body>
@@ -56,8 +51,6 @@
       </div>
     </div>
   </main>
-
-  <footer>Hecho con Cerebro OS</footer>
 
   <script>
     // El código apunta a este mismo servidor (localhost en desarrollo, tu dominio en producción).

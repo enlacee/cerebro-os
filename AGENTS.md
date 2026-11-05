@@ -60,6 +60,8 @@ Arquitectura técnica (contenedores, scheduler, flujo, datos): `ARQUITECTURA.md`
 - "Que Aníbal me llame" sin barra fija abajo: ícono de teléfono (SVG) en la cabecera + chip dentro de la conversación (una vez tras la 2.ª respuesta y cuando el bot sugiere la llamada; se guarda en el mensaje con `call: true`). Con calificación, la cabecera ya no muestra "En línea". (2026-11-03)
 - Vault revisado (2026-11-03): precios unificados (Android SaaS S/49; AppMonetizable $10 solo código, sin soporte), planes viejos eliminados, estrategia interna movida a `~/sites/obsidian-vault/cerebro-os/estrategia-ventas.md`, caso Studio8Record anonimizado, wikilinks corregidos.
 
+- Nueva instancia en preparación: `project/sonidos.rapitaller.com` (Sonidos Especiales, Luciva360: canciones, jingles, perifoneos). Por ahora solo `knowledge/`, reordenado al formato de Cerebro (bot vendedor que toma pedidos: guía con flujo de pedido, 5 servicios, 8 respuestas de chips). El material original (widget sin IA, prompt n8n, integraciones) está en `referencia/`, fuera del prompt; la sección Chat sugerida está en `referencia/env-chat.md`. Falta crear Docker, `.env` y `laravel/`. (2026-11-04)
+
 **Siguiente**
 1. Primer despliegue en el VPS de rapitaller (manual con git): repo privado `cerebro-os` en GitHub, DNS del subdominio, clonar, crear los dos `.env`, `docker compose up -d --build`.
 2. Pegar el widget en anibalcopitan.com/linktree (burbuja + botón `<a href="#chat">💬 Pregúntale a mi asistente</a>`), poner `https://anibalcopitan.com` en `CEREBRO_ALLOWED_ORIGINS`; probar en celulares reales.
