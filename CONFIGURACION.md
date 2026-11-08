@@ -113,7 +113,7 @@ calificación, links).
 | Variable | Qué hace |
 |---|---|
 | `TELEGRAM_BOT_TOKEN` | Token del bot (@BotFather). Secreto. |
-| `TELEGRAM_CHAT_ID` | Chat donde llegan los avisos. Lo obtiene `php artisan telegram:setup`. |
+| `TELEGRAM_CHAT_ID` | A quién le llegan los avisos. Varios separados por coma (ej. `8206633288,123456789`): cada cuenta debe tocar "Iniciar" en el bot. `php artisan telegram:setup` muestra los números y prueba cada uno. |
 
 ### Laravel (las que importan)
 

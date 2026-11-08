@@ -9,7 +9,7 @@ class TelegramSetup extends Command
 {
     protected $signature = 'telegram:setup';
 
-    protected $description = 'Muestra tu TELEGRAM_CHAT_ID y envía un mensaje de prueba';
+    protected $description = 'Muestra los chats que escribieron a tu bot (para TELEGRAM_CHAT_ID) y envía un mensaje de prueba a cada destinatario';
 
     public function handle(Telegram $telegram): int
     {
@@ -19,29 +19,43 @@ class TelegramSetup extends Command
             return self::FAILURE;
         }
 
-        if (blank(config('cerebro.telegram.chat_id'))) {
-            $chats = collect($telegram->api('getUpdates')->json('result', []))
-                ->map(fn (array $update) => $update['message']['chat'] ?? null)
-                ->filter()
-                ->unique('id');
+        $configured = $telegram->chatIds();
 
-            if ($chats->isEmpty()) {
-                $this->warn('Escríbele cualquier mensaje a tu bot en Telegram y vuelve a correr este comando.');
+        // Quién le escribió al bot hace poco (Telegram guarda estos mensajes unas 24 h).
+        $chats = collect($telegram->api('getUpdates')->json('result', []))
+            ->map(fn (array $update) => $update['message']['chat'] ?? null)
+            ->filter()
+            ->unique('id');
 
-                return self::FAILURE;
-            }
-
+        if ($chats->isNotEmpty()) {
+            $this->line('Chats que le escribieron a tu bot:');
             foreach ($chats as $chat) {
-                $this->line(sprintf('  %s → TELEGRAM_CHAT_ID=%s', $chat['first_name'] ?? $chat['title'] ?? '?', $chat['id']));
+                $name = trim(($chat['first_name'] ?? '').' '.($chat['last_name'] ?? '')) ?: ($chat['title'] ?? '?');
+                $mark = in_array((string) $chat['id'], $configured, true) ? '✅ ya recibe avisos' : 'nuevo';
+                $this->line(sprintf('  %s → %s  (%s)', $name, $chat['id'], $mark));
             }
-            $this->info('Copia tu TELEGRAM_CHAT_ID al .env y vuelve a correr este comando para probar.');
-
-            return self::SUCCESS;
+            $this->newLine();
         }
 
-        $ok = $telegram->send('✅ <b>Cerebro OS conectado.</b> Aquí te llegarán las llamadas solicitadas desde el chat.');
-        $ok ? $this->info('Mensaje de prueba enviado ✅') : $this->error('No se pudo enviar. Revisa token y chat id.');
+        if ($configured === []) {
+            $this->warn($chats->isEmpty()
+                ? 'Escríbele cualquier mensaje a tu bot en Telegram (toca "Iniciar") y vuelve a correr este comando.'
+                : 'Copia el número a TELEGRAM_CHAT_ID en .env y vuelve a correr este comando para probar.');
 
-        return $ok ? self::SUCCESS : self::FAILURE;
+            return self::FAILURE;
+        }
+
+        $this->line('Para sumar otra cuenta: que toque "Iniciar" en el bot, corre este comando y agrega su número con coma:');
+        $this->line('  TELEGRAM_CHAT_ID='.implode(',', $configured).',<nuevo>');
+        $this->newLine();
+
+        $failed = 0;
+        foreach ($configured as $chatId) {
+            $ok = $telegram->sendTo($chatId, '✅ <b>Cerebro OS conectado.</b> Aquí te llegarán las llamadas solicitadas desde el chat.');
+            $ok ? $this->info("Prueba enviada a {$chatId} ✅") : $this->error("No llegó a {$chatId}: ¿esa cuenta tocó \"Iniciar\" en el bot?");
+            $failed += $ok ? 0 : 1;
+        }
+
+        return $failed ? self::FAILURE : self::SUCCESS;
     }
 }

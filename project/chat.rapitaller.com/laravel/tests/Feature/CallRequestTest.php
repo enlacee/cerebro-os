@@ -184,6 +184,27 @@ class CallRequestTest extends TestCase
         ])->assertJsonValidationErrors(['name' => 'Escribe tu nombre.', 'project']);
     }
 
+    public function test_notifies_every_telegram_chat(): void
+    {
+        config(['cerebro.telegram.chat_id' => '111, 222,111,']); // espacios, repetidos y coma final
+        Http::fake([
+            'api.telegram.org/*' => fn (Request $request) => $request['chat_id'] === '222'
+                ? Http::response(['ok' => false], 403) // nunca tocó "Iniciar"
+                : Http::response(['ok' => true]),
+        ]);
+        $this->travelTo($this->lima('2026-10-28 09:00'));
+
+        $this->postJson('/api/call-request', [
+            'name' => 'Rosa', 'whatsapp' => '+51 999 888 777', 'project' => 'App', 'slot' => '2026-10-28T11:00',
+        ])->assertCreated();
+
+        $this->assertSame(['111', '222'], app(\App\Services\Telegram::class)->chatIds());
+        Http::assertSentCount(2);
+        Http::assertSent(fn (Request $request) => $request['chat_id'] === '111');
+        Http::assertSent(fn (Request $request) => $request['chat_id'] === '222');
+        $this->assertTrue(app(\App\Services\Telegram::class)->send('hola')); // basta que llegue a uno
+    }
+
     public function test_reminds_once_when_slot_starts(): void
     {
         $this->travelTo($this->lima('2026-10-28 09:00'));
