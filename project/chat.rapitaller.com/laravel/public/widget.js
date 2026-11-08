@@ -3,7 +3,8 @@
  *
  * Uso (todo lo demás se configura en config/cerebro.php → GET /api/widget):
  *   <script src="https://chat.tudominio.com/widget.js" defer></script>
- *   data-open en el <script> → el chat empieza abierto. Un link <a href="#chat"> lo abre.
+ *   data-open en el <script> → el chat empieza abierto solo en escritorio (en celular queda la burbuja).
+ *   data-open="always" → abierto también en celular. Un link <a href="#chat"> lo abre.
  */
 (function () {
   'use strict';
@@ -478,7 +479,12 @@
   });
 
   // Abrir solo: data-open en el <script> (página propia del chat) o al llegar con #chat en la URL.
-  if (script.hasAttribute('data-open') || location.hash === '#chat') toggle(true);
+  // data-open: abierto al cargar solo en escritorio; en celular o tablet queda la burbuja (no tapa la página).
+  // Celular = pantalla angosta o táctil sin mouse (así un celular grande o en horizontal no pasa por escritorio).
+  // data-open="always": abierto también en celular. Entrar con #chat lo abre en cualquier dispositivo.
+  var touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  var openMode = script.getAttribute('data-open');
+  if ((openMode !== null && (openMode === 'always' || !(mobile.matches || touch))) || location.hash === '#chat') toggle(true);
   // Cualquier link a #chat de la web abre el chat (ej. un botón "Pregúntale a mi asistente").
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href="#chat"]');

@@ -151,7 +151,7 @@ Que pegue esto en su web, antes de `</body>`:
 <script src="https://chat.tallerjuan.com/widget.js" defer></script>
 ```
 
-Opcional: un link `<a href="#chat">💬 Pregúntale a nuestro asistente</a>` en su web abre el chat. `https://chat.tallerjuan.com` también sirve como link directo: abre el chat a pantalla completa.
+Opcional: un link `<a href="#chat">💬 Pregúntale a nuestro asistente</a>` en su web abre el chat. `https://chat.tallerjuan.com` también sirve como link directo: abre el chat en escritorio (en celular, la burbuja; con `#chat` al final se abre directo).
 
 Y que configure un tope de gasto en su API key de Gemini.
 

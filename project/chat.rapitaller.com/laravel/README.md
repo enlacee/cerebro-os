@@ -33,7 +33,8 @@ El contenedor instala dependencias, crea `laravel/.env` y la base SQLite, migra 
 <script src="https://chat.rapitaller.com/widget.js" defer></script>
 ```
 
-- Sale la burbuja 💬. Con `data-open` en el `<script>` el chat empieza abierto (así lo usa la raíz `/`, `public/chat.html`).
+- Sale la burbuja 💬. Con `data-open` en el `<script>` el chat empieza abierto **solo en escritorio**; en celular o tablet queda la burbuja cerrada (no tapa la página). Así lo usa la raíz `/` (`public/chat.html`).
+- `data-open="always"` lo abre también en celular (pantalla completa).
 - Cualquier link `<a href="#chat">` de la web abre el chat, y también entrar con `#chat` en la URL. Ejemplo para un linktree: `<a href="#chat">💬 Pregúntale a mi asistente</a>`.
 - La web tiene que estar en `CEREBRO_ALLOWED_ORIGINS` (CORS), ej. `https://anibalcopitan.com`.
 
